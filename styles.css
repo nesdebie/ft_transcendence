@@ -1,0 +1,33 @@
+/* styles.css */
+body {
+    background-color: #ffffff; /* day mode background color */
+    color: #000000; /* day mode text color */
+}
+
+.night-mode {
+    background-color: #000000; /* night mode background color */
+    color: #ffffff; /* night mode text color */
+}
+
+/* styles.css */
+#night-mode-btn {
+    position: fixed;
+    top: 20px; /* Adjust top position as needed */
+    right: 20px; /* Adjust right position as needed */
+    background: none;
+    border: none;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#content {
+    /* Add padding to ensure content isn't hidden behind the button */
+    padding-right: 100px; /* Adjust as needed */
+}
+
+/* Remove any color change on hover */
+#night-mode-btn:hover {
+    color: inherit;
+    text-decoration: none; /* Optional: maintain underline on hover */
+}
