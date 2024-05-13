@@ -7,10 +7,35 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button id="night-mode-btn" onclick="toggleNightMode()">🌜</button>
+    <button id="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+    <div id="sidebar-menu">
+        <button id="hide-sidebar-btn" onclick="toggleSidebar()">✕</button>
+        <ul>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Parameters</a></li>
+            <li><a href="#">Log out</a></li>
+        </ul>  
+    </div>
+
+    <!-- Main Content -->
     <div id="content">
         <h1>Welcome to My Website</h1>
         <p>En construction.</p>
+    </div>
+    <button id="night-mode-btn" onclick="toggleNightMode()">🌜</button>
+
+    <div class="container">
+        <div class="pong-game">
+            <p>Game goes there</p>
+            <!-- Pong game content goes here -->
+            <!-- You can build your pong game later and insert it here -->
+        </div>
+        <div class="vertical-line"></div>
+        <div class="chat">
+            <p>Chatbox goes there</p>
+            <!-- Chat content goes here -->
+            <!-- You can build your chat later and insert it here -->
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
