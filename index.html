@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ft_transcendence</title>
-    <link rel="stylesheet" href="styles.css">
+  <title>Transcendence</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <button id="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
-    <div id="sidebar-menu">
-        <button id="hide-sidebar-btn" onclick="toggleSidebar()">✕</button>
-        <ul>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Parameters</a></li>
-            <li><a href="#">Log out</a></li>
-        </ul>  
-    </div>
 
-    <!-- Main Content -->
-    <div id="content">
-        <h1>Welcome to My Website</h1>
-        <p>En construction.</p>
+    <div class="sidebar">
+      <button class="btn btn-default">Home</button>
+      <button class="btn btn-default">Profile</button>
+      <button class="btn btn-default">Parameters</button>
+      <button class="btn btn-default">Log Out</button>
     </div>
-    <button id="night-mode-btn" onclick="toggleNightMode()">🌜</button>
-
-    <div class="container">
-        <div class="pong-game">
-            <p>Game goes there</p>
-            <!-- Pong game content goes here -->
-            <!-- You can build your pong game later and insert it here -->
+    
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12 text-right">
+            <button id="nightModeBtn" class="btn btn-default">Night Mode</button>
+          </div>
         </div>
-        <div class="vertical-line"></div>
-        <div class="chat">
-            <p>Chatbox goes there</p>
-            <!-- Chat content goes here -->
-            <!-- You can build your chat later and insert it here -->
+      </div>
+    
+      <div class="jumbotron text-center">
+        <h1>Transcendence</h1>
+        <p>Resize this responsive page to see the effect!</p> 
+      </div>
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <h3>Game</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+          </div>
+          <div class="col-sm-6">
+            <h3>Chat</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+          </div>
         </div>
+      </div>
     </div>
+    
     <script src="script.js"></script>
-</body>
+    </body>
+    
 </html>
+

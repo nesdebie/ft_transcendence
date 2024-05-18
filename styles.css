@@ -1,110 +1,55 @@
-/* styles.css */
 body {
-    background-color: #000000; /* day mode background color */
-    color: #ffffff; /* day mode text color */
-    margin-left: 50px; /* Add margin to prevent overlap with sidebar menu button */
-}
-
-.night-mode {
-    background-color: #fdf800; /* night mode background color */
-    color: #000000; /* night mode text color */
-}
-
-/* Styles for night mode button */
-#night-mode-btn {
-    position: fixed;
-    top: 20px; /* Adjust top position as needed */
-    right: 20px; /* Adjust right position as needed */
-    background: none;
-    border: none;
-    color: inherit;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Remove any color change on hover */
-#night-mode-btn:hover,
-#sidebar-toggle-btn:hover,
-#hide-sidebar-btn:hover {
-    color: inherit;
-    text-decoration: none; /* Optional: maintain underline on hover */
-}
-
-/* Styles for sidebar menu */
-#sidebar-menu {
-    position: fixed;
-    left: -250px; /* Initial position, off-screen */
-    top: 0;
-    width: 250px;
-    height: 100%;
-    background-color: #333;
-    transition: left 0.3s ease-in-out;
-    z-index: 1000;
-}
-
-#sidebar-menu ul {
-    list-style-type: none;
+    background-color: black;
+    color: white;
+    margin: 0;
     padding: 0;
-}
-
-#sidebar-menu ul li {
-    padding: 10px;
-}
-
-#sidebar-menu ul li a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/* Styles for sidebar menu button */
-#sidebar-toggle-btn {
+    font-family: Arial, sans-serif;
+  }
+  
+  .sidebar {
+    height: 100%;
+    width: 200px;
     position: fixed;
-    top: 20px;
-    left: 20px;
-    background: none;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    padding-top: 20px;
+  }
+  
+  .sidebar button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
     border: none;
+    background-color: transparent;
+    color: white;
+  }
+  
+  .content {
+    margin-left: 200px;
+    padding: 20px;
+  }
+  
+  .jumbotron, .container, .row, .col-sm-6 {
+    background-color: inherit;
     color: inherit;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* Styles for hiding the sidebar menu button */
-#hide-sidebar-btn {
-    position: relative; /* Change position to relative */
+  }
+  
+  #nightModeBtn {
+    position: fixed;
     top: 10px;
-    left: 10px;
-    background: none;
-    border: none;
+    right: 10px;
+  }
+  
+  /* Night mode styles */
+  body.night-mode {
+    background-color: #fdf800;
+    color: black;
+  }
+  
+  .night-mode .jumbotron, .night-mode .container, .night-mode .row, .night-mode .col-sm-6 {
+    background-color: inherit;
     color: inherit;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 1001; /* Ensure the X button is on top of the menu */
-}
-
-
-/* New CSS styles for pong game and chat sections */
-/* Container to hold the two sections */
-.container {
-    display: flex;
-    margin-top: 20px; /* Adjust as needed */
-}
-
-/* Left section for the pong game */
-.pong-game {
-    flex: 70%;
-    background-color: #f0f0f0; /* Example background color */
-    /* Add styling specific to the pong game section */
-}
-
-/* Vertical line separating the sections */
-.vertical-line {
-    flex: 1%;
-    border-left: 1px solid #ccc; /* Example border color */
-}
-
-/* Right section for the chat */
-.chat {
-    flex: 29%; /* Adjust as needed to give space for the vertical line */
-    background-color: #f0f0f0; /* Example background color */
-    /* Add styling specific to the chat section */
-}
+  }
+  
