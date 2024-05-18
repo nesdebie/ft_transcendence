@@ -1,0 +1,16 @@
+/* Night mode styles */
+body.night-city-mode {
+  background-color: #fdf800;
+  color: black;
+}
+
+.night-city-mode .jumbotron, .night-city-mode .container, .night-city-mode .row, .night-city-mode .col-sm-6 {
+  background-color: inherit;
+  color: inherit;
+}
+
+#nightCityModeBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
