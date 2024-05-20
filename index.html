@@ -14,6 +14,7 @@
   <script src="login.js"></script>
   <script src="buttons.js"></script>
   <script src="pong.js"></script>
+  <script src="navigate.js"></script>
 </head>
 <body>
 
@@ -22,14 +23,14 @@
     <div class="row">
       <div class="col-xs-12 col-sm-6 col-sm-offset-3">
         <h2>Login</h2>
-        <form id="loginForm">
+        <form id="loginForm" role="form">
           <div class="form-group">
             <label for="username">Username:</label>
-            <input type="text" id="username" class="form-control" name="username" required>
+            <input type="text" id="username" class="form-control" name="username" required aria-label="Username">
           </div>
           <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" class="form-control" name="password" required>
+            <input type="password" id="password" class="form-control" name="password" required aria-label="Password">
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
@@ -40,17 +41,17 @@
 
 <div id="contentContainer" style="display: none;">
   <div class="sidebar">
-    <button class="btn btn-default">Home</button>
-    <button class="btn btn-default">Profile</button>
-    <button class="btn btn-default">Parameters</button>
-    <button class="btn btn-default">Log Out</button>
+    <button id="homeBtn" class="btn btn-default" aria-label="Home">Home</button>
+    <button id="pongBtn" class="btn btn-default" aria-label="P0ng">P0ng</button>
+    <button id="homeBtn" class="btn btn-default" aria-label="Home">Shi-Fu-Mi</button>
+    <button id="logoutBtn" class="btn btn-default" aria-label="Log Out">Log Out</button>
   </div>
 
   <div class="content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-xs-12 text-right">
-          <button id="nightCityModeBtn" class="btn btn-xs">🌜</button>
+          <button id="nightCityModeBtn" class="btn btn-xs" aria-label="Toggle Night Mode">🌜</button>
         </div>
       </div>
     </div>
@@ -62,11 +63,10 @@
     
     <div class="container">
       <div class="row">
-        <canvas id="board"></canvas>
+        <canvas id="pong"></canvas>
       </div>
     </div>
   </div>
 </div>
-
 </body>
 </html>

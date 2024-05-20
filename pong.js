@@ -41,7 +41,7 @@ let player1Score = 0;
 let player2Score = 0;
 
 window.onload = function() {
-    board = document.getElementById("board");
+    board = document.getElementById("pong");
     board.height = boardHeight;
     board.width = boardWidth;
     context = board.getContext("2d"); //used for drawing on the board
