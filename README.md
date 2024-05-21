@@ -1,8 +1,12 @@
 Requirements :
-> python3 -m venv /path/to/my/venv
-> cd /path/to/my/venv
-> source /bin/activate
-> pip3 install django
+<p>
+<br>> python3 -m venv /path/to/my/venv
+<br>> cd /path/to/my/venv
+<br>> source /bin/activate
+<br>> pip3 install django
+</p>
 
 Step to launch :
-> python3 manage.py runserver
+<p>
+<br>> python3 manage.py runserver
+</p>
