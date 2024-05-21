@@ -1,12 +1,20 @@
-<p>
-Requirements :
-<br>```python3 -m venv /path/to/my/venv```
-<br>```cd /path/to/my/venv```
-<br>```source /bin/activate```
-<br>```pip3 install django```
-</p>
 
-<p>
+Requirements :
+```sh
+python3 -m venv /path/to/my/venv
+```
+```sh
+cd /path/to/my/venv
+```
+```sh
+source /bin/activate
+```
+```sh
+pip3 install django
+```
+
 Step to launch :
-<br>```python3 manage.py runserver```
-</p>
+```sh
+python3 manage.py runserver
+```
+
