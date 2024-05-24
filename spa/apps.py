@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SinglepageappConfig(AppConfig):
+class SpaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'SinglePageApp'
+    name = 'spa'

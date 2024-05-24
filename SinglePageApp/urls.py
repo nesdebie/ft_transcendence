@@ -1,5 +1,5 @@
 """
-URL configuration for ft_transcendence project.
+URL configuration for SinglePageApp project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -15,10 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from SinglePageApp import views as SPA_views
+from spa import views as spa_views
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', SPA_views.index)
+    path('users_api/', include('users.urls')),
+    path('', spa_views.index),
 ]
