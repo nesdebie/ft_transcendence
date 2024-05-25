@@ -25,6 +25,7 @@
         <div id="register-section" class="hidden">
             <h2>Register</h2>
             <form id="register-form">
+                {% csrf_token %}
                 <label for="register-username">Username:</label>
                 <input type="text" id="register-username" required>
                 <label for="register-password">Password:</label>
