@@ -1,0 +1,96 @@
+@font-face {
+    font-family: 'Terminator';
+    src: url('fonts/terminator-real-nfi.regular.ttf');
+    font-weight: normal;
+    font-size: normal;
+  }
+
+html, body {
+    background-color: black;
+    color: white;
+    font-family: sans-serif;
+    margin: 0;
+    height: 100%;
+}
+
+.button {
+    color: black;
+}
+
+p {
+    
+    margin-block-start: 0;
+    text-indent: 1rem;
+}
+
+#main-page {
+    font-family: 'Terminator';
+}
+
+#nightCityModeBtn {
+    border: none;
+}
+
+#root {
+    background-color: black;
+    color: white;
+    display: flex;
+    height: 100%;
+}
+
+#main-page {
+    flex-grow: 1;
+}
+
+.sidebar {
+    background-color: inherit;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    border-right: 1px solid black;
+}
+
+.sidebar > a {
+    font-family: 'Terminator';
+    color: inherit;
+    margin: 0.5rem 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+
+    padding: 0 1rem;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.socials-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.socials-card {
+    display: flex;
+    align-items: center;
+
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin: 1rem;
+
+    text-decoration: none;
+    color: unset;
+}
+
+.socials-card:hover {
+    background-color: black;
+}
+
+.socials-card > i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}

@@ -1,0 +1,79 @@
+/* Night mode styles */
+
+@font-face {
+  font-family: 'GLITCH';
+  src: url('fonts/Sdglitchrobotdemo-GOPdO.ttf');
+  font-weight: normal;
+  font-size: normal;
+}
+
+@font-face {
+  font-family: 'CP2077';
+  src: url('fonts/Cyberpunk-Regular.ttf');
+  font-weight: normal;
+  font-size: normal;
+}
+
+.night-city-mode h1 {
+  font-family: 'CP2077', sans-serif;
+  color: black;
+  text-shadow: 2px 2px 1px #55ead4;
+  text-transform: uppercase;
+}
+
+body.night-city-mode {
+  background-color: #fdf800;
+  color: black;
+  font-family: 'GLITCH';
+  margin: 0;
+}
+
+.night-city-mode #root{
+  background-color: inherit;
+  color: inherit;
+}
+
+.night-city-mode #main-page{
+  font-family: inherit;
+  background-color: inherit;
+  color: inherit;
+  border: 1px solid black;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  flex-grow: 1;
+}
+
+.night-city-mode .row{
+  background-color: inherit;
+  color: inherit;
+}
+
+.night-city-mode .container{
+  background-color: inherit;
+  color: inherit;
+}
+
+.night-city-mode .sidebar{
+  background-color: black;
+  font-family: 'CP2077';
+}
+
+.night-city-mode .sidebar > a{
+  font-family: 'CP2077';
+  color: #55ead4;
+  text-transform: uppercase;
+}
+
+.night-city-mode .sidebar > a:hover{
+  color: #fdf800;
+  text-shadow: 2px 2px 1px #55ead4;
+  text-transform: uppercase;
+}
+
+#nightCityModeBtn {
+  position: fixed;
+  border: none;
+  top: 10px;
+  right: 10px;
+}

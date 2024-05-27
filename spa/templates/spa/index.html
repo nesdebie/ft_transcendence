@@ -1,50 +1,39 @@
-{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My SPA</title>
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+  <title>Transcendence</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <link rel="stylesheet" href="../../css/night-city-mode.css" />
+  <link rel="stylesheet" href="../../css/pong.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
 </head>
-<body>
-    <div id="app">
-        <div id="login-section" class="hidden">
-            <h2>Login</h2>
-            <form id="login-form">
-                <label for="login-username">Username:</label>
-                <input type="text" id="login-username" required>
-                <label for="login-password">Password:</label>
-                <input type="password" id="login-password" required>
-                <button type="submit">Login</button>
-            </form>
-            <button id="register-btn">Don't have an account? Register</button>
+    <body>
+        <div id="root">
+            <!-- SIDEBAR -->
+            <nav id="main-nav" class="sidebar">
+                <a href="/" onclick="route()">Home</a>
+                <a href="/pong" onclick="route()">Pong</a>
+                <a href="/shifumi" onclick="route()">ShiFuMi</a>
+                <a href="/about" onclick="route()">About</a>
+                <a href="/logout" onclick="route()">Logout</a>
+            </nav>
+            <div id="main-page"><!-- DYNAMIC CONTENT --></div>
         </div>
-        <div id="register-section" class="hidden">
-            <h2>Register</h2>
-            <form id="register-form">
-                {% csrf_token %}
-                <label for="register-username">Username:</label>
-                <input type="text" id="register-username" required>
-                <label for="register-password">Password:</label>
-                <input type="password" id="register-password" required>
-                <label for="register-level">Level:</label>
-                <input type="number" id="register-level" required>
-                <button type="submit">Register</button>
-            </form>
-        </div>
-        <div id="main-content-section" class="hidden">
-            <h1>Welcome to My SPA</h1>
-            <p id="user-level"></p>
-            <button id="logout-button">Logout</button>
-            <div id="content"></div>
-        </div>
-    </div>
 
-    <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
-    <script type="module" src="{% static 'spa/js/sections.js' %}"></script>
-    <script type="module" src="{% static 'spa/js/auth.js' %}"></script>
-</body>
+        <!-- NIGHT CITY MODE BUTTON -->
+        <button id="nightCityModeBtn" aria-label="Toggle Night Mode">
+            <i class="mdi mdi-brightness-2">
+        </button>
+    
+        <!-- SCRIPTS (router.js ALWAYS in last place) -->
+        <script src="../../js/pong.js"></script>
+        <script src="../../js/buttons.js"></script>
+        <script src="../../js/router.js"></script>
+    </body>
 </html>
