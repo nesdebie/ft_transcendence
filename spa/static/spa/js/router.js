@@ -6,12 +6,12 @@ const route = (event) => {
 };
 
 const routes = {
-    404: "../templates/spa/pages/404.html",
-    "/": "../templates/spa/pages/home.html",
-    "/about": "../templates/spa/pages/about.html",
-    "/shifumi": "../templates/spa/pages/shifumi.html",
-    "/pong": "../templates/spa/pages/pong.html",
-    "/logout": "../templates/spa/pages/logout.html",
+    404: "pages/404.html",
+    "/": "pages/home.html",
+    "/about": "pages/about.html",
+    "/shifumi": "pages/shifumi.html",
+    "/pong": "pages/pong.html",
+    "/logout": "pages/logout.html",
 };
 
 function initializePong() {
