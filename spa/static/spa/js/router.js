@@ -12,6 +12,7 @@ const routes = {
     "/shifumi": "pages/shifumi.html",
     "/pong": "pages/pong.html",
     "/logout": "pages/logout.html",
+    "/register": "pages/register.html",
 };
 
 function initializePong() {

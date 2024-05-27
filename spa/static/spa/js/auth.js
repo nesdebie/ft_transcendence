@@ -26,7 +26,10 @@ async function register(event) {
     event.preventDefault();
     const username = document.getElementById('register-username').value;
     const password = document.getElementById('register-password').value;
-    const level = document.getElementById('register-level').value;
+    const nickname = document.getElementById('register-nickname').value;
+    const age = document.getElementById('register-age').value;
+    const email = document.getElementById('register-email').value;
+
 
     const response = await fetch('/users_api/register/', {
         method: 'POST',
@@ -34,7 +37,8 @@ async function register(event) {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify({ username, password, level })
+        body: JSON.stringify({ username, password, nickname, age, email })
+
     });
 
     if (response.ok) {
