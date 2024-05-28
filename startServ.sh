@@ -1,3 +1,5 @@
 python3 -m venv env 
-source env/bin/activate  
+cd env
+source bin/activate  
+pip3 install django 
 python manage.py runserver 
