@@ -13,7 +13,7 @@ const routes = {
     "/pong": "pages/pong.html",
     "/logout": "pages/logout.html",
     "/register": "pages/register.html",
-    "/login": "Pages/login.html",
+    "/login": "pages/login.html",
 };
 
 function initializePong() {

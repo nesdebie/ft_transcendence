@@ -8,3 +8,8 @@ document.getElementById('register-form').addEventListener('submit', async functi
   await register(event);
   route(event);
 });
+
+document.getElementById('login-form').addEventListener('submit', async function(event) {
+  await login(event);
+  route(event);
+});
