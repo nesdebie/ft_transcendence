@@ -1,14 +1,15 @@
-//board
+/* --- BOARD VARIABLES --- */
 let board;
 let boardWidth = 500;
 let boardHeight = 500;
 let context;
 
-//players
+/* --- PLAYERS VARIABLES --- */
 let playerWidth = 10;
 let playerHeight = 50;
 let playerVelocityY = 0;
 
+/* --- PLAYER1 VARIABLES --- */
 let player1 = {
     x: 10,
     y: boardHeight / 2,
@@ -17,6 +18,7 @@ let player1 = {
     velocityY: 0
 };
 
+/* --- PLAYER2 VARIABLES --- */
 let player2 = {
     x: boardWidth - playerWidth - 10,
     y: boardHeight / 2,
@@ -25,7 +27,7 @@ let player2 = {
     velocityY: 0
 };
 
-//ball
+/* --- BALL VARIABLES --- */
 let ballWidth = 10;
 let ballHeight = 10;
 let ball = {
@@ -37,6 +39,7 @@ let ball = {
     velocityY: 2
 };
 
+/* --- SCORES VARIABLES --- */
 let player1Score = 0;
 let player2Score = 0;
 
@@ -81,7 +84,7 @@ function resetGame(direction, boardWidth, boardHeight) {
 
 function update() {
     requestAnimationFrame(update);
-    context.clearRect(0, 0, 500, 500);
+    context.clearRect(0, 0, boardWidth, boardHeight);
 
     // player1
     context.fillStyle = "white";
@@ -137,9 +140,9 @@ function update() {
     context.fillText(player2Score, boardWidth * 4 / 5 - 45, 45);
 
     // draw dotted line down the middle
-    for (let i = 10; i < 500; i += 25) { //i = starting y Position, draw a square every 25 pixels down
+    for (let i = 10; i < boardHeight; i += 25) { //i = starting y Position, draw a square every 25 pixels down
         // (x position = half of boardWidth (middle) - 10), i = y position, width = 5, height = 5
-        context.fillRect(500 / 2 - 10, i, 5, 5);
+        context.fillRect(boardWidth / 2 - 2, i, 5, 5);
     }
 }
 
