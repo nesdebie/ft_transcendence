@@ -25,6 +25,7 @@ p {
 
 #main-page {
     font-family: 'Terminator';
+    flex-grow: 1;
 }
 
 #nightCityModeBtn {
@@ -36,10 +37,6 @@ p {
     color: white;
     display: flex;
     height: 100%;
-}
-
-#main-page {
-    flex-grow: 1;
 }
 
 .sidebar {

@@ -1,55 +1,8 @@
-// Flag to track whether the game is running
-let gameRunning = false;
-let gamePaused = false;
-let animationId;
-
-function toggleStartReset() {
-    if (!gameRunning) {
-        startGame();
-    } else {
-        resetGame();
-    }
-}
-
-function startGame() {
-    // Ensure game is not already running
-    if (!animationId) {
-        // Start the game loop
-        gameRunning = true;
-        animationId = requestAnimationFrame(update);
-    }
-}
-
-function pauseGame() {
-    // Toggle gamePaused flag
-    gamePaused = !gamePaused;
-
-    if (gamePaused) {
-        cancelAnimationFrame(animationId);
-    } else {
-        // Resume game if paused
-        animationId = requestAnimationFrame(update);
-    }
-}
-
-function resetGame() {
-    // Reset game state
-    // Reset scores
-    player1Score = 0;
-    player2Score = 0;
-    // Reset player and ball positions
-    // (code to reset player and ball positions)
-    // Start the game
-    gameRunning = false;
-    startGame();
-}
-
-
 //board
 let board;
 let boardWidth = 500;
 let boardHeight = 500;
-let context; 
+let context;
 
 //players
 let playerWidth = 10;
@@ -87,20 +40,51 @@ let ball = {
 let player1Score = 0;
 let player2Score = 0;
 
-document.addEventListener("DOMContentLoaded", () => {
-    initializePong();
-    // Add event listeners for buttons
-    document.getElementById("startResetButton").addEventListener("click", toggleStartReset);
-    document.getElementById("pauseButton").addEventListener("click", pauseGame);
-});
 
+function outOfBounds(yPosition) {
+    return (yPosition < 0 || yPosition + playerHeight > boardHeight);
+}
+
+function movePlayer(e) {
+    //player1
+    if (e.code == "KeyW") {
+        player1.velocityY = -3;
+    } else if (e.code == "KeyS") {
+        player1.velocityY = 3;
+    }
+
+    //player2
+    if (e.code == "ArrowUp") {
+        player2.velocityY = -3;
+    } else if (e.code == "ArrowDown") {
+        player2.velocityY = 3;
+    }
+}
+
+function detectCollision(a, b) {
+    return a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
+        a.x + a.width > b.x && //a's top right corner passes b's top left corner
+        a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
+        a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
+}
+
+function resetGame(direction, boardWidth, boardHeight) {
+    ball = {
+        x: boardWidth / 2,
+        y: boardHeight / 2,
+        width: ballWidth,
+        height: ballHeight,
+        velocityX: direction,
+        velocityY: 2
+    };
+}
 
 function update() {
     requestAnimationFrame(update);
-    context.clearRect(0, 0, board.width, board.height);
+    context.clearRect(0, 0, 500, 500);
 
     // player1
-    context.fillStyle = "skyblue";
+    context.fillStyle = "white";
     let nextPlayer1Y = player1.y + player1.velocityY;
     if (!outOfBounds(nextPlayer1Y)) {
         player1.y = nextPlayer1Y;
@@ -139,10 +123,12 @@ function update() {
     //game over
     if (ball.x < 0) {
         player2Score++;
-        resetGame(1);
+        resetGame(-1, boardWidth, boardHeight); // Example call
+
     } else if (ball.x + ballWidth > boardWidth) {
         player1Score++;
-        resetGame(-1);
+        resetGame(1, boardWidth, boardHeight); // Example call
+
     }
 
     //score
@@ -151,46 +137,24 @@ function update() {
     context.fillText(player2Score, boardWidth * 4 / 5 - 45, 45);
 
     // draw dotted line down the middle
-    for (let i = 10; i < board.height; i += 25) { //i = starting y Position, draw a square every 25 pixels down
+    for (let i = 10; i < 500; i += 25) { //i = starting y Position, draw a square every 25 pixels down
         // (x position = half of boardWidth (middle) - 10), i = y position, width = 5, height = 5
-        context.fillRect(board.width / 2 - 10, i, 5, 5);
+        context.fillRect(500 / 2 - 10, i, 5, 5);
     }
 }
 
-function outOfBounds(yPosition) {
-    return (yPosition < 0 || yPosition + playerHeight > boardHeight);
-}
-
-function movePlayer(e) {
-    //player1
-    if (e.code == "KeyW") {
-        player1.velocityY = -3;
-    } else if (e.code == "KeyS") {
-        player1.velocityY = 3;
+export function initializePong() {
+    const board = document.getElementById("pong-game"); // Updated ID to match HTML
+    if (board) {
+        board.height = boardHeight;
+        board.width = boardWidth;
+        context = board.getContext("2d"); //used for drawing on the board
+        //draw initial player1
+        context.fillStyle = "white";
+        context.fillRect(player1.x, player1.y, playerWidth, playerHeight);
+        requestAnimationFrame(update);
+        document.addEventListener("keyup", movePlayer);
+    } else {
+        console.error('Canvas element with id "pong" not found.');
     }
-
-    //player2
-    if (e.code == "ArrowUp") {
-        player2.velocityY = -3;
-    } else if (e.code == "ArrowDown") {
-        player2.velocityY = 3;
-    }
-}
-
-function detectCollision(a, b) {
-    return a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
-        a.x + a.width > b.x && //a's top right corner passes b's top left corner
-        a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
-        a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
-}
-
-function resetGame(direction) {
-    ball = {
-        x: boardWidth / 2,
-        y: boardHeight / 2,
-        width: ballWidth,
-        height: ballHeight,
-        velocityX: direction,
-        velocityY: 2
-    };
 }

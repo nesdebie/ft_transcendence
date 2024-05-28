@@ -1,7 +1,15 @@
-#pong {
+#pong-game {
     background-color: black;
     border-top: 5px solid #fdf800;
     border-bottom: 5px solid #fdf800;
     border-left: 5px solid #fdf800;
     border-right: 5px solid #fdf800;
 }
+
+.night-city-mode #pong-game {
+    background-color: black;
+    border-top: 5px solid #ff1111;
+    border-bottom: 5px solid #ff1111;
+    border-left: 5px solid #ff1111;
+    border-right: 5px solid #ff1111;
+  }

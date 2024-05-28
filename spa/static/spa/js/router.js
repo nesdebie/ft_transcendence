@@ -1,3 +1,5 @@
+import { initializePong } from "./pong.js";
+
 const route = (event) => {
     event = event || window.event;
     event.preventDefault();
@@ -13,23 +15,6 @@ const routes = {
     "/pong": "pages/pong.html",
     "/logout": "pages/logout.html",
 };
-
-function initializePong() {
-    board = document.getElementById("pong");
-    if (board) {
-        board.height = boardHeight;
-        board.width = boardWidth;
-        context = board.getContext("2d"); //used for drawing on the board
-
-        //draw initial player1
-        context.fillStyle = "skyblue";
-        context.fillRect(player1.x, player1.y, playerWidth, playerHeight);
-        requestAnimationFrame(update);
-        document.addEventListener("keyup", movePlayer);
-    } else {
-        console.error('Canvas element with id "pong" not found.');
-    }
-}
 
 const handleLocation = async () => {
     const path = window.location.pathname;

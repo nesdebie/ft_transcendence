@@ -1,6 +1,8 @@
 <div class="page-container align-center">
   <h1>PONG</h1>
   <div class="row">
-      <canvas id="pong"></canvas>
+      <canvas id="pong-game" width="500" height="500"></canvas>
   </div>
 </div>
+{% load static %}
+<script type="module" src="{% static 'spa/js/pong.js' %}"></script>
