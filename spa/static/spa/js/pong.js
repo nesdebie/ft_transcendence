@@ -3,6 +3,9 @@ let board;
 let boardWidth = 500;
 let boardHeight = 500;
 let context;
+let gamePaused = false;
+let gameStarted = false;
+let animationFrameId;
 
 /* --- PLAYERS VARIABLES --- */
 let playerWidth = 10;
@@ -43,7 +46,6 @@ let ball = {
 let player1Score = 0;
 let player2Score = 0;
 
-
 function outOfBounds(yPosition) {
     return (yPosition < 0 || yPosition + playerHeight > boardHeight);
 }
@@ -71,7 +73,7 @@ function detectCollision(a, b) {
         a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
 }
 
-function resetGame(direction, boardWidth, boardHeight) {
+function resetGame(direction) {
     ball = {
         x: boardWidth / 2,
         y: boardHeight / 2,
@@ -82,8 +84,21 @@ function resetGame(direction, boardWidth, boardHeight) {
     };
 }
 
+function resetScore() {
+    player1.y = boardHeight / 2 - playerHeight / 2;
+    player2.y = boardHeight / 2 - playerHeight / 2;
+    player1.velocityY = 0;
+    player2.velocityY = 0;
+    player1Score = 0;
+    player2Score = 0;
+    resetGame(1);
+}
+
 function update() {
-    requestAnimationFrame(update);
+    if (gamePaused) {
+        return;
+    }
+    animationFrameId = requestAnimationFrame(update);
     context.clearRect(0, 0, boardWidth, boardHeight);
 
     // player1
@@ -126,11 +141,11 @@ function update() {
     //game over
     if (ball.x < 0) {
         player2Score++;
-        resetGame(-1, boardWidth, boardHeight); // Example call
+        resetGame(-1);
 
     } else if (ball.x + ballWidth > boardWidth) {
         player1Score++;
-        resetGame(1, boardWidth, boardHeight); // Example call
+        resetGame(1);
 
     }
 
@@ -146,6 +161,26 @@ function update() {
     }
 }
 
+function handleKeyPress(e) {
+    if (e.code == "Space") {
+        gamePaused = !gamePaused;
+        if (!gamePaused && gameStarted) {
+            update();
+        }
+    } else if (e.code == "Enter") {
+        if (!gameStarted) {
+            gameStarted = true;
+            update();
+        } else {
+            resetScore();
+            if (gamePaused) {
+                gamePaused = false;
+                update();
+            }
+        }
+    }
+}
+
 export function initializePong() {
     const board = document.getElementById("pong-game"); // Updated ID to match HTML
     if (board) {
@@ -155,9 +190,9 @@ export function initializePong() {
         //draw initial player1
         context.fillStyle = "white";
         context.fillRect(player1.x, player1.y, playerWidth, playerHeight);
-        requestAnimationFrame(update);
-        document.addEventListener("keyup", movePlayer);
+        document.addEventListener("keydown", movePlayer);
+        document.addEventListener("keydown", handleKeyPress);
     } else {
-        console.error('Canvas element with id "pong" not found.');
+        console.error('Canvas element with id "pong-game" not found.');
     }
 }
