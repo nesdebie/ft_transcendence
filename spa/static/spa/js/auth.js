@@ -1,6 +1,17 @@
 import { getCookie } from './utils.js';
 import { showSection, loginSection, mainContentSection, registerSection } from './sections.js';
 
+document.getElementById('register-form').addEventListener('submit', async function(event) {
+    console.log("event");
+    await register(event);
+    route(event);
+  });
+  
+  document.getElementById('login-form').addEventListener('submit', async function(event) {
+    await login(event);
+    route(event);
+  });
+
 async function login(event) {
     event.preventDefault();
     const username = document.getElementById('login-username').value;
@@ -23,14 +34,15 @@ async function login(event) {
 }
 
 async function register(event) {
+    console.log("default");
     event.preventDefault();
+    console.log("getters");
     const username = document.getElementById('register-username').value;
     const password = document.getElementById('register-password').value;
     const nickname = document.getElementById('register-nickname').value;
     const age = document.getElementById('register-age').value;
     const email = document.getElementById('register-email').value;
-
-
+    console.log("fetch");
     const response = await fetch('/users_api/register/', {
         method: 'POST',
         headers: {
@@ -40,9 +52,10 @@ async function register(event) {
         body: JSON.stringify({ username, password, nickname, age, email })
 
     });
-
+    console.log("end");
     if (response.ok) {
-        showSection(mainContentSection);
+        //showSection(mainContentSection);
+    
     } else {
         alert('Registration failed');
     }
