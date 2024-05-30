@@ -1,5 +1,3 @@
-import { initializePong } from "./pong.js";
-
 const route = (event) => {
     event = event || window.event;
     event.preventDefault();
@@ -24,11 +22,6 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
-
-    // Initialize Pong game if the current route is /pong
-    if (path === "/pong") {
-        initializePong();
-    }
 };
 
 window.onpopstate = handleLocation;

@@ -35,10 +35,35 @@
         <!-- SCRIPTS (router.js ALWAYS in last place) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script type="module" src="{% static 'spa/js/pong.js' %}"></script>
         <script type="module" src="{% static 'spa/js/buttons.js' %}"></script>
         <script type="module" src="{% static 'spa/js/auth.js' %}"></script>
         <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
         <script type="module" src="{% static 'spa/js/router.js' %}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Observe changes to the main-page div
+                const observer = new MutationObserver(function(mutationsList, observer) {
+                    for (let mutation of mutationsList) {
+                        if (mutation.type === 'childList') {
+                            if (document.getElementById('pong-game')) {
+                                loadPongScript();
+                            }
+                        }
+                    }
+                });
+    
+                // Configure the observer
+                observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });
+    
+                function loadPongScript() {
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/pong.js' %}";
+                    script.onload = function() {
+                        initializePong();
+                    };
+                    document.head.appendChild(script);
+                }
+            });
+        </script>
     </body>
 </html>

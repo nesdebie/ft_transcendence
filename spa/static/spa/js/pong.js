@@ -1,5 +1,4 @@
 /* --- BOARD VARIABLES --- */
-let board;
 let boardWidth = 500;
 let boardHeight = 500;
 let context;
@@ -181,7 +180,7 @@ function handleKeyPress(e) {
     }
 }
 
-export function initializePong() {
+function initializePong() {
     const board = document.getElementById("pong-game"); // Updated ID to match HTML
     if (board) {
         board.height = boardHeight;
