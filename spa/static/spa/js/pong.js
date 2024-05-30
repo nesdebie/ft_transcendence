@@ -45,6 +45,37 @@ let ball = {
 let player1Score = 0;
 let player2Score = 0;
 
+// Initialize variables if not already defined
+boardWidth = boardWidth ?? 500;
+boardHeight = boardHeight ?? 500;
+playerWidth = playerWidth ?? 10;
+playerHeight = playerHeight ?? 50;
+playerVelocityY = playerVelocityY ?? 0;
+player1 = player1 ?? {
+    x: 10,
+    y: boardHeight / 2,
+    width: playerWidth,
+    height: playerHeight,
+    velocityY: 0
+};
+player2 = player2 ?? {
+    x: boardWidth - playerWidth - 10,
+    y: boardHeight / 2,
+    width: playerWidth,
+    height: playerHeight,
+    velocityY: 0
+};
+ball = ball ?? {
+    x: boardWidth / 2,
+    y: boardHeight / 2,
+    width: ballWidth,
+    height: ballHeight,
+    velocityX: 1,
+    velocityY: 2
+};
+player1Score = player1Score ?? 0;
+player2Score = player2Score ?? 0;
+
 function outOfBounds(yPosition) {
     return (yPosition < 0 || yPosition + playerHeight > boardHeight);
 }
@@ -161,12 +192,12 @@ function update() {
 }
 
 function handleKeyPress(e) {
-    if (e.code == "Space") {
+    if (e.code == "KeyE") {
         gamePaused = !gamePaused;
         if (!gamePaused && gameStarted) {
             update();
         }
-    } else if (e.code == "Enter") {
+    } else if (e.code == "KeyR") {
         if (!gameStarted) {
             gameStarted = true;
             update();
