@@ -23,6 +23,24 @@ const handleLocation = async () => {
     document.getElementById("main-page").innerHTML = html;
 };
 
+const redirectToRoute = (route) => {
+    const event = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+
+    const link = document.createElement('a');
+    link.href = route;
+    link.style.display = "none"; // Hide the link
+    document.body.appendChild(link);
+
+    link.addEventListener('click', route);
+    link.dispatchEvent(event);
+
+    document.body.removeChild(link); // Clean up the link
+};
+
 window.onpopstate = handleLocation;
 window.route = route;
 
