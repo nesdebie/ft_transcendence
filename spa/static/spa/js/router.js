@@ -23,7 +23,8 @@ const handleLocation = async () => {
     document.getElementById("main-page").innerHTML = html;
 };
 
-const redirectToRoute = (route) => {
+export const redirectToRoute = (route) => {
+    console.log("redir");
     const event = new MouseEvent('click', {
         view: window,
         bubbles: true,
@@ -35,8 +36,7 @@ const redirectToRoute = (route) => {
     link.style.display = "none"; // Hide the link
     document.body.appendChild(link);
 
-    link.addEventListener('click', route);
-    link.dispatchEvent(event);
+    link.click();
 
     document.body.removeChild(link); // Clean up the link
 };
