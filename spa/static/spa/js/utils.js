@@ -13,15 +13,4 @@ function getCookie(name) {
     return cookieValue;
 }
 
-async function displayUserLevel() {
-    const response = await fetch('/users_api/user_level/');
-    if (response.ok) {
-        const data = await response.json();
-        const userLevel = data.level;
-        document.getElementById('user-level').textContent = `Your Level: ${userLevel}`;
-    } else {
-        console.error('Failed to fetch user level');
-    }
-}
-
-export { getCookie, displayUserLevel };
+export { getCookie };

@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from spa import views as spa_views
 from django.urls import path, include, re_path
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users_api/', include('users.urls')),
     re_path(r'^pages/(?P<page>.+\.html)$', spa_views.pages),
     path('', spa_views.index),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

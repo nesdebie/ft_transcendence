@@ -1,3 +1,5 @@
+import { fetchUserProfilePicture } from "./auth.js"
+
 const route = (event) => {
     event = event || window.event;
     event.preventDefault();
@@ -22,7 +24,16 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
+	call_page_functions()
 };
+
+// Permet de call des fonctions Js specifiques 
+// pour des element apparaissant dans le HTML 
+function call_page_functions() {
+	if (document.getElementById('user-profile-picture'))
+		fetchUserProfilePicture()
+	//if ...
+}
 
 window.onpopstate = handleLocation;
 window.route = route;

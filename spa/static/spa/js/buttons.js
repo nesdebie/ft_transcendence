@@ -1,4 +1,4 @@
-import {register} from "./auth.js";
+import {register, login, logout} from "./auth.js";
 
 $(document).ready(function(){
 		$("#nightCityModeBtn").click(function(){
@@ -14,6 +14,10 @@ document.body.addEventListener('submit', function(event) {
 	else if (event.target.id === 'login-form'){
 		event.preventDefault();
 		login(event);}
-	else if (event.target.id === 'logout-button') {
-		logout(event); }
+});
+
+document.body.addEventListener('click', function(event) {
+	if (event.target.id === 'logout-button')
+		logout(event);
+	
 });
