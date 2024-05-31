@@ -20,7 +20,6 @@ const routes = {
 
 const handleLocation = async () => {
     const path = window.location.pathname;
-    console.log(path);
     const route = routes[path] || routes[404];
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
@@ -34,6 +33,23 @@ function call_page_functions() {
 		fetchUserProfilePicture()
 	//if ...
 }
+export const redirectToRoute = (route) => {
+    console.log("redir");
+    const event = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+
+    const link = document.createElement('a');
+    link.href = route;
+    link.style.display = "none"; // Hide the link
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link); // Clean up the link
+};
 
 window.onpopstate = handleLocation;
 window.route = route;
