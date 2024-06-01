@@ -15,6 +15,7 @@ html, body {
 
 .button {
     color: black;
+    outline: none; /* Remove outline */
 }
 
 p {
@@ -30,6 +31,7 @@ p {
 
 #nightCityModeBtn {
     border: none;
+    outline: none; /* Remove outline */
 }
 
 #root {

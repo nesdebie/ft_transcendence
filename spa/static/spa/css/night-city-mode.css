@@ -71,9 +71,32 @@ body.night-city-mode {
   text-transform: uppercase;
 }
 
+/* Custom cursor for night-city-mode */
+body.night-city-mode {
+  cursor: url('images/arrow.cur'), auto;
+}
+
+body.night-city-mode button {
+  cursor: url('images/arrow.cur'), pointer;
+}
+
+body.night-city-mode a {
+  cursor: url('images/arrow.cur'), pointer;
+}
+
+body.night-city-mode #textElement {
+  cursor: url('images/arrow.cur'), text;
+}
+
 #nightCityModeBtn {
   position: fixed;
   border: none;
+  outline: none; /* Remove outline */
   top: 10px;
   right: 10px;
+}
+
+/* Apply shadow to the button when night city mode is active */
+body.night-city-mode #nightCityModeBtn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
 }
