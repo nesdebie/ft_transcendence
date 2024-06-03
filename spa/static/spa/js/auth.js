@@ -1,4 +1,5 @@
 import { getCookie } from "./utils.js"
+import { redirectToRoute } from "./router.js"
 
 async function login(event) {
 	event.preventDefault();
@@ -19,9 +20,10 @@ async function login(event) {
 
 	const data = await response.json(); 
 	if (response.ok) {
-		alert(data.message);
+		redirectToRoute('/');
 	} else {
-		alert(data.error);
+		redirectToRoute('/login');
+		handleErrors(data)
 	}
 }
 
@@ -50,9 +52,11 @@ async function register(event) {
 	});
 	const data = await response.json(); 
 	if (response.ok) {
-		alert(data.message);
+		// redirectToRoute('/');
+		console.log("okAY !")
 	} else {
-		alert(data.error);
+		// redirectToRoute('/register');
+		handleErrors(data)
 	}
 }
 
@@ -63,12 +67,7 @@ async function logout() {
 			'X-CSRFToken': getCookie('csrftoken')
 		},
 	});
-
-	if (response.ok) {
-		alert('Logout ok');
-	} else {
-		alert('Logout failed');
-	}
+	redirectToRoute('/login');
 }
 
 async function checkAuthentication() {
@@ -88,6 +87,15 @@ async function checkAuthentication() {
 		}
 	} else {
 		showSection(loginSection);
+	}
+}
+
+function handleErrors(data) {
+	for (const key in data.errors) {
+		const errorElement = document.getElementById(`${key}-error`);
+		if (errorElement) {
+			errorElement.textContent = data.errors[key];
+		}
 	}
 }
 
