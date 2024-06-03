@@ -1,9 +1,10 @@
-import {register, login, logout} from "./auth.js";
+import {register, login, logout, updateSidebar} from "./auth.js";
 
 $(document).ready(function(){
 		$("#nightCityModeBtn").click(function(){
 			$("body").toggleClass("night-city-mode");
 		});
+	updateSidebar();
 });
 
 document.body.addEventListener('submit', function(event) {

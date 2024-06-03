@@ -1,4 +1,5 @@
 import { getCookie } from "./utils.js"
+import { redirectToRoute } from "./router.js"
 
 async function login(event) {
 	event.preventDefault();
@@ -82,12 +83,14 @@ async function checkAuthentication() {
 	if (response.ok) {
 		const data = await response.json();
 		if (data.authenticated == true) {
-			showSection(mainContentSection);
+			return true;
 		} else {
-			showSection(loginSection);
+			//redirectToRoute("/login");
+			return false;
 		}
 	} else {
-		showSection(loginSection);
+		//redirectToRoute("/login")
+		return false;
 	}
 }
 
@@ -110,4 +113,15 @@ async function fetchUserProfilePicture(){
 	}
 }
 
-export { register, login, logout, fetchUserProfilePicture};
+async function updateSidebar() {
+    const isAuthenticated = await checkAuthentication();
+    document.getElementById('nav-login').style.display = isAuthenticated ? 'none' : 'block';
+    document.getElementById('nav-register').style.display = isAuthenticated ? 'none' : 'block';
+    document.getElementById('nav-logout').style.display = isAuthenticated ? 'block' : 'none';
+    document.getElementById('nav-home').style.display = isAuthenticated ? 'block' : 'none';
+    document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';
+    document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
+    document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
+}
+
+export { register, login, logout, fetchUserProfilePicture, updateSidebar};
