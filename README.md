@@ -7,7 +7,7 @@ python3 -m venv /path/to/my/venv
 cd /path/to/my/venv
 ```
 ```sh
-source /bin/activate
+source bin/activate
 ```
 ```sh
 pip3 install django
