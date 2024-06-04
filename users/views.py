@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Player
 from django.http import JsonResponse
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 def login_view(request):
 	if request.method == 'POST':
@@ -40,6 +41,7 @@ def logout_view(request):
 	logout(request)
 	return JsonResponse({'message': 'success'})
 
+@csrf_exempt
 def check_authentication(request):
 	if request.user.is_authenticated:
 		return JsonResponse({'authenticated': True})
