@@ -20,10 +20,14 @@ async function login(event) {
 
 	const data = await response.json(); 
 	if (response.ok) {
-		redirectToRoute('/');
+		const data = await response.json();
+		if (data.authenticated == true) {
+			return true;
+		} else {
+			return false;
+		}
 	} else {
-		redirectToRoute('/login');
-		handleErrors(data)
+		return false;
 	}
 }
 
@@ -83,11 +87,9 @@ async function checkAuthentication() {
 		if (data.authenticated == true) {
 			return true;
 		} else {
-			//redirectToRoute("/login");
 			return false;
 		}
 	} else {
-		//redirectToRoute("/login")
 		return false;
 	}
 }
