@@ -57,7 +57,6 @@ async function register(event) {
 	const data = await response.json(); 
 	if (response.ok) {
 		redirectToRoute('/');
-		console.log("okAY !")
 	} else {
 		redirectToRoute('/register');
 		handleErrors(data)
