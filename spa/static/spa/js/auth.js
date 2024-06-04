@@ -52,10 +52,10 @@ async function register(event) {
 	});
 	const data = await response.json(); 
 	if (response.ok) {
-		// redirectToRoute('/');
+		redirectToRoute('/');
 		console.log("okAY !")
 	} else {
-		// redirectToRoute('/register');
+		redirectToRoute('/register');
 		handleErrors(data)
 	}
 }

@@ -33,22 +33,10 @@ function call_page_functions() {
 		fetchUserProfilePicture()
 	//if ...
 }
-export const redirectToRoute = (route) => {
-    console.log("redir");
-    const event = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-    });
 
-    const link = document.createElement('a');
-    link.href = route;
-    link.style.display = "none"; // Hide the link
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link); // Clean up the link
+export const redirectToRoute = (path) => {
+    window.history.pushState({}, "", path);
+    handleLocation();
 };
 
 window.onpopstate = handleLocation;
