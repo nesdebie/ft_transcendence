@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 def login_view(request):
 	if request.method == 'POST':
@@ -60,6 +61,7 @@ def logout_view(request):
 	logout(request)
 	return JsonResponse({'status': 'success'})
 
+@csrf_exempt
 def check_authentication(request):
 	if request.user.is_authenticated:
 		return JsonResponse({'authenticated': True})
