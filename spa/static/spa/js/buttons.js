@@ -1,4 +1,4 @@
-import {register, login, logout} from "./auth.js";
+import {register, login, logout, updateSidebar} from "./auth.js";
 
 $(document).ready(function(){
     const audio = document.getElementById('nightCityModeMusic');
@@ -16,6 +16,7 @@ $(document).ready(function(){
             audio.currentTime = 0;
         }
     });
+	pdateSidebar();
 });
 document.body.addEventListener('submit', function(event) {
 	
