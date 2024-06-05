@@ -16,6 +16,7 @@ const routes = {
     "/logout": "pages/logout.html",
     "/register": "pages/register.html",
     "/login": "pages/login.html",
+    "/profile": "pages/profile.html",
 };
 
 const handleLocation = async () => {

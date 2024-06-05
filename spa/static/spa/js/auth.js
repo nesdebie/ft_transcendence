@@ -57,6 +57,7 @@ async function register(event) {
 	const data = await response.json(); 
 	if (response.ok) {
 		redirectToRoute('/');
+		updateSidebar();
 	} else {
 		redirectToRoute('/register');
 		handleErrors(data)
@@ -130,6 +131,7 @@ async function updateSidebar() {
     document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
+	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
 }
 
 export { register, login, logout, fetchUserProfilePicture, updateSidebar};

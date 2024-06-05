@@ -30,7 +30,8 @@ document.body.addEventListener('submit', function(event) {
 });
 
 document.body.addEventListener('click', function(event) {
-	if (event.target.id === 'logout-button')
+	if (event.target.id === 'logout-button') {
 		logout(event);
 	updateSidebar();
+    }
 });
