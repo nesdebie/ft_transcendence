@@ -2,6 +2,7 @@ import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
 async function login(event) {
+	console.log("login form");
 	event.preventDefault();
 	const username = document.getElementById('login-username').value;
 	const password = document.getElementById('login-password').value;
@@ -10,23 +11,28 @@ async function login(event) {
 	formData.append('username', username);
 	formData.append('password', password);
 
-	const response = await fetch('/users_api/login/', {
-		method: 'POST',
-		headers: {
-			'X-CSRFToken': getCookie('csrftoken')
-		},
-		body: formData
-	});
+	try {
+		const response = await fetch('/users_api/login/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
 
-	const data = await response.json(); 
-	if (response.ok) {
-		const data = await response.json();
-		if (data.authenticated == true) {
-			return true;
+		if (response.ok) {
+			const data = await response.json();
+			if (data.authenticated === true) {
+				updateSidebar();
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
-	} else {
+	} catch (error) {
+		console.error('Error during login:', error);
 		return false;
 	}
 }
@@ -75,23 +81,25 @@ async function logout() {
 }
 
 async function checkAuthentication() {
-	const response = await fetch('/users_api/check_authentication/', {
-		method: 'POST',
-		headers: {
-			'X-CSRFToken': getCookie('csrftoken')
-		}
-	});
-	console.log(response);
-	if (response.ok) {
-		const data = await response.json();
-		if (data.authenticated == true) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return false;
-	}
+    const response = await fetch('/users_api/check_authentication/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        if (data.authenticated) {
+            return true;
+        } else {
+            redirectToRoute('/login'); // Redirect to login page if not authenticated
+            return false;
+        }
+    } else {
+        console.error('Error checking authentication');
+        return false;
+    }
 }
 
 function handleErrors(data) {
@@ -124,8 +132,6 @@ async function fetchUserProfilePicture(){
 
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
-    document.getElementById('nav-login').style.display = isAuthenticated ? 'none' : 'block';
-    document.getElementById('nav-register').style.display = isAuthenticated ? 'none' : 'block';
     document.getElementById('nav-logout').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-home').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';

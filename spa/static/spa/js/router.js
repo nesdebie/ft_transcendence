@@ -36,7 +36,7 @@ function call_page_functions() {
 }
 
 export const redirectToRoute = (path) => {
-    window.history.pushState({}, "", path);
+    window.history.replaceState({}, "", path);
     handleLocation();
 };
 
