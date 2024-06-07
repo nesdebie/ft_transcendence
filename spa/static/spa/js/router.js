@@ -31,7 +31,9 @@ const handleLocation = async () => {
 // pour des element apparaissant dans le HTML 
 function call_page_functions() {
 	if (document.getElementById('user-profile-picture'))
-		fetchUserProfilePicture()
+		fetchUserProfilePicture();
+    // if (document.getElementById('user-username'))
+	// 	fetchUserProfileData();
 	//if ...
 }
 

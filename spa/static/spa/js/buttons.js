@@ -26,12 +26,10 @@ document.body.addEventListener('submit', function(event) {
 	else if (event.target.id === 'login-form'){
 		event.preventDefault();
 		login(event);}
-    updateSidebar();
 });
 
 document.body.addEventListener('click', function(event) {
 	if (event.target.id === 'logout-button') {
 		logout(event);
-	updateSidebar();
     }
 });

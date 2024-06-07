@@ -2,7 +2,6 @@ import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
 async function login(event) {
-	console.log("login form");
 	event.preventDefault();
 	const username = document.getElementById('login-username').value;
 	const password = document.getElementById('login-password').value;
@@ -21,13 +20,9 @@ async function login(event) {
 		});
 
 		if (response.ok) {
-			const data = await response.json();
-			if (data.authenticated === true) {
-				updateSidebar();
-				return true;
-			} else {
-				return false;
-			}
+			redirectToRoute('/');
+			updateSidebar();
+			return true;
 		} else {
 			return false;
 		}
@@ -78,6 +73,7 @@ async function logout() {
 		},
 	});
 	redirectToRoute('/login');
+	updateSidebar();
 }
 
 async function checkAuthentication() {
@@ -129,6 +125,26 @@ async function fetchUserProfilePicture(){
 		imgElement.style.display = 'none';
 	}
 }
+
+// async function fetchUserProfileData(){
+//     const response = await fetch('/users_api/user_profile_data/', {
+//         method: 'GET',
+//         headers: {
+//             'X-CSRFToken': getCookie('csrftoken')
+//         },
+//     });
+
+//     if (response.ok) {
+//         const data = await response.json();
+//         const usernameElement = document.getElementById('username');
+//         usernameElement.innerText = data.username; // Assuming data contains the username
+//         usernameElement.style.display = 'block';
+//     } else {
+//         console.log("Error fetching user profile data");
+//         usernameElement.style.display = 'none';
+//     }
+// }
+
 
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();

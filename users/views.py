@@ -5,6 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 def login_view(request):
 	if request.method == 'POST':
@@ -71,3 +72,11 @@ def check_authentication(request):
 def user_profile_picutre(request):
 	user_picture = request.user.image.url
 	return JsonResponse({'user_picture': user_picture})
+
+# @login_required
+# def user_profile_data(request):
+#     if request.user.is_authenticated:
+#         username = request.user.username
+#         return JsonResponse({'username': username})
+#     else:
+#         return JsonResponse({'error': 'User not authenticated'}, status=403)
