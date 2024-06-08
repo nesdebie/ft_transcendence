@@ -89,14 +89,15 @@ body.night-city-mode #textElement {
 }
 
 #nightCityModeBtn {
-  position: fixed;
   border: none;
   outline: none; /* Remove outline */
-  top: 10px;
-  right: 10px;
 }
 
 /* Apply shadow to the button when night city mode is active */
 body.night-city-mode #nightCityModeBtn {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
+}
+
+body.night-city-mode .buttons-container i {
+  color: black; /* Adjust the color as needed */
 }

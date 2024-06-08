@@ -13,17 +13,6 @@
 </head>
     <body>
         <div id="root">
-            <!-- SIDEBAR -->
-            <!--<nav id="main-nav" class="sidebar">
-                <a href="/" onclick="route()">Home</a>
-                <a href="/pong" onclick="route()">Pong</a>
-                <a href="/shifumi" onclick="route()">ShiFuMi</a>
-                <a href="/about" onclick="route()">About</a>
-                <a href="/logout" onclick="route()">Logout</a>
-                <a href="/register" onclick="route()">Register</a>
-                <a href="/login" onclick="route()">Login</a>
-
-            </nav>-->
             <nav id="main-nav" class="sidebar">
               <a href="/" id="nav-home" onclick="route()">Home</a>
               <a href="/pong" id="nav-pong" onclick="route()">Pong</a>
@@ -31,17 +20,22 @@
               <a href="/profile" id="nav-profile" onclick="route()">Profile</a>
               <a href="/about" id="nav-about" onclick="route()">About</a>
               <a href="/logout" id="nav-logout" onclick="route()">Logout</a>
-              <!-- DISPLAYED WHEN LOGGED -->
             </nav>
             <div id="main-page"><!-- DYNAMIC CONTENT --></div>
         </div>
 
         <!-- NIGHT CITY MODE BUTTON -->
-        <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="btn btn-link">
-          <img src="{% static 'spa/css/images/samurai.png'%}" width="40" height="50" alt="Button Image">
-        </button>
-        <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
-    
+        <div class="buttons-container">
+          <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="btn btn-link">
+            <img src="{% static 'spa/css/images/samurai.png'%}" width="40" height="50" alt="Button Image">
+          </button>
+          <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
+
+          <button id="profile-button" href="/profile" onclick="route()" class="socials-card" target="_blank">
+            <i class="mdi mdi-account-circle"></i>
+          </button>
+        </div>
+
         <!-- SCRIPTS (router.js ALWAYS in last place) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>

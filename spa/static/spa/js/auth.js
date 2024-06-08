@@ -148,6 +148,7 @@ async function fetchUserProfilePicture(){
 
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
+	document.getElementById('profile-button').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-logout').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-home').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';

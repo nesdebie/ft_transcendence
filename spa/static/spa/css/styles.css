@@ -97,3 +97,30 @@ p {
 body::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
 }
+
+.buttons-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px; /* Adjust the gap as needed */
+}
+.buttons-container button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.buttons-container i {
+    font-size: 42px;
+    color: white; /* Adjust the color as needed */
+}
+
+.buttons-container button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
