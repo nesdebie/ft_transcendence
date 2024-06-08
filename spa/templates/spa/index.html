@@ -26,14 +26,13 @@
 
         <!-- NIGHT CITY MODE BUTTON -->
         <div class="buttons-container">
-          <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="btn btn-link">
-            <img src="{% static 'spa/css/images/samurai.png'%}" width="40" height="50" alt="Button Image">
+          <button id="profile-button" class="socials-card" target="_blank">
+            <i id="profile-button-logo" class="mdi mdi-account-circle"></i>
+          </button>
+          <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="button-default">
+            <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
           </button>
           <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
-
-          <button id="profile-button" href="/profile" onclick="route()" class="socials-card" target="_blank">
-            <i class="mdi mdi-account-circle"></i>
-          </button>
         </div>
 
         <!-- SCRIPTS (router.js ALWAYS in last place) -->

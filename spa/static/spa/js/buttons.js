@@ -1,4 +1,5 @@
-import {register, login, logout, updateSidebar} from "./auth.js";
+import {register, login, logout} from "./auth.js";
+import { redirectToRoute } from "./router.js";
 
 $(document).ready(function(){
     const audio = document.getElementById('nightCityModeMusic');
@@ -16,8 +17,11 @@ $(document).ready(function(){
             audio.currentTime = 0;
         }
     });
-	updateSidebar();
+    $("#profile-button").click(function(){
+        redirectToRoute("/profile");
+    });
 });
+
 document.body.addEventListener('submit', function(event) {
 	
 	if (event.target.id === 'register-form') {
