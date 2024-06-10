@@ -1,4 +1,5 @@
-FROM python:3.9-slim
+
+FROM debian:bullseye
 
 #Ensures that the python output (i.e. the stdout and stderr) streams are sent straight to terminal
 ENV PYTHONUNBUFFERED 1
@@ -7,6 +8,8 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update
+RUN apt-get install python -y
+RUN apt-get install pip -y
 RUN apt-get upgrade
 
 COPY . /app/
