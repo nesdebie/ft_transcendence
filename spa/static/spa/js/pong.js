@@ -4,6 +4,7 @@ function initializePong(scoreToReset) {
     let playerWidth, playerHeight;
     let player1, player2, ballWidth, ballHeight, ball;
     let player1Score, player2Score;
+    let gameWon;
 
     function initVal() {
         // Initialize variables within the function scope
@@ -12,6 +13,7 @@ function initializePong(scoreToReset) {
         context = null;
         gamePaused = false;
         gameStarted = false;
+        gameWon = false;
         animationFrameId = null;
 
         playerWidth = 10;
@@ -97,7 +99,7 @@ function initializePong(scoreToReset) {
     }
 
     function update() {
-        if (gamePaused) {
+        if (gamePaused || gameWon) {
             return;
         }
         animationFrameId = requestAnimationFrame(update);
@@ -145,8 +147,7 @@ function initializePong(scoreToReset) {
             player2Score++;
             if (player2Score >= scoreToReset) {
                 console.log("P2 WIN !");
-                resetScore();
-                gamePaused = !gamePaused;
+                gameWon = true;
             }
             else {
                 resetGame(-1);
@@ -156,8 +157,7 @@ function initializePong(scoreToReset) {
             player1Score++;
             if (player1Score >= scoreToReset) {
                 console.log("P1 WIN !");
-                resetScore();
-                gamePaused = !gamePaused;
+                gameWon = true;
             }
             else {
                 resetGame(1);
@@ -189,6 +189,7 @@ function initializePong(scoreToReset) {
                 update();
             } else {
                 resetScore();
+                gameWon = false;
                 if (gamePaused) {
                     gamePaused = false;
                     update();
@@ -219,7 +220,7 @@ function initializePong(scoreToReset) {
     if (document.getElementById('pong-game')) {
         $(document).ready(function(){
             // Event listener for score slider
-            $("#pong-start").click(function(){
+            $("#pong-start").one('click', function(){
                 let scoreToReset = parseInt($("#scoreSlider").val());
                 console.log(scoreToReset);
                 initializePong(scoreToReset);
