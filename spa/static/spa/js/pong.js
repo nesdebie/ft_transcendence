@@ -157,10 +157,22 @@
             // bounce the ball back
             if (detectCollision(ball, player1)) {
                 if (ball.x <= player1.x + player1.width) { // left side of ball touches right side of player 1 (left paddle)
+                    let collisionPoint = (ball.y + ballHeight / 2) - (player1.y + playerHeight / 2);
+                    collisionPoint = collisionPoint / (playerHeight / 2);
+                    let angleRad = collisionPoint * (Math.PI / 4); // maximum angle is 45 degrees
+                    let direction = ball.velocityX > 0 ? 1 : -1;
+                    ball.velocityX = direction * Math.cos(angleRad) * 5; // 5 is the speed of the ball
+                    ball.velocityY = Math.sin(angleRad) * 5;
                     ball.velocityX *= -1; // flip x direction
                 }
             } else if (detectCollision(ball, player2)) {
                 if (ball.x + ballWidth >= player2.x) { // right side of ball touches left side of player 2 (right paddle)
+                    let collisionPoint = (ball.y + ballHeight / 2) - (player2.y + playerHeight / 2);
+                    collisionPoint = collisionPoint / (playerHeight / 2);
+                    let angleRad = collisionPoint * (Math.PI / 4); // maximum angle is 45 degrees
+                    let direction = ball.velocityX > 0 ? 1 : -1;
+                    ball.velocityX = direction * Math.cos(angleRad) * 5; // 5 is the speed of the ball
+                    ball.velocityY = Math.sin(angleRad) * 5;
                     ball.velocityX *= -1; // flip x direction
                 }
             }
