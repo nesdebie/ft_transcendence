@@ -1,4 +1,4 @@
-function initializePong() {
+function initializePong(scoreToReset) {
     // Declare variables at the top level of the function
     let boardWidth, boardHeight, context, gamePaused, gameStarted, animationFrameId;
     let playerWidth, playerHeight;
@@ -143,11 +143,25 @@ function initializePong() {
         // game over
         if (ball.x < 0) {
             player2Score++;
-            resetGame(-1);
+            if (player2Score >= scoreToReset) {
+                console.log("P2 WIN !");
+                resetScore();
+                gamePaused = !gamePaused;
+            }
+            else {
+                resetGame(-1);
+            }
 
         } else if (ball.x + ballWidth > boardWidth) {
             player1Score++;
-            resetGame(1);
+            if (player1Score >= scoreToReset) {
+                console.log("P1 WIN !");
+                resetScore();
+                gamePaused = !gamePaused;
+            }
+            else {
+                resetGame(1);
+            }
 
         }
 
@@ -200,11 +214,22 @@ function initializePong() {
         console.error('Canvas element with id "pong-game" not found.');
     }
 }
-
-// Ensure the script is only loaded once
+    
 (function() {
     if (document.getElementById('pong-game')) {
-        initializePong();
+        $(document).ready(function(){
+            // Event listener for score slider
+            $("#pong-start").click(function(){
+                let scoreToReset = parseInt($("#scoreSlider").val());
+                console.log(scoreToReset);
+                initializePong(scoreToReset);
+            });
+        });
     }
 })();
+
+function updateSliderValue(value) {
+    document.getElementById('sliderValue').textContent = value;
+}
+
 
