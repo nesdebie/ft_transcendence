@@ -33,6 +33,9 @@
             <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
           </button>
           <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
+          <audio id="dayModeMusic" src="{% static 'spa/js/audio/sci-fi-survival-dreamscape.mp3' %}"></audio>
+          <audio id="hover_day" src="{% static 'spa/js/audio/hover_day.wav' %}"></audio>
+          <audio id="click_day" src="{% static 'spa/js/audio/click_day.wav' %}"></audio>
         </div>
 
         <!-- SCRIPTS (router.js ALWAYS in last place) -->
@@ -55,7 +58,6 @@
               observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });
         
               function loadPongScript() {
-        
                 const script = document.createElement('script');
                 script.src = "{% static 'spa/js/pong.js' %}";
                 document.head.appendChild(script);
