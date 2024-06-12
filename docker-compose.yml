@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  web:
+    build: ./Django/.
+    volumes:
+      - ./app/.:/System/Volumes/Data/sgoinfre/students/aminjauw/Django:rw # Bind mount to sync files
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
