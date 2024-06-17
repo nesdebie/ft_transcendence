@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 class MyAccountManager(BaseUserManager):
 	def create_user(self, username, password=None, **extra_fields):
@@ -46,3 +47,22 @@ class Player(AbstractUser):
 	def __str__(self):
 		return self.username
 
+class Friendship(models.Model):
+    from_user = models.ForeignKey(Player, related_name='friendships', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(Player, related_name='friends', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(Player, related_name='sent_friend_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(Player, related_name='received_friend_requests', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+class OnlineStatus(models.Model):
+    user = models.OneToOneField(Player, on_delete=models.CASCADE)
+    is_online = models.BooleanField(default=False)
+    last_seen = models.DateTimeField(default=timezone.now)
+
+class Block(models.Model):
+    blocker = models.ForeignKey(Player, related_name='blocking', on_delete=models.CASCADE)
+    blocked = models.ForeignKey(Player, related_name='blocked', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

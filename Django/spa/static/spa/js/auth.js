@@ -1,5 +1,6 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
+import { handleProfileButtonClick } from "./buttons.js"
 
 async function login(event) {
 	event.preventDefault();
@@ -126,26 +127,29 @@ async function fetchUserProfilePicture(){
 	}
 }
 
-// async function fetchUserProfileData(){
-//     const response = await fetch('/users_api/user_profile_data/', {
-//         method: 'GET',
-//         headers: {
-//             'X-CSRFToken': getCookie('csrftoken')
-//         },
-//     });
+async function fetchUserData(field = undefined){
+	const response = await fetch('/users_api/user_data/', {
+		method: 'GET',
+		headers: {
+			'X-CSRFToken': getCookie('csrftoken')
+		},
+	});
 
-//     if (response.ok) {
-//         const data = await response.json();
-//         const usernameElement = document.getElementById('username');
-//         usernameElement.innerText = data.username; // Assuming data contains the username
-//         usernameElement.style.display = 'block';
-//     } else {
-//         console.log("Error fetching user profile data");
-//         usernameElement.style.display = 'none';
-//     }
-// }
+	if (response.ok) {
+		const data = await response.json();
+        if (field !== undefined && data.hasOwnProperty(field)) {
+            return data[field];
+        } else {
+            return data; // Return the entire data object if field is not specified or not found
+        }
+	} else {
+		console.log("Error fetching user data");
+	}
+}
 
 
+
+// A séparer du auth.js
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
 	document.getElementById('profile-button').style.display = isAuthenticated ? 'block' : 'none';
@@ -155,6 +159,14 @@ async function updateSidebar() {
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
+
+	if (isAuthenticated)
+	{
+		profile_button = document.getElementById('profile-button');
+		profile_button.removeEventListener('click', handleProfileButtonClick);
+		profile_button.addEventListener('click', handleProfileButtonClick);
+	}
+
 }
 
-export { register, login, logout, fetchUserProfilePicture, updateSidebar};
+export { register, login, logout, fetchUserData, fetchUserProfilePicture, updateSidebar};

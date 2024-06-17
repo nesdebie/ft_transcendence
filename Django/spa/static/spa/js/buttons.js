@@ -1,4 +1,4 @@
-import {register, login, logout, updateSidebar} from "./auth.js";
+import {register, login, logout, updateSidebar, fetchUserData} from "./auth.js";
 import { redirectToRoute } from "./router.js";
 
 $(document).ready(function(){
@@ -21,9 +21,6 @@ $(document).ready(function(){
                 console.error('Error playing audio:', error);
             });
         }
-    });
-    $("#profile-button").click(function(){
-        redirectToRoute("/profile");
     });
 
     const hoverSound = document.getElementById('hover_day');
@@ -64,3 +61,13 @@ document.body.addEventListener('click', function(event) {
 		logout(event);
     }
 });
+
+
+function handleProfileButtonClick(event) {
+    event.preventDefault();
+    username = fetchUserData(username);
+    const route = '/profile/' + username;
+    redirectToRoute(route);
+}
+
+export {handleProfileButtonClick};

@@ -1,0 +1,25 @@
+<h2>Friend Requests</h2>
+<form method="post" action="{% url 'send_friend_request' %}">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Enter username to send request" required>
+    <button type="submit">Send Friend Request</button>
+</form>
+<ul>
+    {% for request in received_requests %}
+    <li>
+        {{ request.from_user.username }}
+        <form method="post" action="{% url 'accept_friend_request' request.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Accept</button>
+        </form>
+        <form method="post" action="{% url 'deny_friend_request' request.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Deny</button>
+        </form>
+        <form method="post" action="{% url 'block_user' request.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Block</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>

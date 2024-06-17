@@ -1,5 +1,5 @@
 #!/bin/sh
-
+sleep 5
 python3 manage.py makemigrations
 
 # Run migrations

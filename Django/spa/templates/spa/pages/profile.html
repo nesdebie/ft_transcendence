@@ -1,4 +1,19 @@
 <div class="page-container align-center">
-	<img id="user-profile-picture" alt="User Profile Picture" width="200" height="200">
-	<!--<div id="user-username"></div>-->
+	<!-- Display the user's profile picture -->
+	<img id="user-profile-picture" src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s Profile Picture" width="200" height="200">
+	
+	<!-- Display the user's username -->
+	<div id="user-username">{{ user_profile.username }}</div>
+
+	<!-- Additional user information can be displayed here -->
+	<div id="user-email">{{ user_profile.email }}</div>
+	<div id="user-join-date">Joined on: {{ user_profile.date_joined }}</div>
+
+	<!-- Display friend request buttons if viewing another user's profile -->
+	{% if not is_own_profile %}
+		<form method="post" action="{% url 'send_friend_request' user_profile.username %}" style="display: inline;">
+			{% csrf_token %}
+			<button type="submit">Send Friend Request</button>
+		</form>
+	{% endif %}
 </div>

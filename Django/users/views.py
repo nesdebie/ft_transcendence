@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
-from .models import Player
+from .models import Player, FriendRequest, Friendship, Block
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 import json
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
 def login_view(request):
 	if request.method == 'POST':
@@ -69,14 +69,36 @@ def check_authentication(request):
 	else:
 		return JsonResponse({'authenticated': False})
 
-def user_profile_picutre(request):
+def user_profile_picture(request):
 	user_picture = request.user.image.url
 	return JsonResponse({'user_picture': user_picture})
 
-# @login_required
-# def user_profile_data(request):
-#     if request.user.is_authenticated:
-#         username = request.user.username
-#         return JsonResponse({'username': username})
-#     else:
-#         return JsonResponse({'error': 'User not authenticated'}, status=403)
+
+def send_friend_request(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        to_user = get_object_or_404(Player, username=username)
+        FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+        return redirect('profile', username=username)
+    return redirect('view_friend_requests')
+
+
+
+def accept_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    Friendship.objects.get_or_create(from_user=friend_request.from_user, to_user=friend_request.to_user)
+    friend_request.delete()
+    return redirect('view_friend_requests')
+
+
+def deny_friend_request(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    friend_request.delete()
+    return redirect('view_friend_requests')
+
+
+def block_user(request, request_id):
+    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
+    Block.objects.get_or_create(blocker=request.user, blocked=friend_request.from_user)
+    friend_request.delete()
+    return redirect('view_friend_requests')
