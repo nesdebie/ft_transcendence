@@ -1,29 +1,30 @@
+# Utilisez l'image de base Debian
 FROM debian:bullseye
 
-#Ensures that the python output (i.e. the stdout and stderr) streams are sent straight to terminal
+# S'assurer que la sortie Python est sans tampon
 ENV PYTHONUNBUFFERED 1
-
-
-#dont make the __pycache__ folders
 ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update
-RUN apt-get install python3 python3-pip -y
-RUN apt-get upgrade
-RUN apt-get clean
+# Installer les dépendances système
+RUN apt-get update \
+    && apt-get install -y python3 python3-pip \
+    && apt-get upgrade -y \
+    && apt-get clean
 
+# Copier le code de l'application dans le conteneur
 COPY . /app/.
 
-RUN pip install --upgrade pip
-RUN pip install -r config/requirements.txt
+# Installer les dépendances Python
+RUN pip install --upgrade pip \
+    && pip install -r config/requirements.txt
 
+# Ajouter les permissions d'exécution pour le script d'entrée
 RUN chmod +x /app/config/entrypoint.sh
 
-# Expose port 8000 for Django
+# Exposer le port 8000 pour Gunicorn
 EXPOSE 8000
 
-# Use the entrypoint script to run the container
+# Utiliser le script d'entrée pour exécuter le conteneur
 ENTRYPOINT ["/app/config/entrypoint.sh"]

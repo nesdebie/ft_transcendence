@@ -1,11 +1,9 @@
 #!/bin/sh
+sleep 5
 
+# Appliquer les migrations de la base de données
 python3 manage.py makemigrations
-
-# Run migrations
 python3 manage.py migrate
 
-# Start the Gunicorn server "Right way"
-#gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application
-
-python3 manage.py runserver 0.0.0.0:8000
+# Démarrer Gunicorn pour servir l'application Django
+gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
     db:
         image: postgres:13
@@ -11,7 +9,9 @@ services:
             - backend
 
     web:
-        build: ./Django/.
+        build:
+            context: ./Django
+            dockerfile: Dockerfile
         volumes:
             - ./Django:/app
         env_file:
@@ -20,13 +20,20 @@ services:
             - db
         networks:
             - backend
-        ports:
-            - "8000:8000"
 
+    nginx:
+        build:
+            context: ./Django/nginx  # Répertoire contenant le Dockerfile de Nginx
+        ports:
+            - "443:443"
+        depends_on:
+            - web
+        networks:
+            - backend
 
 networks:
     backend:
 
 volumes:
-  postgres_data:
-    name: database
+    postgres_data:
+        name: database
