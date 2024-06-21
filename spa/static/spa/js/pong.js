@@ -11,7 +11,7 @@
         window.gameInitialized = true;
 
         // Declare variables at the top level of the function
-        let boardWidth, boardHeight, context, gamePaused, gameStarted, animationFrameId;
+        let boardWidth, boardHeight, context, gamePaused, gameStarted;
         let playerWidth, playerHeight;
         let player1, player2, ballWidth, ballHeight, ball;
         let player1Score, player2Score;
@@ -25,7 +25,6 @@
             gamePaused = false;
             gameStarted = false;
             gameWon = false;
-            animationFrameId = null;
 
             playerWidth = 10;
             playerHeight = 50;
@@ -122,10 +121,10 @@
         }
 
         function update() {
-            if (gamePaused || gameWon) {
+            if (gameWon) {
                 return;
             }
-            animationFrameId = requestAnimationFrame(update);
+            requestAnimationFrame(update);
             context.clearRect(0, 0, boardWidth, boardHeight);
 
             // player1
@@ -214,28 +213,6 @@
             }
         }
 
-        function handleKeyPress(e) {
-            if (e.code === "KeyE") {
-                gamePaused = !gamePaused;
-                if (!gamePaused && gameStarted) {
-                    update();
-                }
-            } else if (e.code === "KeyR") {
-                if (!gameStarted) {
-                    gameStarted = true;
-                    update();
-                } else {
-                    resetScore();
-                    gameWon = false;
-                    if (gamePaused) {
-                        gamePaused = false;
-                        update();
-                    }
-                }
-            }
-        }
-
-        // Initialize game variables and canvas
         initVal();
 
         const board = document.getElementById("pong-game"); // Updated ID to match HTML
@@ -250,12 +227,13 @@
             // Remove existing event listeners
             document.removeEventListener("keydown", movePlayer);
             document.removeEventListener("keyup", stopPlayer);
-            document.removeEventListener("keydown", handleKeyPress);
+            //document.removeEventListener("keydown", handleKeyPress);
 
             // Add event listeners
+            requestAnimationFrame(update);
             document.addEventListener("keydown", movePlayer);
             document.addEventListener("keyup", stopPlayer);
-            document.addEventListener("keydown", handleKeyPress);
+            //document.addEventListener("keydown", handleKeyPress);
         } else {
             console.error('Canvas element with id "pong-game" not found.');
         }
