@@ -1,19 +1,24 @@
 <div class="page-container align-center">
 	<!-- Display the user's profile picture -->
-	<img id="user-profile-picture" src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s Profile Picture" width="200" height="200">
+	<img id="profile-picture" src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s Profile Picture" width="200" height="200">
 	
 	<!-- Display the user's username -->
 	<div id="user-username">{{ user_profile.username }}</div>
 
 	<!-- Additional user information can be displayed here -->
-	<div id="user-email">{{ user_profile.email }}</div>
+	<div id="user-email">email: {{ user_profile.email }}</div>
 	<div id="user-join-date">Joined on: {{ user_profile.date_joined }}</div>
 
+	{% if friends %}
+		<div id="friend">Your friend since {{ friends.created_at }}</div>
+	{% endif %}
+
+
 	<!-- Display friend request buttons if viewing another user's profile -->
-	{% if not is_own_profile %}
-		<form method="post" action="{% url 'send_friend_request' user_profile.username %}" style="display: inline;">
-			{% csrf_token %}
-			<button type="submit">Send Friend Request</button>
-		</form>
+	{% if not is_own_profile and not friends and not request_pending %}
+		{% csrf_token %}
+    	<button id='sendFriendRequestButton' type="button" data-username="{{ user_profile.username }}">Send Friend Request</button>
+		<span id="validation" class="validation-message text-success"></span>
+		<span id="friend_request-error" class="error-message text-danger"></span>
 	{% endif %}
 </div>

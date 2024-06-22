@@ -15,7 +15,7 @@ def login_view(request):
 		if user is not None:
 			login(request, user)
 			return JsonResponse({'status': 'success'})
-		return JsonResponse({'errors': {'password': 'Player does not exist or password is wrong'}}, status=400)
+		return JsonResponse({'errors': {'login': 'Player does not exist or password is wrong'}}, status=400)
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register_view(request):
@@ -52,7 +52,7 @@ def register_view(request):
 			password=password,
 			email = email,
 			nickname = nickname,
-			image = image
+			profile_picture = image
 			)
 		login(request, user)
 		return JsonResponse({'status': 'success'})
@@ -70,35 +70,91 @@ def check_authentication(request):
 		return JsonResponse({'authenticated': False})
 
 def user_profile_picture(request):
-	user_picture = request.user.image.url
-	return JsonResponse({'user_picture': user_picture})
+	profile_picture = request.user.profile_picture.url
+	return JsonResponse({'profile_picture': profile_picture})
 
 
 def send_friend_request(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        to_user = get_object_or_404(Player, username=username)
-        FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
-        return redirect('profile', username=username)
-    return redirect('view_friend_requests')
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try:
+			to_user = Player.object.get(username=username)
+			if not FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists()\
+				and not FriendRequest.objects.filter(from_user=to_user, to_user=from_user).exists():
+
+				FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'friend_request': f'There is already a friend request between you and {to_user.username}\nAccepts his or wait for his to accept yours'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({"errors": {'friend_request': f'{username} does not exist in the database'}})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 
 
 def accept_friend_request(request, request_id):
-    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
-    Friendship.objects.get_or_create(from_user=friend_request.from_user, to_user=friend_request.to_user)
-    friend_request.delete()
-    return redirect('view_friend_requests')
+	try:
+		request = FriendRequest.objects.get(id=request_id)
+	except FriendRequest.DoesNotExist:
+		return JsonResponse({'errors': {'accept-friend-request': 'Friend request does not exist anymore'}}, status=500)
+	from_user = request.from_user
+	to_user = request.to_user
+	Friendship.objects.get_or_create(from_user=from_user, to_user=to_user)
+	Friendship.objects.get_or_create(from_user=to_user, to_user=from_user)
+	request.delete()
+	return JsonResponse({'status': 'succes'})
 
 
 def deny_friend_request(request, request_id):
-    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
-    friend_request.delete()
-    return redirect('view_friend_requests')
+	try:
+		request = FriendRequest.objects.get(id=request_id)
+	except FriendRequest.DoesNotExist:
+		return JsonResponse({'errors': {'deny-friend-request': 'Friend request does not exist anymore'}}, status=500)
+	request.delete()
+	return JsonResponse({'status': 'succes'})
 
 
-def block_user(request, request_id):
-    friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
-    Block.objects.get_or_create(blocker=request.user, blocked=friend_request.from_user)
-    friend_request.delete()
-    return redirect('view_friend_requests')
+def block_user(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try :
+			to_user = Player.object.get(username=username)
+			if not Block.objects.filter(from_user=from_user, to_user=to_user).exists():
+				Block.objects.get_or_create(from_user=request.user, to_user=to_user)
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'block_user': f'There is already a blokking between you and {to_user.username}'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({'errors': {'block_user': 'User does not exist'}})
+
+	return JsonResponse({'status': 'invalid method'}, status=405)
+
+def user_data(request, username):
+	user = get_object_or_404(Player, username=username)
+
+	data = {
+		'username': 		user.username,
+		'email':			user.email,
+		'profile_picture.url':	user.profile_picture.url,
+		'nickname':			user.nickname
+	}
+	return JsonResponse(data)
+
+def current_user_data(request):
+	username = request.user.username
+	return user_data(request, username=username)
+
+def find_user(request):
+	if request.method == 'POST':
+		username	= request.POST.get('username')
+		if username == request.user.username:
+			return JsonResponse({'errors': {'find-user': 'are you trying to break be by looking for yourself ?'}}, status=400)
+		try:
+			user = Player.object.get(username=username)
+			return JsonResponse({'status': 'success'})
+		except Player.DoesNotExist:
+			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
+	else:
+		return JsonResponse({'status': 'invalid method'}, status=405)

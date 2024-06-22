@@ -11,9 +11,11 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update
-RUN apt-get install python3 python3-pip -y
+RUN apt-get install -y python3 python3-pip bash procps
 RUN apt-get upgrade
 RUN apt-get clean
+
+
 
 COPY . /app/.
 

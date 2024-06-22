@@ -124,3 +124,14 @@ body::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
 }
+
+/* a changer */
+.validation-message {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.text-success {
+    color: green;
+}

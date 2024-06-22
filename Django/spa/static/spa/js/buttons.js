@@ -1,5 +1,7 @@
-import {register, login, logout, updateSidebar, fetchUserData} from "./auth.js";
+import {register, login, logout, updateSidebar, find_user, checkAuthentication } from "./auth.js";
 import { redirectToRoute } from "./router.js";
+import { sendFriendRequest, acceptFriendRequest, block_user } from "./friend_managment.js"
+
 
 $(document).ready(function(){
     const audio_night = document.getElementById('nightCityModeMusic');
@@ -21,6 +23,10 @@ $(document).ready(function(){
                 console.error('Error playing audio:', error);
             });
         }
+    });
+
+    $("#profile-button").click(function(){
+        redirectToRoute("/profile");
     });
 
     const hoverSound = document.getElementById('hover_day');
@@ -53,6 +59,10 @@ document.body.addEventListener('submit', function(event) {
 	else if (event.target.id === 'login-form'){
 		event.preventDefault();
 		login(event);}
+    else if (event.target.id == 'find-user-form') {
+        event.preventDefault();
+        find_user(event);
+    }
     updateSidebar();
 });
 
@@ -60,14 +70,40 @@ document.body.addEventListener('click', function(event) {
 	if (event.target.id === 'logout-button') {
 		logout(event);
     }
+    else if (event.target.id === 'sendFriendRequestButton') {
+        const username = event.target.getAttribute('data-username')
+        console.log("sending friend request to " + username);
+        sendFriendRequest(username);
+    }
+    else if (event.target.id === 'accept-friend-request-button') {
+        const id = event.target.getAttribute('data-id')
+        console.log('accepting friend request id: ' + id);
+        acceptFriendRequest(id);
+    }
+    else if (event.target.id === 'deny-friend-request-button') {
+        const id = event.target.getAttribute('data-id')
+        console.log('denying friend request id: ' + id);
+        denyFriendRequest(id);
+    }
+    else if (event.target.id === 'block-user-button') {
+        const username = event.target.getAttribute('data-username')
+        console.log('blocking: ' + username);
+        block_user(username);
+    }
+    else if (event.target.id === 'friend-profile-button') {
+        const username = event.target.getAttribute('data-username');
+        console.log('clicked on the friend ' + username);
+        redirectToRoute("/profile/" + username);
+    }
 });
 
 
-function handleProfileButtonClick(event) {
-    event.preventDefault();
-    username = fetchUserData(username);
-    const route = '/profile/' + username;
-    redirectToRoute(route);
-}
+document.addEventListener('DOMContentLoaded', function() {
+    first_connection();
+});
 
-export {handleProfileButtonClick};
+async function first_connection() {
+    const isAuthenticated = await checkAuthentication();
+    if (isAuthenticated == false)
+      redirectToRoute('/login');
+}
