@@ -132,6 +132,8 @@ window.PongGame = (function() {
         if (player1Score >= scoreToReset || player2Score >= scoreToReset) {
             gameWon = true;
             console.log(player1Score > player2Score ? "P1 WON :" : "P2 WON :", player1Score, "-", player2Score);
+            context.font = "100px sans-serif";
+            context.fillText(player1Score > player2Score ? "P1 WON!" : "P2 WON!", 40, 275);
             $("#pong-start").prop("disabled", false); // Enable the button
         }
     }
