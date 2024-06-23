@@ -1,14 +1,11 @@
 window.PongGame = (function() {
-    let gameInitialized = false;
-    let context, gamePaused, gameStarted;
+    let context;
     let player1, player2, ball;
     let player1Score, player2Score;
     let gameWon, scoreToReset;
 
     function initVal(score) {
         scoreToReset = score; // Initialize scoreToReset here
-        gamePaused = false;
-        gameStarted = false;
         gameWon = false;
 
         player1 = { x: 10, y: 250, width: 10, height: 50, velocityY: 0 };
@@ -144,7 +141,6 @@ window.PongGame = (function() {
             let canvas = document.getElementById('pong-game');
             if (canvas) {
                 context = canvas.getContext('2d');
-                gameInitialized = true;
                 initVal(score);
                 $("#pong-start").prop("disabled", true); // Disable the button initially
             }
