@@ -63,8 +63,21 @@ window.PongGame = (function() {
         }
     }
 
+    function cleanup() {
+        gameWon = true;
+        document.removeEventListener('keydown', keyDownHandler);
+        document.removeEventListener('keyup', keyUpHandler);
+        if (context) {
+            context.clearRect(0, 0, 500, 500);
+        }
+    }
+
     function update() {
         if (gameWon) return;
+        if (!gameWon && window.location.pathname !== '/pong') {
+            console.log("Game interrupted !");
+            cleanup();
+        }
         requestAnimationFrame(update);
         context.clearRect(0, 0, 500, 500);
 
@@ -90,31 +103,10 @@ window.PongGame = (function() {
         if (ball.y <= 0 || ball.y + ball.height >= 500) {
             ball.velocityY *= -1;
         }
-        // if (detectCollision(ball, player1) || detectCollision(ball, player2)) {
-        //     ball.velocityX *= -1;
-        // }
-        if (detectCollision(ball, player1)) {
-            if (ball.x <= player1.x + player1.width) { // left side of ball touches right side of player 1 (left paddle)
-                let collisionPoint = (ball.y + ball.height / 2) - (player1.y + player1.height / 2);
-                collisionPoint = collisionPoint / (player1.height / 2);
-                let angleRad = collisionPoint * (Math.PI / 4); // maximum angle is 45 degrees
-                let direction = ball.velocityX > 0 ? 1 : -1;
-                ball.velocityX = direction * Math.cos(angleRad) * 5; // 5 is the speed of the ball
-                ball.velocityY = Math.sin(angleRad) * 5;
-                ball.velocityX *= -1; // flip x direction
-            }
-        } else if (detectCollision(ball, player2)) {
-            if (ball.x + ball.width >= player2.x) { // right side of ball touches left side of player 2 (right paddle)
-                let collisionPoint = (ball.y + ball.height / 2) - (player2.y + player2.height / 2);
-                collisionPoint = collisionPoint / (player2.height / 2);
-                let angleRad = collisionPoint * (Math.PI / 4); // maximum angle is 45 degrees
-                let direction = ball.velocityX > 0 ? 1 : -1;
-                ball.velocityX = direction * Math.cos(angleRad) * 5; // 5 is the speed of the ball
-                ball.velocityY = Math.sin(angleRad) * 5;
-                ball.velocityX *= -1; // flip x direction
-            }
+        if (detectCollision(ball, player1) || detectCollision(ball, player2)) {
+            ball.velocityX *= -1;
         }
-        // Score update and reset game
+
         if (ball.x < 0) {
             player2Score++;
             resetGame(1);
@@ -147,15 +139,6 @@ window.PongGame = (function() {
         }
     }
 
-    function cleanup() {
-        gameWon = true;
-        document.removeEventListener('keydown', keyDownHandler);
-        document.removeEventListener('keyup', keyUpHandler);
-        if (context) {
-            context.clearRect(0, 0, 500, 500);
-        }
-    }
-
     return {
         init: function(score) {
             let canvas = document.getElementById('pong-game');
@@ -170,12 +153,14 @@ window.PongGame = (function() {
     };
 })();
 
-$(document).ready(function() {
-    $("#pong-start").click(function(){
-        let scoreToReset = parseInt($("#scoreSlider").val());
-        window.PongGame.init(scoreToReset);
+if (document.getElementById('pong-game')) {
+    $(document).ready(function() {
+        $("#pong-start").click(function(){
+            let scoreToReset = parseInt($("#scoreSlider").val());
+            window.PongGame.init(scoreToReset);
+        });
     });
-});
+}
 
 function updateSliderValue(value) {
     document.getElementById('sliderValue').textContent = value;
