@@ -134,7 +134,7 @@ window.PongGame = (function() {
 
         if (player1Score >= scoreToReset || player2Score >= scoreToReset) {
             gameWon = true;
-            console.log("GAME OVER : ", player1Score, "-", player2Score);
+            console.log(player1Score > player2Score ? "P1 WON :" : "P2 WON :", player1Score, "-", player2Score);
             $("#pong-start").prop("disabled", false); // Enable the button
         }
     }
