@@ -39,7 +39,6 @@ services:
         networks:
             - backend
 
-<<<<<<< HEAD
     nginx:
         build:
             context: ./Django/nginx  # Répertoire contenant le Dockerfile de Nginx
@@ -50,18 +49,11 @@ services:
         networks:
             - backend
 
-=======
->>>>>>> aminjauw_channels
 networks:
     backend:
 
 volumes:
-<<<<<<< HEAD
-    postgres_data:
-        name: database
-=======
   postgres_data:
     name: database
   postgres_channels_data:
     name: database_channels
->>>>>>> aminjauw_channels
