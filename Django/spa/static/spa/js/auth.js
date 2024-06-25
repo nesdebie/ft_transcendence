@@ -2,35 +2,38 @@ import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
 async function login(event) {
-	event.preventDefault();
-	const username = document.getElementById('login-username').value;
-	const password = document.getElementById('login-password').value;
+    event.preventDefault();
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
 
-	const formData = new FormData();
-	formData.append('username', username);
-	formData.append('password', password);
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
 
-	try {
-		const response = await fetch('/users_api/login/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': getCookie('csrftoken')
-			},
-			body: formData
-		});
+    try {
+        const response = await fetch('/users_api/login/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
 
-		if (response.ok) {
-			redirectToRoute('/');
-			updateSidebar();
-			return true;
-		} else {
-			return false;
-		}
-	} catch (error) {
-		console.error('Error during login:', error);
-		return false;
-	}
+        if (response.ok) {
+            redirectToRoute('/');
+            updateSidebar();
+            return true;
+        } else {
+            console.error('Login failed:', response.statusText);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        return false;
+    }
 }
+
 
 async function register(event) {
 	event.preventDefault();

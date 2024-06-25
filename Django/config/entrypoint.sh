@@ -1,5 +1,5 @@
 #!/bin/sh
-sleep 5
+sleep 10
 
 # Appliquer les migrations de la base de données
 python3 manage.py makemigrations
