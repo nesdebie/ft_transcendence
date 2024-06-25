@@ -16,7 +16,8 @@ async function sendFriendRequest(username) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			const validation = document.getElementById('validation-str');
+			redirectToRoute(window.location.pathname);
+			const validation = document.getElementById('friend-request-validation');
 			validation.textContent = 'Request send !'
 		}
 		else {
@@ -86,7 +87,7 @@ async function         block_user(username) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute('/friend_requests');
+			redirectToRoute(window.location.pathname);
 		}
 		else {
 			handleErrors(data);
@@ -97,4 +98,29 @@ async function         block_user(username) {
 	}
 }
 
-export {sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user };
+async function         unblock_user(username) {
+	const formData = new FormData()
+	formData.append('username', username);
+	try {
+		const response = await fetch('/users_api/unblock_user/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
+
+		const data = await response.json()
+		if (response.ok && data.status == 'succes') {
+			redirectToRoute(window.location.pathname);
+		}
+		else {
+			handleErrors(data);
+		}
+	}
+	catch (error) {
+		console.error('Error during connection to server:', error);
+	}
+}
+
+export {sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user, unblock_user };

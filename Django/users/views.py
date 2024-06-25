@@ -120,14 +120,32 @@ def block_user(request):
 		username = request.POST.get('username')
 		from_user = request.user
 		try :
+			print(f'looking for user {username}')
 			to_user = Player.object.get(username=username)
+			print(f'found user {to_user}')
 			if not Block.objects.filter(from_user=from_user, to_user=to_user).exists():
 				Block.objects.get_or_create(from_user=request.user, to_user=to_user)
 				return JsonResponse({'status': 'succes'})
 			else:
-				return JsonResponse ({'errors': {'block_user': f'There is already a blokking between you and {to_user.username}'}}, status=400)
+				return JsonResponse ({'errors': {'block': f'There is already a blokking between you and {to_user.username}'}}, status=400)
 		except Player.DoesNotExist:
-			return JsonResponse({'errors': {'block_user': 'User does not exist'}})
+			return JsonResponse({'errors': {'block': 'User does not exist'}}, status=400)
+
+	return JsonResponse({'status': 'invalid method'}, status=405)
+
+def unblock_user(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try :
+			to_user = Player.object.get(username=username)
+			if Block.objects.filter(from_user=from_user, to_user=to_user).exists():
+				Block.objects.get(from_user=request.user, to_user=to_user).delete()
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'unblock': f'You haven\'t block {to_user.username} yet, so you can not unblock him'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({'errors': {'unblock': 'User does not exist'}}, status=400)
 
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
@@ -150,9 +168,11 @@ def find_user(request):
 	if request.method == 'POST':
 		username	= request.POST.get('username')
 		if username == request.user.username:
-			return JsonResponse({'errors': {'find-user': 'are you trying to break be by looking for yourself ?'}}, status=400)
+			return JsonResponse({'errors': {'find-user': 'are you trying to break me by looking for yourself ?'}}, status=400)
 		try:
 			user = Player.object.get(username=username)
+			if (user.has_blocked(player=request.user)):
+				return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
 			return JsonResponse({'status': 'success'})
 		except Player.DoesNotExist:
 			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)

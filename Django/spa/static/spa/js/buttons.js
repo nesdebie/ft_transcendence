@@ -1,6 +1,6 @@
 import {register, login, logout, updateSidebar, find_user, checkAuthentication } from "./auth.js";
 import { redirectToRoute } from "./router.js";
-import { sendFriendRequest, acceptFriendRequest, block_user } from "./friend_managment.js"
+import { sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user, unblock_user } from "./friend_managment.js"
 
 
 $(document).ready(function(){
@@ -67,33 +67,44 @@ document.body.addEventListener('submit', function(event) {
 });
 
 document.body.addEventListener('click', function(event) {
-	if (event.target.id === 'logout-button') {
+    let target = event.target;
+
+    while (target && target.tagName !== 'BUTTON') {
+        target = target.parentElement;
+    }
+
+    if (!target){
+        return;
+    }
+
+
+	if (target.id === 'logout-button') {
 		logout(event);
     }
-    else if (event.target.id === 'sendFriendRequestButton') {
-        const username = event.target.getAttribute('data-username')
+    else if (target.id === 'sendFriendRequestButton') {
+        const username = target.getAttribute('data-username')
         console.log("sending friend request to " + username);
         sendFriendRequest(username);
     }
-    else if (event.target.id === 'accept-friend-request-button') {
-        const id = event.target.getAttribute('data-id')
-        console.log('accepting friend request id: ' + id);
+    else if (target.id === 'accept-friend-request-button') {
+        const id = target.getAttribute('data-id')
         acceptFriendRequest(id);
     }
-    else if (event.target.id === 'deny-friend-request-button') {
-        const id = event.target.getAttribute('data-id')
-        console.log('denying friend request id: ' + id);
+    else if (target.id === 'deny-friend-request-button') {
+        const id = target.getAttribute('data-id')
         denyFriendRequest(id);
     }
-    else if (event.target.id === 'block-user-button') {
-        const username = event.target.getAttribute('data-username')
-        console.log('blocking: ' + username);
-        block_user(username);
-    }
-    else if (event.target.id === 'friend-profile-button') {
-        const username = event.target.getAttribute('data-username');
-        console.log('clicked on the friend ' + username);
+    else if (target.id === 'friend-profile-button') {
+        const username = target.getAttribute('data-username');
         redirectToRoute("/profile/" + username);
+    }
+    else if (target.id == 'blockUserButton') {
+        const username = target.getAttribute('data-username');
+        block_user(username);        
+    }
+    else if (target.id == 'unblockUserButton') {
+        const username = target.getAttribute('data-username');
+        unblock_user(username);        
     }
 });
 

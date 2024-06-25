@@ -8,17 +8,35 @@
 	<!-- Additional user information can be displayed here -->
 	<div id="user-email">email: {{ user_profile.email }}</div>
 	<div id="user-join-date">Joined on: {{ user_profile.date_joined }}</div>
-
 	{% if friends %}
-		<div id="friend">Your friend since {{ friends.created_at }}</div>
+		<div id="friend">Your friend since {{ friends.created_on }}</div>
 	{% endif %}
-
+	
+	{% if blocked %}
+		<div id="blocked">You have blocked him since {{ blocked.created_on }}</div>
+	{% endif %}
+	
 
 	<!-- Display friend request buttons if viewing another user's profile -->
 	{% if not is_own_profile and not friends and not request_pending %}
 		{% csrf_token %}
     	<button id='sendFriendRequestButton' type="button" data-username="{{ user_profile.username }}">Send Friend Request</button>
-		<span id="validation" class="validation-message text-success"></span>
+		<span id="friend-request-validation" class="validation-message text-success"></span>
 		<span id="friend_request-error" class="error-message text-danger"></span>
 	{% endif %}
-</div>
+
+	<!-- If not already blocked, block user -->
+	{% if not is_own_profile %}
+		{% if not blocked %}
+			{% csrf_token %}
+			<button id='blockUserButton' type="button" data-username="{{ user_profile.username }}">Block user</button>
+			<span id="blocked-validation" class="validation-message text-success"></span>
+			<span id="block-error" class="error-message text-danger"></span>
+		{% else %}
+			{% csrf_token %}
+			<button id='unblockUserButton' type="button" data-username="{{ user_profile.username }}">Unblock user</button>
+			<span id="unblocked-validation" class="validation-message text-success"></span>
+			<span id="unblock-error" class="error-message text-danger"></span>
+		{% endif %}
+	{% endif %}
+</div>  

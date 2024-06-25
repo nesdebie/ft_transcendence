@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'spa',
+    'channels_postgres',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,26 +84,28 @@ environ.Env.read_env()
 
 
 
+# Database settings
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
+        'NAME': env('APP_DB_NAME'),
+        'USER': env('APP_DB_USER'),
+        'PASSWORD': env('APP_DB_PASSWORD'),
+        'HOST': env('APP_DB_HOST'),
+        'PORT': env('APP_DB_PORT'),
     }
 }
 
+# Channels settings
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_postgres.core.PostgresChannelLayer',
         'CONFIG': {
-            'database': env('DB_NAME'),
-            'user': env('DB_USER'),
-            'password': env('DB_PASSWORD'),
-            'host': env('DB_HOST'),
-            'port': env('DB_PORT'),
+            'database': env('CHANNEL_DB_NAME'),
+            'user': env('CHANNEL_DB_USER'),
+            'password': env('CHANNEL_DB_PASSWORD'),
+            'host': env('CHANNEL_DB_HOST'),
+            'port': env('CHANNEL_DB_PORT'),
         },
     },
 }

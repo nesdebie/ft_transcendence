@@ -50,6 +50,14 @@ class Player(AbstractUser):
 	def get_friends(self):
 		return self.friends.all()
 
+	def is_friend(self, player: 'Player'):
+		"""  Return the friendship if it exist else return false """
+		try:
+			friendship = Friendship.objects.get(from_user=self, to_user=player)
+			return friendship
+		except Friendship.DoesNotExist:
+			return False
+
 	def get_received_friend_requests(self):
 		return FriendRequest.objects.filter(to_user=self)
 
@@ -57,7 +65,15 @@ class Player(AbstractUser):
 		return FriendRequest.objects.filter(from_user=self)
 
 	def get_blocked_players(self):
-		return Block.objects.filter(blocker=self).values_list('blocked', flat=True)
+		return Block.objects.filter(from_user=self).values_list('to_user', flat=True)
+
+	def has_blocked(self, player: 'Player'):
+		"""  Return the Blocked instance if it exist else return false """
+		try:
+			block = Block.objects.get(from_user=self, to_user=player)
+			return block
+		except Block.DoesNotExist:
+			return False
 
 	def __str__(self):
 		return self.username
@@ -68,7 +84,7 @@ class Player(AbstractUser):
 class Friendship(models.Model):
 	from_user = models.ForeignKey(Player, related_name='friendships_from', on_delete=models.CASCADE)
 	to_user = models.ForeignKey(Player, related_name='friendships_to', on_delete=models.CASCADE)
-	created_at = models.DateTimeField(auto_now_add=True)
+	created_on = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		unique_together = ('from_user', 'to_user')
@@ -79,7 +95,7 @@ class Friendship(models.Model):
 class FriendRequest(models.Model):
 	from_user = models.ForeignKey(Player, related_name='sent_friend_requests', on_delete=models.CASCADE)
 	to_user = models.ForeignKey(Player, related_name='received_friend_requests', on_delete=models.CASCADE)
-	timestamp = models.DateTimeField(auto_now_add=True)
+	created_on = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		unique_together = ('from_user', 'to_user')
@@ -89,9 +105,9 @@ class FriendRequest(models.Model):
 
 
 class Block(models.Model):
-	blocker = models.ForeignKey(Player, related_name='blocking', on_delete=models.CASCADE)
-	blocked = models.ForeignKey(Player, related_name='blocked_by', on_delete=models.CASCADE)
-	created_at = models.DateTimeField(auto_now_add=True)
+	from_user = models.ForeignKey(Player, related_name='blocking', on_delete=models.CASCADE)
+	to_user = models.ForeignKey(Player, related_name='blocked_by', on_delete=models.CASCADE)
+	created_on = models.DateTimeField(auto_now_add=True)
 	
 	def __str__(self):
 		return f"{self.blocker.username} blocked {self.blocked.username}"

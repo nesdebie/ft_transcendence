@@ -25,7 +25,6 @@ async function login(event) {
 			updateSidebar();
 			return true;
 		} else {
-			redirectToRoute('/login');
 			handleErrors(data);
 			return false;
 		}
