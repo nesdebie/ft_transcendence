@@ -7,13 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app
 
-# Installer les dépendances système
-RUN apt-get update \
-    && apt-get install -y python3 python3-pip \
-    && apt-get upgrade -y \
-    && apt-get clean
+# Install system dependencies
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip bash procps
+RUN apt-get upgrade
+RUN apt-get clean
 
-# Copier le code de l'application dans le conteneur
+
+
 COPY . /app/.
 
 # Installer les dépendances Python

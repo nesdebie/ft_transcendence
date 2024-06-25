@@ -3,8 +3,25 @@ services:
         image: postgres:13
         env_file:
             - .env
+        environment:
+            POSTGRES_DB: ${APP_DB_NAME}
+            POSTGRES_USER: ${APP_DB_USER}
+            POSTGRES_PASSWORD: ${APP_DB_PASSWORD}
         volumes:
             - postgres_data:/var/lib/postgresql/data
+        networks:
+            - backend
+
+    db_channels:
+        image: postgres:13
+        env_file:
+            - .env
+        environment:
+            POSTGRES_DB: ${CHANNEL_DB_NAME}
+            POSTGRES_USER: ${CHANNEL_DB_USER}
+            POSTGRES_PASSWORD: ${CHANNEL_DB_PASSWORD}
+        volumes:
+            - postgres_channels_data:/var/lib/postgresql/data
         networks:
             - backend
 
@@ -18,9 +35,11 @@ services:
             - .env
         depends_on:
             - db
+            - db_channels
         networks:
             - backend
 
+<<<<<<< HEAD
     nginx:
         build:
             context: ./Django/nginx  # Répertoire contenant le Dockerfile de Nginx
@@ -31,9 +50,18 @@ services:
         networks:
             - backend
 
+=======
+>>>>>>> aminjauw_channels
 networks:
     backend:
 
 volumes:
+<<<<<<< HEAD
     postgres_data:
         name: database
+=======
+  postgres_data:
+    name: database
+  postgres_channels_data:
+    name: database_channels
+>>>>>>> aminjauw_channels

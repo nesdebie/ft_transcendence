@@ -18,6 +18,7 @@
               <a href="/pong" id="nav-pong" onclick="route()">Pong</a>
               <a href="/shifumi" id="nav-shifumi" onclick="route()">ShiFuMi</a>
               <a href="/profile" id="nav-profile" onclick="route()">Profile</a>
+              <a href="/friend_requests" id="nav-friend-requests" onclick="route()">Friend Requests</a>
               <a href="/about" id="nav-about" onclick="route()">About</a>
               <a href="/logout" id="nav-logout" onclick="route()">Logout</a>
             </nav>
@@ -27,7 +28,7 @@
         <!-- NIGHT CITY MODE BUTTON -->
         <div class="buttons-container">
           <button id="profile-button" class="socials-card" target="_blank">
-            <i id="profile-button-logo" class="mdi mdi-account-circle"></i>
+            <img id="profile-button-logo" src="/media/profile_pics/default.jpg" width="40" height="45" class="mdi mdi-account-circle" alt="Profile Image">
           </button>
           <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="button-default">
             <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
@@ -41,8 +42,14 @@
         <!-- SCRIPTS (router.js ALWAYS in last place) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <script>
+        <script type="module" src="{% static 'spa/js/buttons.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/auth.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/friend_managment.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/router.js' %}"></script>
+        <script type="module">
             document.addEventListener('DOMContentLoaded', function() {
+              
               // Observe changes to the main-page div
               const observer = new MutationObserver(function(mutationsList, observer) {
                 for (let mutation of mutationsList) {
@@ -56,17 +63,8 @@
         
               // Configure the observer
               observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });
-        
-              function loadPongScript() {
-                const script = document.createElement('script');
-                script.src = "{% static 'spa/js/pong.js' %}";
-                document.head.appendChild(script);
-              }
+
             });
           </script>
-        <script type="module" src="{% static 'spa/js/buttons.js' %}"></script>
-        <script type="module" src="{% static 'spa/js/auth.js' %}"></script>
-        <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
-        <script type="module" src="{% static 'spa/js/router.js' %}"></script>
     </body>
 </html>

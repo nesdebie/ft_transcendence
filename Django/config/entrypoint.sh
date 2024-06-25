@@ -1,8 +1,7 @@
 #!/bin/sh
 sleep 10
 
-# Appliquer les migrations de la base de données
-python3 manage.py makemigrations
+# Run migrations
 python3 manage.py migrate
 
 # Démarrer Gunicorn pour servir l'application Django

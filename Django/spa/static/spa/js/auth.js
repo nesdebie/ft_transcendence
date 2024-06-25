@@ -1,37 +1,37 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
+
 async function login(event) {
-    event.preventDefault();
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+	event.preventDefault();
+	const username = document.getElementById('login-username').value;
+	const password = document.getElementById('login-password').value;
 
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
+	const formData = new FormData();
+	formData.append('username', username);
+	formData.append('password', password);
 
-    try {
-        const response = await fetch('/users_api/login/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-
-        if (response.ok) {
-            redirectToRoute('/');
-            updateSidebar();
-            return true;
-        } else {
-            console.error('Login failed:', response.statusText);
-            return false;
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        return false;
-    }
+	try {
+		const response = await fetch('/users_api/login/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
+		const data = await response.json()
+		if (response.ok) {
+			redirectToRoute('/');
+			updateSidebar();
+			return true;
+		} else {
+			handleErrors(data);
+			return false;
+		}
+	} catch (error) {
+		console.error('Error during login:', error);
+		return false;
+	}
 }
 
 
@@ -47,7 +47,7 @@ async function register(event) {
 	formData.append('username', username);
 	formData.append('password', password);
 	formData.append('password2', password2);
-	formData.append('email', username);
+	formData.append('email', email);
 	formData.append('image', image);
 
 	const response = await fetch('/users_api/register/', {
@@ -64,7 +64,7 @@ async function register(event) {
 		updateSidebar();
 	} else {
 		redirectToRoute('/register');
-		handleErrors(data)
+		handleErrors(data);
 	}
 }
 
@@ -92,7 +92,6 @@ async function checkAuthentication() {
         if (data.authenticated) {
             return true;
         } else {
-            redirectToRoute('/login'); // Redirect to login page if not authenticated
             return false;
         }
     } else {
@@ -102,10 +101,15 @@ async function checkAuthentication() {
 }
 
 function handleErrors(data) {
+	console.log("going to print errors:");
+	console.log(data);
 	for (const key in data.errors) {
 		const errorElement = document.getElementById(`${key}-error`);
 		if (errorElement) {
-			errorElement.textContent = data.errors[key];
+			const errorMessages = Array.isArray(data.errors[key]) 
+				? data.errors[key].join('\n') 
+				: data.errors[key];
+			errorElement.textContent = errorMessages;
 		}
 	}
 }
@@ -121,7 +125,7 @@ async function fetchUserProfilePicture(){
 	if (response.ok) {
 		const data = await response.json();
 		const imgElement = document.getElementById('user-profile-picture');
-		imgElement.src = data.user_picture;
+		imgElement.src = data.profile_picture;
 		imgElement.style.display = 'block';
 	} else {
 		console.log("Error fetching user picture")
@@ -129,26 +133,58 @@ async function fetchUserProfilePicture(){
 	}
 }
 
-// async function fetchUserProfileData(){
-//     const response = await fetch('/users_api/user_profile_data/', {
-//         method: 'GET',
-//         headers: {
-//             'X-CSRFToken': getCookie('csrftoken')
-//         },
-//     });
+async function fetchUserData(field = undefined, username = ''){
+	const response = await fetch('/users_api/user_data/' + username, {
+		method: 'GET',
+		headers: {
+			'X-CSRFToken': getCookie('csrftoken')
+		},
+	});
 
-//     if (response.ok) {
-//         const data = await response.json();
-//         const usernameElement = document.getElementById('username');
-//         usernameElement.innerText = data.username; // Assuming data contains the username
-//         usernameElement.style.display = 'block';
-//     } else {
-//         console.log("Error fetching user profile data");
-//         usernameElement.style.display = 'none';
-//     }
-// }
+	if (response.ok) {
+		const data = await response.json();
+		console.log(data);
+        if (field !== undefined && data.hasOwnProperty(field)) {
+			console.log(data[field]);
+            return data[field];
+        } else {
+            return data; // Return the entire data object if field is not specified or not found
+        }
+	} else {
+		console.log("Error fetching user data");
+	}
+}
+
+async function find_user(event) {
+	event.preventDefault();
+	const username = document.getElementById('find-user-username').value;
+
+	const formData = new FormData();
+	formData.append('username', username);
+
+	try {
+		const response = await fetch('/users_api/find_user/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
+		
+		const data = await response.json()
+		if (response.ok) {
+			redirectToRoute('/profile/' + username);
+		} else {
+			console.log("find_user gave back not 200");
+			handleErrors(data);
+		}
+	} catch (error) {
+		console.error('Error during connection to server:', error);
+	}
+}
 
 
+// A séparer du auth.js
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
 	document.getElementById('profile-button').style.display = isAuthenticated ? 'block' : 'none';
@@ -158,6 +194,9 @@ async function updateSidebar() {
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
+	document.getElementById('nav-friend-requests').style.display = isAuthenticated ? 'block' : 'none';
+	if (isAuthenticated)
+		document.getElementById('profile-button-logo').src = await fetchUserData('profile_picture.url');
 }
 
-export { register, login, logout, fetchUserProfilePicture, updateSidebar};
+export { register, login, logout, fetchUserData, fetchUserProfilePicture, updateSidebar, find_user, checkAuthentication, handleErrors };
