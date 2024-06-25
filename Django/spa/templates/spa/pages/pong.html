@@ -1,12 +1,10 @@
 <div class="page-container align-center">
   <h1>PONG</h1>
   <div class="row">
-      <canvas id="pong-game"></canvas>
+      <canvas id="pong-game" width="500" height="500"></canvas>
   </div>
   <div>
     <input type="range" id="scoreSlider" min="1" max="5" value="1" step="1" oninput="updateSliderValue(this.value)">
     <label for="scoreSlider">First to <span id="sliderValue">1</span> point(s)</label>    
-    </div><button id="pong-start" class="button-default">Validate</button>
-  <p>[E] Pause.</p>
-  <p>[R] START/RESET.</p>
+    </div><button id="pong-start" class="btn btn-dark">START GAME</button>
 </div>
