@@ -11,7 +11,7 @@ down:
 
 clean: down
 	docker volume rm $$(docker volume ls -q)
-	docker builder prune -a
+	docker builder prune -a -f
 
 re: clean all
 

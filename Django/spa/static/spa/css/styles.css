@@ -135,3 +135,10 @@ body::-webkit-scrollbar {
 .text-success {
     color: green;
 }
+
+#profile-button-logo {
+    width: 40px; /* Ensure the width and height are equal for a perfect circle */
+    height: 40px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image covers the area */
+}
