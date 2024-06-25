@@ -13,4 +13,6 @@ clean: down
 	docker volume rm $$(docker volume ls -q)
 	docker builder prune -a
 
-.PHONY: all detach up down clean
+re: clean all
+
+.PHONY: all detach up down clean re

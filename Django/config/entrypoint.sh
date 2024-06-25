@@ -1,8 +1,23 @@
-#!/bin/sh
-sleep 10
+#!/bin/bash
+set -e
+
+# Function to wait for a service to be ready
+wait_for_service() {
+    echo "Waiting for $1 to be ready..."
+    while ! pg_isready -q -h $2 -p $3 -U $4; do
+        echo "Waiting for PostgreSQL to initialize..."
+        sleep 1
+    done
+    echo "$1 is ready."
+}
+
+# Wait for databases to be ready
+wait_for_service "App database" "$APP_DB_HOST" "$APP_DB_PORT" "$APP_DB_USER"
+wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHANNEL_DB_USER"
 
 # Run migrations
 python3 manage.py migrate
 
-# Démarrer Gunicorn pour servir l'application Django
-gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application
+
+# Start Gunicorn to serve the Django application
+exec gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application

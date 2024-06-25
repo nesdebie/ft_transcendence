@@ -47,24 +47,29 @@
         <script type="module" src="{% static 'spa/js/friend_managment.js' %}"></script>
         <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
         <script type="module" src="{% static 'spa/js/router.js' %}"></script>
-        <script type="module">
-            document.addEventListener('DOMContentLoaded', function() {
-              
-              // Observe changes to the main-page div
-              const observer = new MutationObserver(function(mutationsList, observer) {
-                for (let mutation of mutationsList) {
-                  if (mutation.type === 'childList') {
-                    if (document.getElementById('pong-game')) {
-                      loadPongScript();
-                    }
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            // Observe changes to the main-page div
+            const observer = new MutationObserver(function(mutationsList, observer) {
+              for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                  if (document.getElementById('pong-game')) {
+                    //loadPongScript();
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/pong.js' %}";
+                    document.head.appendChild(script);
                   }
                 }
-              });
-        
-              // Configure the observer
-              observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });
-
-            });
-          </script>
+              }
+            });              
+            // Configure the observer
+            observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });              
+            // function loadPongScript() {
+            //   const script = document.createElement('script');
+            //   script.src = "{% static 'spa/js/pong.js' %}";
+            //   document.head.appendChild(script);
+            // }
+          });
+        </script>
     </body>
 </html>
