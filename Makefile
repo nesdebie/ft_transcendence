@@ -4,7 +4,7 @@ up:
 	docker-compose --file ./docker-compose.yml up --build
 
 detach:
-	docker-compose --file ./docker-compose.yml up -detach --build
+	docker-compose --file ./docker-compose.yml up --detach --build
 
 down:
 	docker compose --file ./docker-compose.yml down
