@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="{% static 'spa/css/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/night-city-mode.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
+  <link rel="stylesheet" href="{% static 'spa/css/shifumi.css' %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -57,6 +58,12 @@
                     //loadPongScript();
                     const script = document.createElement('script');
                     script.src = "{% static 'spa/js/pong.js' %}";
+                    document.head.appendChild(script);
+                  }
+                  if (document.getElementById('shifumi-game')) {
+                    //loadPongScript();
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/shifumi.js' %}";
                     document.head.appendChild(script);
                   }
                 }

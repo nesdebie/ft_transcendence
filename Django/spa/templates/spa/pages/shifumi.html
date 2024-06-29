@@ -1,5 +1,32 @@
 <div class="page-container align-center">
-    <h1>SHI - FU - MI</h1>
-    <p>Pour les amateurs de kung fu uniquement.</p>
-    <p>Coming soon.</p>
+    <section id="shifumi-game" class="shifumi-game">
+        <!--Title -->
+        <div class="title">Rock Paper Scissor</div>
+         
+        <!--Display Score of player and computer -->
+        <div class="score">  
+            <div class="playerScore">
+                <h2>Player: </h2><p class="p-count count">0</p>
+            </div>       
+            <div class="computerScore">
+                <h2>Computer: </h2><p class="c-count count">0</p>
+            </div>
+        </div>
+       
+        <div class="move">Choose your move</div>
+         
+        <!--Number of moves left before game ends -->
+        <div class="movesleft">Moves Left: 10 </div>
+         
+        <!--Options available to player to play game -->
+        <div class="options">
+            <button id="rock" class="rock">Rock</button>
+            <button id="paper" class="paper">Paper</button>
+            <button id="scissor" class="scissor">Scissors</button>        
+        </div>
+         
+        <!--Final result of game -->
+        <div class="result"></div>
+    </section>
+    <button id="shifumi-start" class="btn btn-dark">START GAME</button>
 </div>

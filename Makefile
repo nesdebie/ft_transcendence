@@ -15,4 +15,6 @@ clean: down
 
 re: clean all
 
-.PHONY: all detach up down clean re
+redetach: clean detach
+
+.PHONY: all detach up down clean re redetach
