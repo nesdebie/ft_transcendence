@@ -188,13 +188,14 @@ async function find_user(event) {
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
 	document.getElementById('profile-button').style.display = isAuthenticated ? 'block' : 'none';
-    document.getElementById('nav-logout').style.display = isAuthenticated ? 'block' : 'none';
+    //document.getElementById('nav-logout').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-home').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
-	document.getElementById('nav-friend-requests').style.display = isAuthenticated ? 'block' : 'none';
+	//document.getElementById('nav-friend-requests').style.display = isAuthenticated ? 'block' : 'none';
+	document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
 	if (isAuthenticated)
 		document.getElementById('profile-button-logo').src = await fetchUserData('profile_picture.url');
 }

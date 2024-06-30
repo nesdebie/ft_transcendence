@@ -19,9 +19,12 @@
               <a href="/pong" id="nav-pong" onclick="route()">Pong</a>
               <a href="/shifumi" id="nav-shifumi" onclick="route()">ShiFuMi</a>
               <a href="/profile" id="nav-profile" onclick="route()">Profile</a>
-              <a href="/friend_requests" id="nav-friend-requests" onclick="route()">Friend Requests</a>
+              <!--<a href="/friend_requests" id="nav-friend-requests" onclick="route()">Friend Requests</a>-->
               <a href="/about" id="nav-about" onclick="route()">About</a>
-              <a href="/logout" id="nav-logout" onclick="route()">Logout</a>
+              <!--<a href="/logout" id="nav-logout" onclick="route()">Logout</a>-->
+              <button id="logout-button" class="btn btn-primary btn-block">
+                <i class="mdi mdi-logout"></i>
+              </button>
             </nav>
             <div id="main-page"><!-- DYNAMIC CONTENT --></div>
         </div>
@@ -38,7 +41,13 @@
           <audio id="dayModeMusic" src="{% static 'spa/js/audio/sci-fi-survival-dreamscape.mp3' %}"></audio>
           <audio id="hover_day" src="{% static 'spa/js/audio/hover_day.wav' %}"></audio>
           <audio id="click_day" src="{% static 'spa/js/audio/click_day.wav' %}"></audio>
+          <audio id="hover_night" src="{% static 'spa/js/audio/hover_night.wav' %}"></audio>
+          <audio id="click_night" src="{% static 'spa/js/audio/click_night.wav' %}"></audio>
         </div>
+
+        <button id="controlButton" class="control-button">
+          <i class="mdi mdi-volume-high"></i>
+        </button>
 
         <!-- SCRIPTS (router.js ALWAYS in last place) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -47,6 +56,7 @@
         <script type="module" src="{% static 'spa/js/auth.js' %}"></script>
         <script type="module" src="{% static 'spa/js/friend_managment.js' %}"></script>
         <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/audio.js' %}"></script>
         <script type="module" src="{% static 'spa/js/router.js' %}"></script>
         <script>
           document.addEventListener('DOMContentLoaded', function() {
@@ -69,13 +79,7 @@
                 }
               }
             });              
-            // Configure the observer
             observer.observe(document.getElementById('main-page'), { childList: true, subtree: true });              
-            // function loadPongScript() {
-            //   const script = document.createElement('script');
-            //   script.src = "{% static 'spa/js/pong.js' %}";
-            //   document.head.appendChild(script);
-            // }
           });
         </script>
     </body>

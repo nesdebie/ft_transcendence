@@ -161,3 +161,40 @@ body::-webkit-scrollbar {
 .header h2 {
     font-weight: normal;
 }
+
+/* styles.css */
+
+.control-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+/* Add this CSS to your stylesheet or <style> tag */
+
+#main-nav {
+    position: relative; /* Ensure the nav is relatively positioned */
+  }
+  
+  #logout-button {
+    position: absolute;
+    bottom: 10px; /* Adjust this value as needed */
+    left: 10px; /* Adjust this value as needed */
+    width: 40px;
+    background-color: black;
+    border-color: white;
+    display: flex;
+    align-items: center;
+  }
+  
+  #logout-button .mdi {
+    margin-right: 8px; /* Adjust margin as needed */
+  }
+  

@@ -39,4 +39,43 @@
 			<span id="unblock-error" class="error-message text-danger"></span>
 		{% endif %}
 	{% endif %}
+	<h2>Find a User</h2>
+	<form id="find-user-form">
+		{% csrf_token %}
+		<div class="form-group">
+			<span id="find-user-error" class="error-message text-danger"></span>
+		</div>				
+		<div class="form-group">
+			<label for="find-user-username">Username</label>
+			<input type="text" class="form-control" id="find-user-username" name="find-user-username" required>
+		</div>
+		<button type="submit" class="btn btn-primary btn-block">Search</button>
+	</form>
+	
+	<h2>Your Friends</h2>
+	<div class="friends-grid">
+		{% for friend in friends %}
+		<div class="friend-card">
+			<button id='friend-profile-button' class="socials-card" data-username="{{ friend.username }}" target="_blank">
+				<img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}'s profile picture" width="40" height="45">
+				<p>{{ friend.username }}</p>
+			</button>
+		</div>
+		{% endfor %}
+	</div>
+	
+	<h2>Friend Requests</h2>
+	<ul>
+		{% for request in received_requests %}
+		<li>
+			{{ request.from_user.username }}
+				<button id="accept-friend-request-button" type="button" data-id="{{ request.id }}">Accept</button>
+				<span id="accept-friend-request-error" class="error-message text-danger"></span>
+				<button id="deny-friend-request-button" type="button" data-id="{{ request.id }}">Deny</button>
+				<span id="deny-friend-request-error" class="error-message text-danger"></span>
+				<button id="block-user-button" type="button" data-username="{{ request.from_user.username }}">Block</button>
+				<span id="block-user-error" class="error-message text-danger"></span>
+		</li>
+		{% endfor %}
+	</ul>
 </div>  

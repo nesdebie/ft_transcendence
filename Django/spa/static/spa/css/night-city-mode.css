@@ -96,3 +96,16 @@ body.night-city-mode #textElement {
 body.night-city-mode .buttons-container i {
   color: black; /* Adjust the color as needed */
 }
+
+.night-city-mode .control-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 10px 20px;
+  background-color: black;
+  color: #fdf800;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
