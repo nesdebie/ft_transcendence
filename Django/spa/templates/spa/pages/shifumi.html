@@ -5,11 +5,13 @@
          
         <!--Display Score of player and computer -->
         <div class="score">  
-            <div class="playerScore">
-                <h2>Player: </h2><p class="p-count count">0</p>
-            </div>       
-            <div class="computerScore">
-                <h2>Computer: </h2><p class="c-count count">0</p>
+            <div class="header">
+                <p>Player - Computer</p>
+            </div>
+            <div class="scores">
+                <p class="p-count count">0</p>
+                <p>-</p>
+                <p class="c-count count">0</p>
             </div>
         </div>
        
@@ -28,5 +30,11 @@
         <!--Final result of game -->
         <div class="result"></div>
     </section>
+    <input type="range" id="difficultySlider" min="0" max="2" value="1" step="1" oninput="updateSliderValue(this.value)">
+    <label for="difficultySlider">Difficulty : <span id="sliderValue">Normal</span></label>
+    <div>
+        <input type="checkbox" id="mentalistMode">
+        <label for="mentalistMode">MENTALIST MODE (beta)</label>
+    </div>
     <button id="shifumi-start" class="btn btn-dark">START GAME</button>
 </div>

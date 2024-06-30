@@ -1,3 +1,7 @@
+#shifumi-start {
+    color: black;
+}
+
 #rock, #paper, #scissor {
     color: black;
 }
@@ -6,4 +10,8 @@
     color: #fdf800;
     text-shadow: 2px 2px 1px #ff1111;
     background-color: black;
+}
+
+#difficultySlider {
+    width: 200px; /* Adjust this value as needed */
 }

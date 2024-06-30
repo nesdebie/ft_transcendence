@@ -9,12 +9,16 @@ detach:
 down:
 	docker compose --file ./docker-compose.yml down
 
-clean: down
+fclean: down
 	docker volume rm $$(docker volume ls -q)
 	docker builder prune --all --force
 
-re: clean all
+re: fclean all
 
-redetach: clean detach
+rd: fclean detach
 
-.PHONY: all detach up down clean re redetach
+du: down up
+
+dd: down detach
+
+.PHONY: all detach up down fclean re rd dd du
