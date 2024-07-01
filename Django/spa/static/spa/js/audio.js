@@ -1,49 +1,53 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const audio_night = document.getElementById('nightCityModeMusic');
-    const audio_day = document.getElementById('dayModeMusic');
-    const controlButton = document.getElementById('controlButton');
-    let audioPlaying = false; // Flag to track audio state
-  
-    // Function to toggle audio playback
-    function toggleAudio() {
-      if (audioPlaying) {
-        audio_night.pause();
-        audio_day.pause();
-        audioPlaying = false;
-      } else {
-        if ($("body").hasClass("night-city-mode")) {
+  const audio_night = document.getElementById('nightCityModeMusic');
+  const audio_day = document.getElementById('dayModeMusic');
+  const controlButton = document.getElementById('controlButton');
+  let audioPlaying = false; // Flag to track audio state
+  let currentAudio = null; // Track the currently playing audio
+
+  // Function to play the correct audio based on the mode
+  function playAudioBasedOnMode() {
+      if ($("body").hasClass("night-city-mode")) {
           audio_day.pause();
           audio_day.currentTime = 0;
-          audio_night.play().catch(error => {
-            console.error('Error playing audio:', error);
-          });
-        } else {
+          currentAudio = audio_night;
+      } else {
           audio_night.pause();
           audio_night.currentTime = 0;
-          audio_day.play().catch(error => {
-            console.error('Error playing audio:', error);
-          });
-        }
-        audioPlaying = true;
+          currentAudio = audio_day;
       }
-    }
-  
-    // Event listener for control button click
-    controlButton.addEventListener('click', function() {
+      currentAudio.play().catch(error => {
+          console.error('Error playing audio:', error);
+      });
+      audioPlaying = true;
+  }
+
+  // Function to toggle audio playback
+  function toggleAudio() {
+      if (audioPlaying) {
+          currentAudio.pause();
+          audioPlaying = false;
+      } else {
+          playAudioBasedOnMode();
+      }
+  }
+
+  // Event listener for control button click
+  controlButton.addEventListener('click', function() {
       toggleAudio();
-    });
-  
-    // Automatically toggle audio when switching to night-city-mode
-    $("body").on("click", "#nightCityModeBtn", function() {
+  });
+
+  // Automatically toggle audio when switching to night-city-mode
+  $("body").on("click", "#nightCityModeBtn", function() {
       $("body").toggleClass("night-city-mode");
       console.log("Night city mode toggled. Current state:", $("body").hasClass("night-city-mode"));
-  
+
       if (audioPlaying) {
-        toggleAudio();
+          playAudioBasedOnMode(); // Switch to the correct audio while keeping it playing
       }
-    });
   });
-  
+});
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // Get the audio elements for day and night
