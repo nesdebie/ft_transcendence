@@ -50,31 +50,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Get the audio elements for day and night
-    const hoverDayAudio = document.getElementById('hover_day');
-    const clickDayAudio = document.getElementById('click_day');
-    const hoverNightAudio = document.getElementById('hover_night');
-    const clickNightAudio = document.getElementById('click_night');
+  // Get the audio elements for day and night
+  const hoverDayAudio = document.getElementById('hover_day');
+  const clickDayAudio = document.getElementById('click_day');
+  const hoverNightAudio = document.getElementById('hover_night');
+  const clickNightAudio = document.getElementById('click_night');
 
-    // Get all <a> elements inside the nav
-    const navLinks = document.querySelectorAll('#main-nav a');
+  // Get all <a> and <button> elements
+  const elements = document.querySelectorAll('a, button');
 
-    // Add event listeners to each nav link
-    navLinks.forEach(function(link) {
-        link.addEventListener('mouseover', function() {
-            if ($("body").hasClass("night-city-mode")) {
-                hoverNightAudio.play();
-            } else {
-                hoverDayAudio.play();
-            }
-        });
+  // Add event listeners to each element
+  elements.forEach(function(element) {
+      element.addEventListener('mouseover', function() {
+          if (document.body.classList.contains("night-city-mode")) {
+              hoverNightAudio.play();
+          } else {
+              hoverDayAudio.play();
+          }
+      });
 
-        link.addEventListener('click', function() {
-            if ($("body").hasClass("night-city-mode")) {
-                clickNightAudio.play();
-            } else {
-                clickDayAudio.play();
-            }
-        });
-    });
+      element.addEventListener('click', function() {
+          if (document.body.classList.contains("night-city-mode")) {
+              clickNightAudio.play();
+          } else {
+              clickDayAudio.play();
+          }
+      });
+  });
 });

@@ -1,6 +1,7 @@
 window.ShifumiGame = (function() {
     let playerScore, computerScore, moves, gameInitialized = false;
-    let mentalistMode = false; // Add a global variable for mentalist mode
+    let mentalistMode = false;
+    let playerOptions = [];
 
     function initGame(difficulty, mentalist) {
         if (gameInitialized) return;
@@ -9,36 +10,66 @@ window.ShifumiGame = (function() {
         playerScore = 0;
         computerScore = 0;
         moves = 0;
-        mentalistMode = mentalist; // Initialize mentalist mode
+        mentalistMode = mentalist;
         console.log("Shifumi initialized");
+        resetGameState();
         setupEventListeners(difficulty);
     }
 
-    function setupEventListeners(difficulty) {
+    function resetGameState() {
         const rockBtn = document.querySelector('.rock');
         const paperBtn = document.querySelector('.paper');
         const scissorBtn = document.querySelector('.scissor');
-        const playerOptions = [rockBtn, paperBtn, scissorBtn];
+        playerOptions = [rockBtn, paperBtn, scissorBtn];
 
         playerOptions.forEach(option => {
-            option.addEventListener('click', function () {
-                if (mentalistMode && moves < 10) {
-                    goMentalist();
-                }
-                const movesLeft = document.querySelector('.movesleft');
-                moves++;
-                movesLeft.innerText = `Moves Left: ${10 - moves}`;
+            option.style.display = 'inline-block'; // Show all options
+        });
 
-                const choiceNumber = Math.floor(Math.random() * 3);
-                const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
+        const movesLeft = document.querySelector('.movesleft');
+        movesLeft.style.display = 'block';
+        movesLeft.innerText = 'Moves Left: 10';
 
-                determineWinner(this.innerText, computerChoice, difficulty);
+        const chooseMove = document.querySelector('.move');
+        chooseMove.innerText = '';
 
-                if (moves === 10) {
-                    endGame(playerOptions, movesLeft);
-                }
+        const result = document.querySelector('.result');
+        result.style.fontSize = '';
+        result.innerText = '';
+        result.style.color = '';
+
+        const playerScoreBoard = document.querySelector('.p-count');
+        const computerScoreBoard = document.querySelector('.c-count');
+        playerScoreBoard.textContent = '0';
+        computerScoreBoard.textContent = '0';
+    }
+
+    function setupEventListeners(difficulty) {
+        playerOptions.forEach(option => {
+            option.addEventListener('click', function(event) {
+                handleClick(event, difficulty);
             });
         });
+    }
+
+    function handleClick(event, difficulty) {
+        if (moves >= 10) return;
+
+        if (mentalistMode && moves < 10) {
+            goMentalist();
+        }
+        const movesLeft = document.querySelector('.movesleft');
+        moves++;
+        movesLeft.innerText = `Moves Left: ${10 - moves}`;
+
+        const choiceNumber = Math.floor(Math.random() * 3);
+        const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
+
+        determineWinner(event.target.innerText, computerChoice, difficulty);
+
+        if (moves === 10) {
+            endGame(playerOptions, movesLeft);
+        }
     }
 
     function determineWinner(player, computer, difficulty) {
@@ -88,6 +119,7 @@ window.ShifumiGame = (function() {
 
         playerOptions.forEach(option => {
             option.style.display = 'none';
+            option.removeEventListener('click', handleClick); // Remove event listeners
         });
 
         chooseMove.innerText = '[GAME OVER]';
@@ -106,6 +138,10 @@ window.ShifumiGame = (function() {
             result.innerText = 'Tie';
             result.style.color = 'grey';
         }
+
+        // Enable the start button to allow restarting the game
+        $("#shifumi-start").prop("disabled", false);
+        gameInitialized = false; // Allow re-initialization
     }
 
     return {

@@ -162,22 +162,17 @@ body::-webkit-scrollbar {
     font-weight: normal;
 }
 
-/* styles.css */
-
-.control-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    padding: 10px 20px;
-    background-color: white;
-    color: black;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+#controlButton {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 40px;
+    background-color: black;
+    color: white;
+    border-color: white;
+    display: flex;
+    align-items: center;
   }
-  
-/* Add this CSS to your stylesheet or <style> tag */
 
 #main-nav {
     position: relative; /* Ensure the nav is relatively positioned */
