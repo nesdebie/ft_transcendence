@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const clickNightAudio = document.getElementById('click_night');
 
   // Get all <a> and <button> elements
-  const elements = document.querySelectorAll('a, button');
+  const elements = document.querySelectorAll('a');
 
   // Add event listeners to each element
   elements.forEach(function(element) {
