@@ -14,7 +14,7 @@ const route = (event, url_precision = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/shifumi', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
-    { paths: ['/profile', '/friend_requests'], suffix: '' }
+    { paths: ['/profile', '/friend_requests', '/profile_editer'], suffix: '' }
 ];
 
 
