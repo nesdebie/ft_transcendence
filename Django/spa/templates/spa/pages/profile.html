@@ -1,4 +1,5 @@
 <div class="page-container align-center">
+	<h1> Profile </h1>
 	<!-- Display the user's profile picture -->
 	<img id="profile-picture" src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s Profile Picture" width="200" height="200">
 	
@@ -20,7 +21,7 @@
 	<!-- Display friend request buttons if viewing another user's profile -->
 	{% if not is_own_profile and not friends and not request_pending %}
 		{% csrf_token %}
-    	<button id='sendFriendRequestButton' type="button" data-username="{{ user_profile.username }}">Send Friend Request</button>
+    	<button id='sendFriendRequestButton' class="btn btn-dark" type="button" data-username="{{ user_profile.username }}">Send Friend Request</button>
 		<span id="friend-request-validation" class="validation-message text-success"></span>
 		<span id="friend_request-error" class="error-message text-danger"></span>
 	{% endif %}
@@ -29,17 +30,17 @@
 	{% if not is_own_profile %}
 		{% if not blocked %}
 			{% csrf_token %}
-			<button id='blockUserButton' type="button" data-username="{{ user_profile.username }}">Block user</button>
+			<button id='blockUserButton' class="btn btn-dark" type="button" data-username="{{ user_profile.username }}">Block user</button>
 			<span id="blocked-validation" class="validation-message text-success"></span>
 			<span id="block-error" class="error-message text-danger"></span>
 		{% else %}
 			{% csrf_token %}
-			<button id='unblockUserButton' type="button" data-username="{{ user_profile.username }}">Unblock user</button>
+			<button id='unblockUserButton' class="btn btn-dark" type="button" data-username="{{ user_profile.username }}">Unblock user</button>
 			<span id="unblocked-validation" class="validation-message text-success"></span>
 			<span id="unblock-error" class="error-message text-danger"></span>
 		{% endif %}
 	{% endif %}
-	<h2>Find a User</h2>
+	<h3>Find a User</h3>
 	<form id="find-user-form">
 		{% csrf_token %}
 		<div class="form-group">
@@ -49,10 +50,10 @@
 			<label for="find-user-username">Username</label>
 			<input type="text" class="form-control" id="find-user-username" name="find-user-username" required>
 		</div>
-		<button type="submit" class="btn btn-primary btn-block">Search</button>
+		<button type="submit" class="btn btn-dark">Search</button>
 	</form>
 	
-	<h2>Your Friends</h2>
+	<h3>Your Friends</h3>
 	<div class="friends-grid">
 		{% for friend in friends %}
 		<div class="friend-card">
@@ -64,16 +65,16 @@
 		{% endfor %}
 	</div>
 	
-	<h2>Friend Requests</h2>
+	<h3>Friend Requests</h3>
 	<ul>
 		{% for request in received_requests %}
 		<li>
 			{{ request.from_user.username }}
-				<button id="accept-friend-request-button" type="button" data-id="{{ request.id }}">Accept</button>
+				<button id="accept-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Accept</button>
 				<span id="accept-friend-request-error" class="error-message text-danger"></span>
-				<button id="deny-friend-request-button" type="button" data-id="{{ request.id }}">Deny</button>
+				<button id="deny-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Deny</button>
 				<span id="deny-friend-request-error" class="error-message text-danger"></span>
-				<button id="block-user-button" type="button" data-username="{{ request.from_user.username }}">Block</button>
+				<button id="block-user-button" class="btn btn-dark" type="button" data-username="{{ request.from_user.username }}">Block</button>
 				<span id="block-user-error" class="error-message text-danger"></span>
 		</li>
 		{% endfor %}

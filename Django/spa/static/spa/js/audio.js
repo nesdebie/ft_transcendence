@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const audio_night = document.getElementById('nightCityModeMusic');
   const audio_day = document.getElementById('dayModeMusic');
-  const controlButton = document.getElementById('controlButton');
+  const audioButton = document.getElementById('audioButton');
   let audioPlaying = false; // Flag to track audio state
   let currentAudio = null; // Track the currently playing audio
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Event listener for control button click
-  controlButton.addEventListener('click', function() {
+  audioButton.addEventListener('click', function() {
       toggleAudio();
   });
 

@@ -162,7 +162,12 @@ body::-webkit-scrollbar {
     font-weight: normal;
 }
 
-#controlButton {
+#main-nav {
+    position: relative; /* Ensure the nav is relatively positioned */
+  }
+
+
+#audioButton {
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -174,11 +179,7 @@ body::-webkit-scrollbar {
     align-items: center;
   }
 
-#main-nav {
-    position: relative; /* Ensure the nav is relatively positioned */
-  }
-  
-  #logout-button {
+#logout-button {
     position: absolute;
     bottom: 10px; /* Adjust this value as needed */
     left: 10px; /* Adjust this value as needed */
