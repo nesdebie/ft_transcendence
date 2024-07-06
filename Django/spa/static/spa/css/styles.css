@@ -13,13 +13,7 @@ html, body {
     height: 100%;
 }
 
-.button {
-    color: black;
-    outline: none; /* Remove outline */
-}
-
 p {
-    
     margin-block-start: 0;
     text-indent: 1rem;
 }
@@ -142,19 +136,24 @@ body::-webkit-scrollbar {
     object-fit: cover; /* Ensures the image covers the area */
 }
 
+#nightCityModeBtnImg {
+    border: none;
+    outline: none; /* Remove outline */
+  }
+
 .score {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-.header,
-.scores {
+
+.header, .scores {
     display: flex;
     align-items: center;
     margin: 5px 0;
 }
-.header h2,
-.scores p {
+
+.header h2, .scores p {
     margin: 0 10px;
 }
 .header h2 {
@@ -164,7 +163,6 @@ body::-webkit-scrollbar {
 #main-nav {
     position: relative; /* Ensure the nav is relatively positioned */
   }
-
 
 #audioButton {
     position: absolute;
