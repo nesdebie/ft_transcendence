@@ -37,14 +37,26 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleAudio();
   });
 
-  // Automatically toggle audio when switching to night-city-mode
   $("body").on("click", "#nightCityModeBtn", function() {
-      $("body").toggleClass("night-city-mode");
-      console.log("Night city mode toggled. Current state:", $("body").hasClass("night-city-mode"));
+    $("body").toggleClass("night-city-mode");
+    console.log("Night city mode toggled. Current state:", $("body").hasClass("night-city-mode"));
 
-      if (audioPlaying) {
-          playAudioBasedOnMode(); // Switch to the correct audio while keeping it playing
-      }
+    // Check if night-city-mode is enabled
+    if ($("body").hasClass("night-city-mode")) {
+        $(".btn.btn-dark").each(function() {
+            $(this).attr("data-original-class", $(this).attr("class")); // Save the original class as a custom attribute
+            $(this).removeClass("btn btn-dark").addClass("cyberpunk"); // Change to cyberpunk
+        });
+    } else {
+        $(".cyberpunk").each(function() {
+            var originalClass = $(this).attr("data-original-class"); // Retrieve the original class
+            $(this).attr("class", originalClass); // Restore the original class
+        });
+    }
+
+    if (audioPlaying) {
+        playAudioBasedOnMode(); // Switch to the correct audio while keeping it playing
+    }
   });
 });
 
