@@ -1,3 +1,49 @@
+// Function to apply night city mode
+function applyNightCityMode() {
+    document.body.classList.add("cyberpunk");
+
+    // Handle btn btn-dark
+    document.querySelectorAll(".btn.btn-dark").forEach(function(element) {
+        if (!element.getAttribute("data-original-class")) {
+            element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
+        }
+        element.classList.remove("btn", "btn-dark");
+        element.classList.add("cyberpunk"); // Change to cyberpunk
+    });
+
+    // Handle btn btn-light
+    document.querySelectorAll(".btn.btn-light").forEach(function(element) {
+        if (!element.getAttribute("data-original-class")) {
+            element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
+        }
+        element.classList.remove("btn", "btn-light");
+        element.classList.add("cyberpunk", "blue"); // Change to cyberpunk blue
+    });
+}
+
+// Function to remove night city mode
+function removeNightCityMode() {
+    document.body.classList.remove("cyberpunk");
+
+    // Restore original class for .cyberpunk elements
+    document.querySelectorAll(".cyberpunk").forEach(function(element) {
+        var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
+        if (originalClass) {
+            element.setAttribute("class", originalClass); // Restore the original class
+            element.removeAttribute("data-original-class");
+        }
+    });
+
+    // Restore original class for .cyberpunk.blue elements
+    document.querySelectorAll(".cyberpunk.blue").forEach(function(element) {
+        var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
+        if (originalClass) {
+            element.setAttribute("class", originalClass); // Restore the original class
+            element.removeAttribute("data-original-class");
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const audio_night = document.getElementById('nightCityModeMusic');
     const audio_day = document.getElementById('dayModeMusic');
@@ -36,52 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
     audioButton.addEventListener('click', function() {
         toggleAudio();
     });
-
-    // Function to apply night city mode
-    function applyNightCityMode() {
-        document.body.classList.add("cyberpunk");
-
-        // Handle btn btn-dark
-        document.querySelectorAll(".btn.btn-dark").forEach(function(element) {
-            if (!element.getAttribute("data-original-class")) {
-                element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
-            }
-            element.classList.remove("btn", "btn-dark");
-            element.classList.add("cyberpunk"); // Change to cyberpunk
-        });
-
-        // Handle btn btn-light
-        document.querySelectorAll(".btn.btn-light").forEach(function(element) {
-            if (!element.getAttribute("data-original-class")) {
-                element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
-            }
-            element.classList.remove("btn", "btn-light");
-            element.classList.add("cyberpunk", "blue"); // Change to cyberpunk blue
-        });
-    }
-
-    // Function to remove night city mode
-    function removeNightCityMode() {
-        document.body.classList.remove("cyberpunk");
-
-        // Restore original class for .cyberpunk elements
-        document.querySelectorAll(".cyberpunk").forEach(function(element) {
-            var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
-            if (originalClass) {
-                element.setAttribute("class", originalClass); // Restore the original class
-                element.removeAttribute("data-original-class");
-            }
-        });
-
-        // Restore original class for .cyberpunk.blue elements
-        document.querySelectorAll(".cyberpunk.blue").forEach(function(element) {
-            var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
-            if (originalClass) {
-                element.setAttribute("class", originalClass); // Restore the original class
-                element.removeAttribute("data-original-class");
-            }
-        });
-    }
 
     // Apply night city mode if it is enabled in local storage
     function applyNightCityModeOnLoad() {
@@ -135,3 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Export the functions
+export { applyNightCityMode, removeNightCityMode };
