@@ -34,7 +34,7 @@ const handleLocation = async () => {
     console.log("Handle location : " + path + "\n to route = " + route);
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
-    call_page_functions();
+    //call_page_functions();
     reapplyNightCityModeIfNecessary(); // Reapply cyberpunk mode if necessary
 };
 
@@ -45,15 +45,15 @@ function reapplyNightCityModeIfNecessary() {
     }
 }
 
-// Permet de call des fonctions Js specifiques 
-// pour des element apparaissant dans le HTML 
-function call_page_functions() {
-    if (document.getElementById('user-profile-picture'))
-        fetchUserProfilePicture();
-    // if (document.getElementById('user-username'))
-    //  fetchUserProfileData();
-    //if ...
-}
+// // Permet de call des fonctions Js specifiques 
+// // pour des element apparaissant dans le HTML 
+// function call_page_functions() {
+//     if (document.getElementById('user-profile-picture'))
+//         fetchUserProfilePicture();
+//     // if (document.getElementById('user-username'))
+//     //  fetchUserProfileData();
+//     //if ...
+// }
 
 export const redirectToRoute = (path) => {
     window.history.replaceState({}, "", path);
