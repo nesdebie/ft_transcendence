@@ -15,6 +15,8 @@ wait_for_service() {
 wait_for_service "App database" "$APP_DB_HOST" "$APP_DB_PORT" "$APP_DB_USER"
 wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHANNEL_DB_USER"
 
+# 2FA make migrations 
+python3 manage.py makemigrations
 # Run migrations
 python3 manage.py migrate
 
