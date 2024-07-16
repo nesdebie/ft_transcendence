@@ -20,9 +20,7 @@ def login_view(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            print(f"Login attempt for user: {user.username}, 2FA: {user.two_factor_enabled}, Activation Code: {user.activation_code}")
             if user.two_factor_enabled:
-                print("Two factor enabeld")
                 secret = user.activation_code
                 otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
                 qr = qrcode.make(otp_url)
@@ -32,6 +30,8 @@ def login_view(request):
                 qr_base = qr_bytes.getvalue()
                 qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
 
+                login(request, user) # 2FA added so user can connect normally with 2 FA
+
                 return JsonResponse({
                     'status': 'success',
                     'two_factor_enabled': True,
@@ -40,106 +40,11 @@ def login_view(request):
                 })
             else:
                 login(request, user)
-                print("in else if user not none")
                 return JsonResponse({'status': 'success'})
 			
         return JsonResponse({'errors': {'login': 'Player does not exist or password is wrong'}}, status=400)
     
     return JsonResponse({'status': 'invalid method'}, status=405)
-
-#def login_view(request):
-#	if request.method == 'POST':
-#		username = request.POST.get('username')
-#		password = request.POST.get('password')
-#		user = authenticate(request, username=username, password=password)
-#		if user is not None:
-#			# 2FA
-#			if user.two_factor_enabled:  # Assurez-vous que le modèle utilisateur a cet attribut
-#				secret = user.activation_code  # Assurez-vous que le modèle utilisateur a cet attribut
-#				otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
-#				qr = qrcode.make(otp_url)
-#				qr_bytes = BytesIO()
-#				qr.save(qr_bytes)
-#				qr_base = qr_bytes.getvalue()
-#				qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
-#				
-#				return JsonResponse({
-#                    'status': 'success',
-#                    'two_factor_enabled': True,
-#                    'qr_code_base64': qr_base64,
-#                    'username': user.username
-#                })# 2FA
-#			else:
-#				login(request, user)
-#				return JsonResponse({'status': 'success'})
-#		
-#		return JsonResponse({'errors': {'login': 'Player does not exist or password is wrong'}}, status=400)
-#	return JsonResponse({'status': 'invalid method'}, status=405)
-
-#def register_view(request):
-#	if request.method == 'POST':
-#		username	= request.POST.get('username')
-#		password 	= request.POST.get('password')
-#		password2 	= request.POST.get('password2')
-#		email 		= request.POST.get('email')
-#		image		= request.FILES.get('image')
-#		nickname	= request.POST.get('nickname')
-#		#2FA
-#		two_factor_auth = request.POST.get('two_factor_auth') == 'on'
-#	
-#		errors = {}
-#
-#		if Player.objects.filter(username=username).exists():
-#			errors['username'] = "Username exist already."
-#
-#		if Player.object.filter(email=email).exists():
-#			errors['email'] = "This email is already used, if it is yours try to log in instead."
-#
-#		try:
-#			validate_password(password, Player)
-#		except ValidationError as error:
-#			errors['password'] = error.messages
-#			
-#
-#		if (password != password2):
-#			errors['password2'] = "Passwords don't match"
-#
-#		if (errors):
-#			return JsonResponse({"errors": errors}, status=400)
-#
-#		user = Player.objects.create_user(
-#			username=username, 
-#			password=password,
-#			email = email,
-#			nickname = nickname,
-#			profile_picture = image
-#			)
-#		#2FA
-#		if two_factor_auth:
-#			secret = pyotp.random_base32()
-#			user.activation_code = secret  # Assurez-vous que le modèle utilisateur a cet attribut
-#			user.two_factor_enabled = True  # Assurez-vous que le modèle utilisateur a cet attribut
-#			user.save()
-#			
-#			otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
-#			qr = qrcode.make(otp_url)
-#			qr_bytes = BytesIO()
-#			qr.save(qr_bytes)
-#			
-#			qr_base = qr_bytes.getvalue()
-#			qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
-#			
-#			login(request, user)
-#			return JsonResponse({
-#                'status': 'success',
-#                'two_factor_enabled': True,
-#                'qr_code_base64': qr_base64
-#            })
-#	
-#		login(request, user)
-#		return JsonResponse({'status': 'success'})
-#	
-#	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register_view(request):
     if request.method == 'POST':
@@ -150,10 +55,6 @@ def register_view(request):
         image = request.FILES.get('image')
         nickname = request.POST.get('nickname')
         two_factor_auth = request.POST.get('two_factor_auth') == 'on'
-
-        print("two factor auth val : ", two_factor_auth)
-        #print("psswwd : ", password)
-
     
         errors = {}
 
@@ -187,8 +88,6 @@ def register_view(request):
             user.two_factor_enabled = True
             user.save()
 
-            print(f"User {username} 2FA enabled: {user.two_factor_enabled}")
-
             otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
             qr = qrcode.make(otp_url)
             qr_bytes = BytesIO()
@@ -197,8 +96,6 @@ def register_view(request):
             qr_base = qr_bytes.getvalue()
             qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
 
-            print(f"User created: {user.username}, 2FA: {user.two_factor_enabled}, Activation Code: {user.activation_code}")
-
             login(request, user)
             return JsonResponse({
                 'status': 'success',
@@ -206,7 +103,6 @@ def register_view(request):
                 'qr_code_base64': qr_base64
             })
 
-        print(f"User created: {user.username}, 2FA: {user.two_factor_enabled}, Activation Code: {user.activation_code}")
         login(request, user)
         return JsonResponse({'status': 'success'})
 

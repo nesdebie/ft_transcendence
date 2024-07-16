@@ -1,66 +1,6 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
-
-//async function login(event) {
-//	event.preventDefault();
-//	const username = document.getElementById('login-username').value;
-//	const password = document.getElementById('login-password').value;
-//
-//	const formData = new FormData();
-//	formData.append('username', username);
-//	formData.append('password', password);
-//
-//	try {
-//		const response = await fetch('/users_api/login/', {
-//			method: 'POST',
-//			headers: {
-//				'X-CSRFToken': getCookie('csrftoken')
-//			},
-//			body: formData
-//		});
-//
-//		const data = await response.json()
-//		console.log("Login response data:", data); // Debug message
-//		
-//		if (response.ok) {
-//			console.log("Response ok")
-//			// 2FA -->
-//			if (data.two_factor_enabled) {
-//				console.log("in two factor")
-//				// Affichez le QR code si 2FA est activée
-//				const qrCodeContainer = document.getElementById('qr-code-container');
-//				const qrCodeElement = document.getElementById('qr-code');
-//				qrCodeContainer.style.display = 'block';
-//				qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
-//				
-//				// Ajoutez un événement pour soumettre le code OTP
-//				document.getElementById('otp-form').addEventListener('submit', function(event) {
-//					event.preventDefault();
-//					verifyOtp(data.username); // == true ) {
-//					
-//					console.log("verify opt true")
-//					redirectToRoute('/');
-//					updateSidebar();
-//					return true;
-//				});
-//			} 
-//			else {// <-- 2FA
-//				console.log("no 2FA")
-//				redirectToRoute('/');
-//				updateSidebar();
-//				return true;
-//			}
-//		} else {
-//			console.log("handle error coming")
-//			handleErrors(data);
-//			return false;
-//		}
-//	} catch (error) {
-//		console.error('Error during login:', error);
-//		return false;
-//	}
-//}
 // 2FA 
 async function login(event) {
     event.preventDefault();
@@ -81,13 +21,11 @@ async function login(event) {
         });
 
         const data = await response.json();
-        console.log("Login response data:", data); // Debug message
         
         if (response.ok) {
             console.log("Response ok");
             // 2FA -->
             if (data.two_factor_enabled) {
-                console.log("in two factor");
                 // Affichez le QR code si 2FA est activée
                 const qrCodeContainer = document.getElementById('qr-code-container');
                 const qrCodeElement = document.getElementById('qr-code');
@@ -99,8 +37,7 @@ async function login(event) {
                     event.preventDefault();
                     verifyOtp(data.username).then(result => {
                         if (result) {
-							console.log("2FA connection accepted")
-                            redirectToRoute('/');
+							redirectToRoute('/');
                             updateSidebar();
 							return true;
                         }
@@ -108,13 +45,11 @@ async function login(event) {
                 });
             } else { // <-- 2FA
 				// aut with no 2FA
-                console.log("no 2FA");
                 redirectToRoute('/');
                 updateSidebar();
                 return true;
             }
         } else {
-            console.log("handle error coming");
             handleErrors(data);
             return false;
         }
@@ -123,37 +58,6 @@ async function login(event) {
         return false;
     }
 }
-// 2FA 
-//async function verifyOtp(username) {
-//	const otp = document.getElementById('otp').value;
-//	const formData = new FormData();
-//	formData.append('username', username);
-//	formData.append('otp_code', otp);
-//
-//	try {
-//		const response = await fetch('/users_api/verify_otp/', {
-//			method: 'POST',
-//			headers: {
-//				'X-CSRFToken': getCookie('csrftoken')
-//			},
-//			body: formData
-//		});
-//		const data = await response.json();
-//		if (response.ok) {
-//			console.log("response ok in opt ")
-//			//redirectToRoute('/');
-//			//updateSidebar();
-//			//return true;
-//		} else {
-//			console.log("response not ok")
-//			alert('Invalid OTP. Please try again.');
-//			//return false;
-//		}
-//	} catch (error) {
-//		console.error('Error during OTP verification:', error);
-//		//return false;
-//	}
-//}
 
 // 2FA , fonction ajouter pour vérifier OPT si le code est bien scanné et le code bien rentré 
 async function verifyOtp(username) {
@@ -172,10 +76,9 @@ async function verifyOtp(username) {
         });
         const data = await response.json();
         if (response.ok) {
-            console.log("response ok in opt");
+			await checkAuthentication();
             return true;
         } else {
-            console.log("response not ok");
             alert('Invalid OTP. Please try again.');
             return false;
         }
@@ -244,9 +147,12 @@ async function checkAuthentication() {
 
     if (response.ok) {
         const data = await response.json();
+		print("data is : ", data);
         if (data.authenticated) {
+			console.log("CheckAuthentification OK : ", data);
             return true;
         } else {
+			console.log("CheckAuthentification NOK : ", data);
             return false;
         }
     } else {
