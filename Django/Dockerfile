@@ -20,7 +20,8 @@ COPY . /app/.
 # Install Python dependencies
 RUN pip install --upgrade pip \
     && pip install -r config/requirements.txt \
-    pip install pyotp qrcode[pil]
+    && pip install pyotp qrcode[pil] web3 
+    # blockchain 
 
 # Add execution permissions to the entrypoint script
 RUN chmod +x /app/config/entrypoint.sh

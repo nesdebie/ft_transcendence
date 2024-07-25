@@ -1,0 +1,45 @@
+
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+Compiling your contracts...
+===========================
+> Everything is up to date, there is nothing to compile.
+
+
+Starting migrations...
+======================
+> Network name:    'development'
+> Network id:      1721904425497
+> Block gas limit: 30000000 (0x1c9c380)
+
+
+2_deploy_contracts.js
+=====================
+
+   Deploying 'PongMatches'
+   -----------------------
+   > transaction hash:    0x4f6cce61c4b4864db6651f5390fc2cd0733eb30f99b4399a9cd2465b839ddf9b
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x991a4afac6a39771321f2213167224CD0fdf8189
+   > block number:        1
+   > block timestamp:     1721904446
+   > account:             0x4Ad62Dc0273e79587AE8cA24fEea9803caadA01a
+   > balance:             999.99641933425
+   > gas used:            1060938 (0x10304a)
+   > gas price:           3.375 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00358066575 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:       0.00358066575 ETH
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.00358066575 ETH
+
+

@@ -1,0 +1,82 @@
+ganache v7.9.1 (@ganache/cli: 0.10.1, @ganache/core: 0.10.1)
+Starting RPC server
+
+Available Accounts
+==================
+(0) 0x4Ad62Dc0273e79587AE8cA24fEea9803caadA01a (1000 ETH)
+(1) 0xE2eD5C60d9F263c3822a4eeddFDFF4a20837DaD1 (1000 ETH)
+(2) 0xD106414c39667d6E127b9Ad78580553Afe1c596d (1000 ETH)
+(3) 0x7cA32Ff4aB226ABca0685E392C704094238d7b52 (1000 ETH)
+(4) 0x9959Ec143516A0697F26355111C01594f78c8B46 (1000 ETH)
+(5) 0xABe944Ee9465a91276A722D8FE1434c88e58364F (1000 ETH)
+(6) 0x4492C1e4cf2F86C9697D5BFd16A4Ecbb63a3333e (1000 ETH)
+(7) 0x03dF1416e3715Ea0dF5F03F6574978dB72c4f7e5 (1000 ETH)
+(8) 0x07D579a6d665885bE779E312e84C253bFb703D91 (1000 ETH)
+(9) 0x8F0aE3A34075110Fc26EBC1862331aE8A47cB33a (1000 ETH)
+
+Private Keys
+==================
+(0) 0x14c6c04c4e74e8fb541af88ac8bed5193338a636d3794dde0987a9b3b0106f4d
+(1) 0xdda9a9bd86129397d58531a1d74036499ec007b13d1c69680b190c2d1ff8256c
+(2) 0xf95b03cdf9710c9cbaca320260016815dd4813e4497c8cc810e0cea24e2ea535
+(3) 0x1089a5ac7797c02c2189745ecfe98c069c67bc2f5961ea875408086e7a983c1d
+(4) 0x610c3e684f7b96dc34e4e2a2b356bfd08c1c9541e05b0e004a04ca0ef228e996
+(5) 0xe09116e7f19d3fa148e97951c492c8ef7d672b8df7604865941663679b9bfc2b
+(6) 0xc7891ce1674615f74809e4c6b54650f55ba20f2df6a2260b231132853771521c
+(7) 0x901008c11b365250889690071f7c142a59555047ce79cf3f70763d61078cf800
+(8) 0x795ba768307934e8526cf62f11727eb5ff1f1571ec3c818a3b4059fb008250c2
+(9) 0xc6c8638bc2c5d534ec0f3abd0666fdbab859967e2e321aec49229549e2e0afe3
+
+HD Wallet
+==================
+Mnemonic:      mandate all sauce dentist ride audit book digital deny sell inmate become
+Base HD Path:  m/44'/60'/0'/0/{account_index}
+
+Default Gas Price
+==================
+2000000000
+
+BlockGas Limit
+==================
+30000000
+
+Call Gas Limit
+==================
+50000000
+
+Chain
+==================
+Hardfork: shanghai
+Id:       1337
+
+RPC Listening on 0.0.0.0:7545
+eth_blockNumber
+net_version
+eth_accounts
+eth_getBlockByNumber
+eth_accounts
+net_version
+eth_getBlockByNumber
+eth_getBlockByNumber
+net_version
+eth_getBlockByNumber
+eth_estimateGas
+net_version
+eth_blockNumber
+eth_getBlockByNumber
+eth_estimateGas
+eth_getBlockByNumber
+eth_gasPrice
+eth_sendTransaction
+
+  Transaction: 0x4f6cce61c4b4864db6651f5390fc2cd0733eb30f99b4399a9cd2465b839ddf9b
+  Contract created: 0x991a4afac6a39771321f2213167224cd0fdf8189
+  Gas usage: 1060938
+  Block number: 1
+  Block time: Thu Jul 25 2024 10:47:26 GMT+0000 (Coordinated Universal Time)
+
+eth_getTransactionReceipt
+eth_getCode
+eth_getTransactionByHash
+eth_getBlockByNumber
+eth_getBalance

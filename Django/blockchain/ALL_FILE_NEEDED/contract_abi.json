@@ -1,0 +1,240 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "matchId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "participant1",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "participant2",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "score",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
+      }
+    ],
+    "name": "MatchAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "matchExists",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "matchIndexById",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "matches",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "matchId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "participant1",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "participant2",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "score",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_matchId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_participant1",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_participant2",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_score",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_winner",
+        "type": "string"
+      }
+    ],
+    "name": "addMatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_matchId",
+        "type": "string"
+      }
+    ],
+    "name": "getMatchById",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "matchId",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "participant1",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "participant2",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "score",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "winner",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct PongMatches.Match",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [],
+    "name": "getAllMatches",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "matchId",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "participant1",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "participant2",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "score",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "winner",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct PongMatches.Match[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  }
+]
