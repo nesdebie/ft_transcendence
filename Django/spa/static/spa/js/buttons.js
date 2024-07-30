@@ -1,6 +1,6 @@
 import { register, login, logout, updateSidebar, find_user, checkAuthentication } from "./auth.js";
 import { redirectToRoute } from "./router.js";
-import { sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user, unblock_user } from "./friend_managment.js";
+import { sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriendRequest, removeFriend, block_user, unblock_user } from "./friend_managment.js";
 
 $(document).ready(function() {
     $("#profile-button").click(function() {
@@ -38,23 +38,31 @@ document.body.addEventListener('click', function(event) {
 
     if (target.id === 'logout-button') {
         logout(event);
-    } else if (target.id === 'sendFriendRequestButton') {
+    } else if (target.id === 'send-friend-request-button') {
         const username = target.getAttribute('data-username');
         console.log("sending friend request to " + username);
         sendFriendRequest(username);
+    } else if (target.id === 'remove-friend-request-button') {
+        const username = target.getAttribute('data-username');
+        console.log("removing friend request to " + username);
+        removeFriendRequest(username);
     } else if (target.id === 'accept-friend-request-button') {
         const id = target.getAttribute('data-id');
         acceptFriendRequest(id);
     } else if (target.id === 'deny-friend-request-button') {
         const id = target.getAttribute('data-id');
         denyFriendRequest(id);
+    } else if (target.id === 'remove-friend-button') {
+        const username = target.getAttribute('data-username');
+        console.log("removing friend " + username);
+        removeFriend(username);
     } else if (target.id === 'friend-profile-button') {
         const username = target.getAttribute('data-username');
         redirectToRoute("/profile/" + username);
-    } else if (target.id == 'blockUserButton') {
+    } else if (target.id == 'block-user-button') {
         const username = target.getAttribute('data-username');
         block_user(username);
-    } else if (target.id == 'unblockUserButton') {
+    } else if (target.id == 'unblock-user-button') {
         const username = target.getAttribute('data-username');
         unblock_user(username);
     }

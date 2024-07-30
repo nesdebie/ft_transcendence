@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-0fl%sqt^##ykr6o-4e%2x=ii9k-f_9qmj#!^o^#^0x4+jyt%dv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
 
 
 # Application definition
@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'users',
     'spa',
+    'channels',
     'channels_postgres',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,6 +97,7 @@ DATABASES = {
     }
 }
 
+ASGI_APPLICATION = 'SinglePageApp.asgi.application'
 # Channels settings
 CHANNEL_LAYERS = {
     'default': {
@@ -166,3 +168,4 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
