@@ -91,7 +91,21 @@ def send_friend_request(request):
 			return JsonResponse({"errors": {'friend_request': f'{username} does not exist in the database'}})
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
+def remove_friend_request(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try:
+			to_user = Player.object.get(username=username)
+			if FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists():
 
+				FriendRequest.objects.filter(from_user=from_user, to_user=to_user).delete()
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'friend_request': f'You haven\'t send any friend request to {to_user.username}\n'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({"errors": {'friend_request': f'{username} does not exist in the database'}})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def accept_friend_request(request, request_id):
 	try:
@@ -114,6 +128,25 @@ def deny_friend_request(request, request_id):
 	request.delete()
 	return JsonResponse({'status': 'succes'})
 
+
+def remove_friend(request):
+	print('Removing friend')
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try:
+			to_user = Player.object.get(username=username)
+			if Friendship.objects.filter(from_user=from_user, to_user=to_user).exists() \
+				or Friendship.objects.filter(from_user=to_user, to_user=from_user).exists():
+
+				Friendship.objects.filter(from_user=from_user, to_user=to_user).delete()
+				Friendship.objects.filter(from_user=to_user, to_user=from_user).delete()
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'remove_friend': f'There isn\'t any friendshi between you and {to_user.username}\n'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({"errors": {'remove_friend': f'{username} does not exist in the database'}})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def block_user(request):
 	if request.method == 'POST':

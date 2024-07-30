@@ -52,13 +52,20 @@ class Player(AbstractUser):
 	def get_friends(self):
 		return self.friends.all()
 
-	def is_friend(self, player: 'Player'):
-		"""  Return the friendship if it exist else return false """
+	def is_friend(self, player: 'Player') -> bool:
+		try:
+			friendship = Friendship.objects.get(from_user=self, to_user=player)
+			return True
+		except Friendship.DoesNotExist:
+			return False
+
+	def get_friendship(self, player: 'Player'):
+		""" return firendship, if it exist or NONE otherwise """
 		try:
 			friendship = Friendship.objects.get(from_user=self, to_user=player)
 			return friendship
 		except Friendship.DoesNotExist:
-			return False
+			return None
 
 	def get_received_friend_requests(self):
 		return FriendRequest.objects.filter(to_user=self)
