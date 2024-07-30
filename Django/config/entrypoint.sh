@@ -20,4 +20,4 @@ python3 manage.py migrate
 
 
 # Start Gunicorn to serve the Django application
-exec gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application
+exec gunicorn --reload --bind 0.0.0.0:8000 SinglePageApp.wsgi:application

@@ -32,6 +32,8 @@ class Player(AbstractUser):
 	profile_picture 	= models.ImageField(max_length=255, upload_to='profile_pics', default='profile_pics/default.jpg')
 
 	nickname 			= models.CharField(max_length=100, blank=True, default='')
+	online_status		= models.BooleanField(default=False)
+
 
 	friends 			= models.ManyToManyField('self', through='Friendship', symmetrical=False, related_name='related_friends')
 	friend_requests 	= models.ManyToManyField('self', through='FriendRequest', symmetrical=False, related_name='related_friend_requests')
@@ -117,3 +119,14 @@ class OnlineStatus(models.Model):
 	user = models.OneToOneField(Player, on_delete=models.CASCADE)
 	is_online = models.BooleanField(default=False)
 	last_seen = models.DateTimeField(default=timezone.now)
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(Player, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Player, related_name='received_messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.sender} to {self.receiver} at {self.timestamp}'

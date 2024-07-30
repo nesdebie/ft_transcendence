@@ -1,4 +1,5 @@
 import { fetchUserProfilePicture } from "./auth.js"
+import { initChat } from "./chat.js";
 
 const route = (event, url_precision = null) => {
    // If an event is provided, prevent default behavior
@@ -14,7 +15,7 @@ const route = (event, url_precision = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/shifumi', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
-    { paths: ['/profile', '/friend_requests'], suffix: '' }
+    { paths: ['/profile', '/friend_requests', '/chat'], suffix: '' }
 ];
 
 
@@ -38,14 +39,16 @@ const handleLocation = async () => {
     console.log("Handle location : " + path + "\n to route = " + route);
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
-	call_page_functions()
+	call_page_functions(path)
 };
 
 // Permet de call des fonctions Js specifiques 
 // pour des element apparaissant dans le HTML 
-function call_page_functions() {
+function call_page_functions(path) {
 	if (document.getElementById('user-profile-picture'))
 		fetchUserProfilePicture();
+    if (path.startsWith('/chat'))
+        initChat();
     // if (document.getElementById('user-username'))
 	// 	fetchUserProfileData();
 	//if ...
