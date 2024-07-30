@@ -147,7 +147,6 @@ async function checkAuthentication() {
 
     if (response.ok) {
         const data = await response.json();
-		print("data is : ", data);
         if (data.authenticated) {
 			console.log("CheckAuthentification OK : ", data);
             return true;

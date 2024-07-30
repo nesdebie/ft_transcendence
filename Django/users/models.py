@@ -32,10 +32,10 @@ class Player(AbstractUser):
 	profile_picture 	= models.ImageField(max_length=255, upload_to='profile_pics', default='profile_pics/default.jpg')
 
 	nickname 			= models.CharField(max_length=100, blank=True, default='')
-	# 2FA 
+	online_status		= models.BooleanField(default=False)
+
 	activation_code 	= models.CharField(max_length=32, blank=True, null=True)  # Ajout de l'attribut activation_code
 	two_factor_enabled 	= models.BooleanField(default=False)  # Ajout de l'attribut two_factor_enabled
-	online_status		= models.BooleanField(default=False)
 
 
 	friends 			= models.ManyToManyField('self', through='Friendship', symmetrical=False, related_name='related_friends')
