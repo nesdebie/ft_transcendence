@@ -45,11 +45,12 @@ async function login(event) {
                 });
             } else { // <-- 2FA
 				// aut with no 2FA
-                redirectToRoute('/');
+                await redirectToRoute('/');
                 updateSidebar();
                 return true;
             }
         } else {
+			await redirectToRoute('/login');
             handleErrors(data);
             return false;
         }
@@ -59,34 +60,6 @@ async function login(event) {
     }
 }
 
-// 2FA , fonction ajouter pour vérifier OPT si le code est bien scanné et le code bien rentré 
-async function verifyOtp(username) {
-    const otp = document.getElementById('otp').value;
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('otp_code', otp);
-
-    try {
-        const response = await fetch('/users_api/verify_otp/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: formData
-        });
-        const data = await response.json();
-        if (response.ok) {
-			await checkAuthentication();
-            return true;
-        } else {
-            alert('Invalid OTP. Please try again.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Error during OTP verification:', error);
-        return false;
-    }
-}
 
 async function register(event) {
 	event.preventDefault();
@@ -97,8 +70,8 @@ async function register(event) {
 	const image = document.getElementById('register-image').files[0];
     // 2FA
 	const two_factor_auth = document.getElementById('register-2fa').checked;
-
-
+	
+	
 	const formData = new FormData();
 	formData.append('username', username);
 	formData.append('password', password);
@@ -107,21 +80,21 @@ async function register(event) {
 	formData.append('image', image);
 	// 2FA
     formData.append('two_factor_auth', two_factor_auth ? 'on' : '');
-
+	
 	const response = await fetch('/users_api/register/', {
 		method: 'POST',
 		headers: {
 			'X-CSRFToken': getCookie('csrftoken')
 		},
 		body: formData
-
+		
 	});
 	const data = await response.json(); 
 	if (response.ok) {
-		redirectToRoute('/');
+		await redirectToRoute('/');
 		updateSidebar();
 	} else {
-		redirectToRoute('/register');
+		await redirectToRoute('/register');
 		handleErrors(data);
 	}
 }
@@ -133,18 +106,47 @@ async function logout() {
 			'X-CSRFToken': getCookie('csrftoken')
 		},
 	});
-	redirectToRoute('/login');
+	await redirectToRoute('/login');
 	updateSidebar();
 }
 
+// 2FA , fonction ajouter pour vérifier OPT si le code est bien scanné et le code bien rentré 
+async function verifyOtp(username) {
+	const otp = document.getElementById('otp').value;
+	const formData = new FormData();
+	formData.append('username', username);
+	formData.append('otp_code', otp);
+
+	try {
+		const response = await fetch('/users_api/verify_otp/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
+		const data = await response.json();
+		if (response.ok) {
+			await checkAuthentication();
+			return true;
+		} else {
+			alert('Invalid OTP. Please try again.');
+			return false;
+		}
+	} catch (error) {
+		console.error('Error during OTP verification:', error);
+		return false;
+	}
+}
+
 async function checkAuthentication() {
-    const response = await fetch('/users_api/check_authentication/', {
-        method: 'POST',
+	const response = await fetch('/users_api/check_authentication/', {
+		method: 'POST',
         headers: {
-            'X-CSRFToken': getCookie('csrftoken')
+			'X-CSRFToken': getCookie('csrftoken')
         }
     });
-
+	
     if (response.ok) {
         const data = await response.json();
         if (data.authenticated) {
@@ -236,6 +238,7 @@ async function find_user(event) {
 			redirectToRoute('/profile/' + username);
 		} else {
 			console.log("find_user gave back not 200");
+			await redirectToRoute('/profile/')
 			handleErrors(data);
 		}
 	} catch (error) {

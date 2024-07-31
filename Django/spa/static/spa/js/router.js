@@ -54,9 +54,9 @@ function call_page_functions(path) {
 	//if ...
 }
 
-export const redirectToRoute = (path) => {
+export const redirectToRoute = async(path) => {
     window.history.replaceState({}, "", path);
-    handleLocation();
+    await handleLocation();
 };
 
 window.onpopstate = handleLocation;
