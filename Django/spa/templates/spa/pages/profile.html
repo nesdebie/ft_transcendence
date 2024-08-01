@@ -10,7 +10,7 @@
 	<div id="user-email">email: {{ user_profile.email }}</div>
 	<div id="user-join-date">Joined on: {{ user_profile.date_joined }}</div>
 	{% if is_own_profile %}
-	<a href="/profile_editer" onclick="route(event)">Edit</a>
+	<a href="/profile_editor" onclick="route(event)">Edit</a>
 	<a href="/friend_requests" onclick="route(event)">Add friends</a>
 	{% endif %}
 	{% if friends %}
