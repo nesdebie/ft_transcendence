@@ -38,20 +38,11 @@ services:
         depends_on:
             - db
             - db_channels
-            - blockchain
         networks:
             - backend
-    
-    blockchain:
-        build:
-          context: ./Django/blockchain # blockchain 
-          dockerfile: dockerfile
-        networks:
-          - backend
         ports:
-          - "7545:7545"
-        volumes:
-          - ./Django/blockchain/ALL_FILE_NEEDED:/PROJECT
+            - "8000:8000"
+            - "7545:7545"
 
     nginx:
         build:

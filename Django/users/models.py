@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
+from blockchain.ALL_FILE_NEEDED.get_match_data import get_match_data
+from blockchain.ALL_FILE_NEEDED.set_match_data import set_match_data
+
 
 class MyAccountManager(BaseUserManager):
 	def create_user(self, username, password=None, **extra_fields):
