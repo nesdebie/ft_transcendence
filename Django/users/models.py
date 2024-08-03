@@ -35,9 +35,11 @@ class Player(AbstractUser):
 	profile_picture 	= models.ImageField(max_length=255, upload_to='profile_pics', default='profile_pics/default.jpg')
 
 	nickname 			= models.CharField(max_length=100, blank=True, default='')
-	# 2FA 
+	online_status		= models.BooleanField(default=False)
+
 	activation_code 	= models.CharField(max_length=32, blank=True, null=True)  # Ajout de l'attribut activation_code
 	two_factor_enabled 	= models.BooleanField(default=False)  # Ajout de l'attribut two_factor_enabled
+
 
 	friends 			= models.ManyToManyField('self', through='Friendship', symmetrical=False, related_name='related_friends')
 	friend_requests 	= models.ManyToManyField('self', through='FriendRequest', symmetrical=False, related_name='related_friend_requests')
@@ -56,13 +58,20 @@ class Player(AbstractUser):
 	def get_friends(self):
 		return self.friends.all()
 
-	def is_friend(self, player: 'Player'):
-		"""  Return the friendship if it exist else return false """
+	def is_friend(self, player: 'Player') -> bool:
+		try:
+			friendship = Friendship.objects.get(from_user=self, to_user=player)
+			return True
+		except Friendship.DoesNotExist:
+			return False
+
+	def get_friendship(self, player: 'Player'):
+		""" return firendship, if it exist or NONE otherwise """
 		try:
 			friendship = Friendship.objects.get(from_user=self, to_user=player)
 			return friendship
 		except Friendship.DoesNotExist:
-			return False
+			return None
 
 	def get_received_friend_requests(self):
 		return FriendRequest.objects.filter(to_user=self)
@@ -121,3 +130,14 @@ class OnlineStatus(models.Model):
 	user = models.OneToOneField(Player, on_delete=models.CASCADE)
 	is_online = models.BooleanField(default=False)
 	last_seen = models.DateTimeField(default=timezone.now)
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(Player, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Player, related_name='received_messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.sender} to {self.receiver} at {self.timestamp}'

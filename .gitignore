@@ -13,6 +13,7 @@ spa/migrations/__pycache__/__init__.cpython-312.pyc
 SinglePageApp/__pycache__/
 users/__pycache__/
 users/migrations/__pycache__/
+Django/.logs/*
 
 # Fucking .DS_Store
 *.DS_Store
