@@ -7,34 +7,59 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-import os
+# 2FA
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
+from django.contrib.auth import login
 
 def login_view(request):
-	if request.method == 'POST':
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		user = authenticate(request, username=username, password=password)
-		if user is not None:
-			login(request, user)
-			return JsonResponse({'status': 'success'})
-		return JsonResponse({'errors': {'login': 'Player does not exist or password is wrong'}}, status=400)
-	return JsonResponse({'status': 'invalid method'}, status=405)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.two_factor_enabled:
+                secret = user.activation_code
+                otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
+                qr = qrcode.make(otp_url)
+                qr_bytes = BytesIO()
+                qr.save(qr_bytes)
+
+                qr_base = qr_bytes.getvalue()
+                qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
+
+                login(request, user) # 2FA added so user can connect normally with 2 FA
+
+                return JsonResponse({
+                    'status': 'success',
+                    'two_factor_enabled': True,
+                    'qr_code_base64': qr_base64,
+                    'username': user.username
+                })
+            else:
+                login(request, user)
+                return JsonResponse({'status': 'success'})
+			
+        return JsonResponse({'errors': {'login': 'Player does not exist or password is wrong'}}, status=400)
+    
+    return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register_view(request):
     if request.method == 'POST':
-        username    = request.POST.get('username')
-        password    = request.POST.get('password')
-        password2   = request.POST.get('password2')
-        email       = request.POST.get('email')
-        image       = request.FILES.get('image')
-        nickname    = request.POST.get('nickname')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+        email = request.POST.get('email')
+        image = request.FILES.get('image')
+        nickname = request.POST.get('nickname')
+        two_factor_auth = request.POST.get('two_factor_auth') == 'on'
     
         errors = {}
 
         if Player.objects.filter(username=username).exists():
-            errors['username'] = "Username exist already."
+            errors['username'] = "Username already exists."
 
         if Player.objects.filter(email=email).exists():
             errors['email'] = "This email is already used, if it is yours try to log in instead."
@@ -45,30 +70,42 @@ def register_view(request):
             errors['password'] = error.messages
 
         if password != password2:
-            errors['password2'] = "Passwords don't match"
+            errors['password2'] = "Passwords don't match."
 
         if errors:
             return JsonResponse({"errors": errors}, status=400)
 
-        # Check if profile picture already exists and delete it
-        image_name = f"{username}.png"
-        image_path = os.path.join('profile_pics', image_name)
-        if default_storage.exists(image_path):
-            default_storage.delete(image_path)
-
-        # Save the new profile picture
-        if image:
-            default_storage.save(image_path, ContentFile(image.read()))
-
         user = Player.objects.create_user(
-            username=username, 
+            username=username,
             password=password,
             email=email,
             nickname=nickname,
-            profile_picture=image_path
+            profile_picture=image
         )
+        if two_factor_auth:
+            secret = pyotp.random_base32()
+            user.activation_code = secret
+            user.two_factor_enabled = True
+            user.save()
+
+            otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
+            qr = qrcode.make(otp_url)
+            qr_bytes = BytesIO()
+            qr.save(qr_bytes)
+
+            qr_base = qr_bytes.getvalue()
+            qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
+
+            login(request, user)
+            return JsonResponse({
+                'status': 'success',
+                'two_factor_enabled': True,
+                'qr_code_base64': qr_base64
+            })
+
         login(request, user)
         return JsonResponse({'status': 'success'})
+
     return JsonResponse({'status': 'invalid method'}, status=405)
 
 def logout_view(request):
@@ -104,7 +141,21 @@ def send_friend_request(request):
 			return JsonResponse({"errors": {'friend_request': f'{username} does not exist in the database'}})
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
+def remove_friend_request(request):
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try:
+			to_user = Player.object.get(username=username)
+			if FriendRequest.objects.filter(from_user=from_user, to_user=to_user).exists():
 
+				FriendRequest.objects.filter(from_user=from_user, to_user=to_user).delete()
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'friend_request': f'You haven\'t send any friend request to {to_user.username}\n'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({"errors": {'friend_request': f'{username} does not exist in the database'}})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def accept_friend_request(request, request_id):
 	try:
@@ -127,6 +178,25 @@ def deny_friend_request(request, request_id):
 	request.delete()
 	return JsonResponse({'status': 'succes'})
 
+
+def remove_friend(request):
+	print('Removing friend')
+	if request.method == 'POST':
+		username = request.POST.get('username')
+		from_user = request.user
+		try:
+			to_user = Player.object.get(username=username)
+			if Friendship.objects.filter(from_user=from_user, to_user=to_user).exists() \
+				or Friendship.objects.filter(from_user=to_user, to_user=from_user).exists():
+
+				Friendship.objects.filter(from_user=from_user, to_user=to_user).delete()
+				Friendship.objects.filter(from_user=to_user, to_user=from_user).delete()
+				return JsonResponse({'status': 'succes'})
+			else:
+				return JsonResponse ({'errors': {'remove_friend': f'There isn\'t any friendshi between you and {to_user.username}\n'}}, status=400)
+		except Player.DoesNotExist:
+			return JsonResponse({"errors": {'remove_friend': f'{username} does not exist in the database'}})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def block_user(request):
 	if request.method == 'POST':
@@ -177,6 +247,7 @@ def current_user_data(request):
 	username = request.user.username
 	return user_data(request, username=username)
 
+
 def find_user(request):
 	if request.method == 'POST':
 		username	= request.POST.get('username')
@@ -191,3 +262,19 @@ def find_user(request):
 			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
 	else:
 		return JsonResponse({'status': 'invalid method'}, status=405)
+	
+# 2FA
+def verify_otp(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        otp_code = request.POST.get('otp_code')
+        try:
+            user = Player.objects.get(username=username)
+            otp = pyotp.TOTP(user.activation_code)
+            if otp.verify(otp_code):
+                return JsonResponse({'detail': 'OTP is valid'}, status=200)
+            else:
+                return JsonResponse({'detail': 'Invalid OTP'}, status=400)
+        except Player.DoesNotExist:
+            return JsonResponse({'detail': 'User not found'}, status=404)
+    return JsonResponse({'detail': 'Invalid method'}, status=405)

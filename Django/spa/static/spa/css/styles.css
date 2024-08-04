@@ -13,7 +13,13 @@ html, body {
     height: 100%;
 }
 
+.button {
+    color: black;
+    outline: none; /* Remove outline */
+}
+
 p {
+    
     margin-block-start: 0;
     text-indent: 1rem;
 }
@@ -107,6 +113,7 @@ body::-webkit-scrollbar {
 
 .buttons-container i {
     font-size: 42px;
+    color: white; /* Adjust the color as needed */
 }
 
 .buttons-container button {
@@ -136,35 +143,26 @@ body::-webkit-scrollbar {
     object-fit: cover; /* Ensures the image covers the area */
 }
 
-#nightCityModeBtnImg {
-    border: none;
-    outline: none; /* Remove outline */
-  }
-
 .score {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
-.header, .scores {
+.header,
+.scores {
     display: flex;
     align-items: center;
     margin: 5px 0;
 }
-
-.header h2, .scores p {
+.header h2,
+.scores p {
     margin: 0 10px;
 }
 .header h2 {
     font-weight: normal;
 }
 
-#main-nav {
-    position: relative; /* Ensure the nav is relatively positioned */
-  }
-
-#audioButton {
+#controlButton {
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -176,7 +174,11 @@ body::-webkit-scrollbar {
     align-items: center;
   }
 
-#logout-button {
+#main-nav {
+    position: relative; /* Ensure the nav is relatively positioned */
+  }
+  
+  #logout-button {
     position: absolute;
     bottom: 10px; /* Adjust this value as needed */
     left: 10px; /* Adjust this value as needed */

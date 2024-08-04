@@ -1,140 +1,80 @@
-// Function to apply night city mode
-function applyNightCityMode() {
-    document.body.classList.add("cyberpunk");
-
-    // Handle btn btn-dark
-    document.querySelectorAll(".btn.btn-dark").forEach(function(element) {
-        if (!element.getAttribute("data-original-class")) {
-            element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
-        }
-        element.classList.remove("btn", "btn-dark");
-        element.classList.add("cyberpunk"); // Change to cyberpunk
-    });
-
-    // Handle btn btn-light
-    document.querySelectorAll(".btn.btn-light").forEach(function(element) {
-        if (!element.getAttribute("data-original-class")) {
-            element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
-        }
-        element.classList.remove("btn", "btn-light");
-        element.classList.add("cyberpunk", "blue"); // Change to cyberpunk blue
-    });
-}
-
-// Function to remove night city mode
-function removeNightCityMode() {
-    document.body.classList.remove("cyberpunk");
-
-    // Restore original class for .cyberpunk elements
-    document.querySelectorAll(".cyberpunk").forEach(function(element) {
-        var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
-        if (originalClass) {
-            element.setAttribute("class", originalClass); // Restore the original class
-            element.removeAttribute("data-original-class");
-        }
-    });
-
-    // Restore original class for .cyberpunk.blue elements
-    document.querySelectorAll(".cyberpunk.blue").forEach(function(element) {
-        var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
-        if (originalClass) {
-            element.setAttribute("class", originalClass); // Restore the original class
-            element.removeAttribute("data-original-class");
-        }
-    });
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    const audio_night = document.getElementById('nightCityModeMusic');
-    const audio_day = document.getElementById('dayModeMusic');
-    const audioButton = document.getElementById('audioButton');
-    let audioPlaying = false; // Flag to track audio state
-    let currentAudio = null; // Track the currently playing audio
+  const audio_night = document.getElementById('nightCityModeMusic');
+  const audio_day = document.getElementById('dayModeMusic');
+  const controlButton = document.getElementById('controlButton');
+  let audioPlaying = false; // Flag to track audio state
+  let currentAudio = null; // Track the currently playing audio
 
-    // Function to play the correct audio based on the mode
-    function playAudioBasedOnMode() {
-        if (document.body.classList.contains("cyberpunk")) {
-            audio_day.pause();
-            audio_day.currentTime = 0;
-            currentAudio = audio_night;
-        } else {
-            audio_night.pause();
-            audio_night.currentTime = 0;
-            currentAudio = audio_day;
-        }
-        currentAudio.play().catch(error => {
-            console.error('Error playing audio:', error);
-        });
-        audioPlaying = true;
-    }
+  // Function to play the correct audio based on the mode
+  function playAudioBasedOnMode() {
+      if ($("body").hasClass("night-city-mode")) {
+          audio_day.pause();
+          audio_day.currentTime = 0;
+          currentAudio = audio_night;
+      } else {
+          audio_night.pause();
+          audio_night.currentTime = 0;
+          currentAudio = audio_day;
+      }
+      currentAudio.play().catch(error => {
+          console.error('Error playing audio:', error);
+      });
+      audioPlaying = true;
+  }
 
-    // Function to toggle audio playback
-    function toggleAudio() {
-        if (audioPlaying) {
-            currentAudio.pause();
-            audioPlaying = false;
-        } else {
-            playAudioBasedOnMode();
-        }
-    }
+  // Function to toggle audio playback
+  function toggleAudio() {
+      if (audioPlaying) {
+          currentAudio.pause();
+          audioPlaying = false;
+      } else {
+          playAudioBasedOnMode();
+      }
+  }
 
-    // Event listener for control button click
-    audioButton.addEventListener('click', function() {
-        toggleAudio();
-    });
+  // Event listener for control button click
+  controlButton.addEventListener('click', function() {
+      toggleAudio();
+  });
 
-    // Apply night city mode if it is enabled in local storage
-    function applyNightCityModeOnLoad() {
-        if (localStorage.getItem('cyberpunk') === 'true') {
-            applyNightCityMode();
-        }
-    }
+  // Automatically toggle audio when switching to night-city-mode
+  $("body").on("click", "#nightCityModeBtn", function() {
+      $("body").toggleClass("night-city-mode");
+      console.log("Night city mode toggled. Current state:", $("body").hasClass("night-city-mode"));
 
-    // Apply mode on page load
-    applyNightCityModeOnLoad();
-
-    document.querySelector("#nightCityModeBtn").addEventListener('click', function() {
-        if (document.body.classList.contains("cyberpunk")) {
-            removeNightCityMode();
-            localStorage.setItem('cyberpunk', 'false');
-        } else {
-            applyNightCityMode();
-            localStorage.setItem('cyberpunk', 'true');
-        }
-
-        if (audioPlaying) {
-            playAudioBasedOnMode(); // Switch to the correct audio while keeping it playing
-        }
-    });
-
-    // Get the audio elements for day and night
-    const hoverDayAudio = document.getElementById('hover_day');
-    const clickDayAudio = document.getElementById('click_day');
-    const hoverNightAudio = document.getElementById('hover_night');
-    const clickNightAudio = document.getElementById('click_night');
-
-    // Get all <a> elements
-    const elements = document.querySelectorAll('a');
-
-    // Add event listeners to each element
-    elements.forEach(function(element) {
-        element.addEventListener('mouseover', function() {
-            if (document.body.classList.contains("cyberpunk")) {
-                hoverNightAudio.play();
-            } else {
-                hoverDayAudio.play();
-            }
-        });
-
-        element.addEventListener('click', function() {
-            if (document.body.classList.contains("cyberpunk")) {
-                clickNightAudio.play();
-            } else {
-                clickDayAudio.play();
-            }
-        });
-    });
+      if (audioPlaying) {
+          playAudioBasedOnMode(); // Switch to the correct audio while keeping it playing
+      }
+  });
 });
 
-// Export the functions
-export { applyNightCityMode, removeNightCityMode };
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Get the audio elements for day and night
+  const hoverDayAudio = document.getElementById('hover_day');
+  const clickDayAudio = document.getElementById('click_day');
+  const hoverNightAudio = document.getElementById('hover_night');
+  const clickNightAudio = document.getElementById('click_night');
+
+  // Get all <a> and <button> elements
+  const elements = document.querySelectorAll('a, button');
+
+  // Add event listeners to each element
+  elements.forEach(function(element) {
+      element.addEventListener('mouseover', function() {
+          if (document.body.classList.contains("night-city-mode")) {
+              hoverNightAudio.play();
+          } else {
+              hoverDayAudio.play();
+          }
+      });
+
+      element.addEventListener('click', function() {
+          if (document.body.classList.contains("night-city-mode")) {
+              clickNightAudio.play();
+          } else {
+              clickDayAudio.play();
+          }
+      });
+  });
+});

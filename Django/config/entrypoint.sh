@@ -11,13 +11,29 @@ wait_for_service() {
     echo "$1 is ready."
 }
 
+# ganache / blockchain
+echo "starting ganache ..."
+cd ./blockchain/ALL_FILE_NEEDED
+echo "pwd" 
+pwd
+./start.sh 
+
+cd ../..
+
+
+
+echo "start database .."
 # Wait for databases to be ready
 wait_for_service "App database" "$APP_DB_HOST" "$APP_DB_PORT" "$APP_DB_USER"
 wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHANNEL_DB_USER"
 
+echo "migrations .."
+# 2FA make migrations 
+python3 manage.py makemigrations
 # Run migrations
 python3 manage.py migrate
 
 
+echo "gunicorn .."
 # Start Gunicorn to serve the Django application
-exec gunicorn --bind 0.0.0.0:8000 SinglePageApp.wsgi:application
+exec gunicorn --reload --bind 0.0.0.0:8000 SinglePageApp.wsgi:application

@@ -40,6 +40,9 @@ services:
             - db_channels
         networks:
             - backend
+        ports:
+            - "8000:8000"
+            - "7545:7545"
 
     nginx:
         build:

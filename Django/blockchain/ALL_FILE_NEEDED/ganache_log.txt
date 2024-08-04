@@ -1,0 +1,82 @@
+ganache v7.9.1 (@ganache/cli: 0.10.1, @ganache/core: 0.10.1)
+Starting RPC server
+
+Available Accounts
+==================
+(0) 0xBd5e89e3762eFCc0427768FD03FD739d6D5F196f (1000 ETH)
+(1) 0xC32A324f92C09cfCfACaa3265d7CEbDa0858C6f7 (1000 ETH)
+(2) 0xA9797d3dDaC8d6edcac53349ca213BB06d442193 (1000 ETH)
+(3) 0x4Ac0279bee02D4f6ee432609d8B154121ABe935E (1000 ETH)
+(4) 0xB4951FF780E9bf798dF55B0aE6733376A025AB66 (1000 ETH)
+(5) 0xf3e7f2804c069D01ca9ce36501aEa23061FF2993 (1000 ETH)
+(6) 0x59f94BCa4B7E898826928f382Fb341dEf6c2C3a0 (1000 ETH)
+(7) 0xA11c4858d89a0357b8b111EAA234674188dEC268 (1000 ETH)
+(8) 0x3a69A61059e166bF95fB2f36658d68FFB2879095 (1000 ETH)
+(9) 0x5939AE96DbB5d91AC9feDd17721a5cdDa006e20D (1000 ETH)
+
+Private Keys
+==================
+(0) 0x4e6d511054cb88b79b879399156c0a2719929ef6d5399731d7e03e9334246e24
+(1) 0xcd97063e669a034a0ec105c39025231766a922944731e4ef036886bd289b51a4
+(2) 0xde8a8a7aa61ac0dbd4337127fb92d14b1ee458938bc19ef29c41f8f5f00bf377
+(3) 0xe964a3afbd1c418670a427274caa8fde97021c65de7d8884e609f758a43d634c
+(4) 0x0d65be2720cd2ce39e0430ad95c87c81db8aed0173643b804fa23c38fbd74d5e
+(5) 0xfdbff882cd8fde6ab4f3525ee9ba867bcd0c8695821baa6e2b2f6b81b545f822
+(6) 0x61187ecbcb6f3660b9b859187e68ae40626193ad2b1ca2f0ddad817ce491a11b
+(7) 0x00bb7380868e5af7a13bc43693b799c6280c826235009fc847c4f59f2bf91561
+(8) 0xc0346405e11e2758015c681a09236f03a8e60a12de9522ee566272dd531d9f9d
+(9) 0x15e10ff790e918fe893a43907e86ec454bfb8a7af77c4a7e63185eac4e16757e
+
+HD Wallet
+==================
+Mnemonic:      decline turkey rescue trigger wrap copper enrich broccoli system lift metal vicious
+Base HD Path:  m/44'/60'/0'/0/{account_index}
+
+Default Gas Price
+==================
+2000000000
+
+BlockGas Limit
+==================
+30000000
+
+Call Gas Limit
+==================
+50000000
+
+Chain
+==================
+Hardfork: shanghai
+Id:       1337
+
+RPC Listening on 0.0.0.0:7545
+eth_blockNumber
+net_version
+eth_accounts
+eth_getBlockByNumber
+eth_accounts
+net_version
+eth_getBlockByNumber
+eth_getBlockByNumber
+net_version
+eth_getBlockByNumber
+eth_estimateGas
+net_version
+eth_blockNumber
+eth_getBlockByNumber
+eth_estimateGas
+eth_getBlockByNumber
+eth_gasPrice
+eth_sendTransaction
+
+  Transaction: 0x3342cb92a7d42648a22352bf0c4e3fde77e29f8b9d4c4315060dcab27fcf19a5
+  Contract created: 0x738268b7ec3890ca010686dba460e58cfc449e6a
+  Gas usage: 1060938
+  Block number: 1
+  Block time: Sat Aug 03 2024 13:23:28 GMT+0000 (Coordinated Universal Time)
+
+eth_getTransactionReceipt
+eth_getCode
+eth_getTransactionByHash
+eth_getBlockByNumber
+eth_getBalance
