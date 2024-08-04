@@ -61,7 +61,13 @@ def update_profile_picture(request):
     if request.method == 'POST':
         if 'image' in request.FILES:
             profile_picture = request.FILES['image']
-            request.user.profile_picture = profile_picture
+            if profile_picture.content_type != 'image/png':
+                return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
+
+            image_name = f"{request.user.username}.png"
+            image_path = os.path.join('profile_pics', image_name)
+            default_storage.save(image_path, ContentFile(profile_picture.read()))
+            request.user.profile_picture = image_path
             request.user.save()
             return JsonResponse({'status': 'success', 'profile_picture': request.user.profile_picture.url})
         return JsonResponse({'errors': {'image': 'No image file provided'}}, status=400)

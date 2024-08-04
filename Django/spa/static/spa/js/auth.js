@@ -43,6 +43,11 @@ async function register(event) {
 	const email = document.getElementById('register-email').value;
 	const image = document.getElementById('register-image').files[0];
 
+	if (image && image.type !== 'image/png') {
+		alert('Profile picture must be a PNG file.');
+		return;
+	}
+
 	const formData = new FormData();
 	formData.append('username', username);
 	formData.append('password', password);
@@ -56,7 +61,6 @@ async function register(event) {
 			'X-CSRFToken': getCookie('csrftoken')
 		},
 		body: formData
-
 	});
 	const data = await response.json(); 
 	if (response.ok) {

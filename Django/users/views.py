@@ -7,6 +7,10 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+
 def login_view(request):
 	if request.method == 'POST':
 		username = request.POST.get('username')
@@ -19,44 +23,53 @@ def login_view(request):
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register_view(request):
-	if request.method == 'POST':
-		username	= request.POST.get('username')
-		password 	= request.POST.get('password')
-		password2 	= request.POST.get('password2')
-		email 		= request.POST.get('email')
-		image		= request.FILES.get('image')
-		nickname	= request.POST.get('nickname')
-	
-		errors = {}
+    if request.method == 'POST':
+        username    = request.POST.get('username')
+        password    = request.POST.get('password')
+        password2   = request.POST.get('password2')
+        email       = request.POST.get('email')
+        image       = request.FILES.get('image')
+        nickname    = request.POST.get('nickname')
+    
+        errors = {}
 
-		if Player.objects.filter(username=username).exists():
-			errors['username'] = "Username exist already."
+        if Player.objects.filter(username=username).exists():
+            errors['username'] = "Username exist already."
 
-		if Player.object.filter(email=email).exists():
-			errors['email'] = "This email is already used, if it is yours try to log in instead."
+        if Player.objects.filter(email=email).exists():
+            errors['email'] = "This email is already used, if it is yours try to log in instead."
 
-		try:
-			validate_password(password, Player)
-		except ValidationError as error:
-			errors['password'] = error.messages
-			
+        try:
+            validate_password(password, Player)
+        except ValidationError as error:
+            errors['password'] = error.messages
 
-		if (password != password2):
-			errors['password2'] = "Passwords don't match"
+        if password != password2:
+            errors['password2'] = "Passwords don't match"
 
-		if (errors):
-			return JsonResponse({"errors": errors}, status=400)
+        if errors:
+            return JsonResponse({"errors": errors}, status=400)
 
-		user = Player.objects.create_user(
-			username=username, 
-			password=password,
-			email = email,
-			nickname = nickname,
-			profile_picture = image
-			)
-		login(request, user)
-		return JsonResponse({'status': 'success'})
-	return JsonResponse({'status': 'invalid method'}, status=405)
+        # Check if profile picture already exists and delete it
+        image_name = f"{username}.png"
+        image_path = os.path.join('profile_pics', image_name)
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+
+        # Save the new profile picture
+        if image:
+            default_storage.save(image_path, ContentFile(image.read()))
+
+        user = Player.objects.create_user(
+            username=username, 
+            password=password,
+            email=email,
+            nickname=nickname,
+            profile_picture=image_path
+        )
+        login(request, user)
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'invalid method'}, status=405)
 
 def logout_view(request):
 	logout(request)
