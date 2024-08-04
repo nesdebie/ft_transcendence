@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
 			<h2 class="text-center">Register</h2>
-			<form id="register-form" class="register-form">
+			<form id="register-form" class="register-form" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div class="form-group">
 					<label for="register-username">Username</label>
@@ -34,13 +34,7 @@
 					<input type="file" class="form-control" id="register-image" name="image">
 					<span id="image-error" class="error-message text-danger"></span>
 				</div>
-				<!-- 2FA -->
-				<div class="form-group">
-                    <input type="checkbox" id="register-2fa" name="two_factor_auth">
-                    <label for="register-2fa">Enable Two-Factor Authentication (2FA)</label>
-                </div>
-				<!-- -->
-				<button id="register-form-button" type="submit" class="btn btn-primary btn-block">Register</button>
+				<button id="register-form-button" type="submit" class="btn btn-dark">Register</button>
 			</form>
 			<p class="text-center">
 				Have an account yet? <a href="/login" onclick="route(event)">Login</a>

@@ -29,33 +29,6 @@ async function sendFriendRequest(username) {
 	}
 }
 
-async function removeFriendRequest(username) {
-	const formData = new FormData()
-	formData.append('username', username);
-	try {
-		const response = await fetch('/users_api/remove_friend_request/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': getCookie('csrftoken')
-			},
-			body:	formData
-		});
-
-		const data = await response.json()
-		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
-			const validation = document.getElementById('friend-request-validation');
-			validation.textContent = 'Request send !'
-		}
-		else {
-			handleErrors(data);
-		}
-	}
-	catch (error) {
-		console.error('Error during connection to server:', error);
-	}
-}
-
 async function acceptFriendRequest(id) {
 	try {
 		const response = await fetch('/users_api/accept_friend_request/' + id, {
@@ -67,7 +40,7 @@ async function acceptFriendRequest(id) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
+			redirectToRoute('/friend_requests');
 		}
 		else {
 			handleErrors(data);
@@ -89,32 +62,7 @@ async function denyFriendRequest(id) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
-		}
-		else {
-			handleErrors(data);
-		}
-	}
-	catch (error) {
-		console.error('Error during connection to server:', error);
-	}
-}
-
-async function removeFriend(username) {
-	const formData = new FormData()
-	formData.append('username', username);
-	try {
-		const response = await fetch('/users_api/remove_friend/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': getCookie('csrftoken')
-			},
-			body:	formData
-		});
-
-		const data = await response.json()
-		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
+			redirectToRoute('/friend_requests');
 		}
 		else {
 			handleErrors(data);
@@ -175,6 +123,4 @@ async function         unblock_user(username) {
 	}
 }
 
-
-
-export {sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriendRequest, removeFriend, block_user, unblock_user };
+export {sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user, unblock_user };

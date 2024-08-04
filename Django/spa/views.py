@@ -1,84 +1,98 @@
-import logging
-from django.shortcuts import render, get_object_or_404
-from users.models import Player, FriendRequest, Block, Message
-from django.db.models import Q
-
-logger = logging.getLogger(__name__)
+from django.shortcuts import render, redirect, get_object_or_404
+from users.models import Player, FriendRequest, Block
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 def index(request):
-	return render(request, 'spa/index.html')
+    if request.user.is_authenticated:
+        return redirect('self_profile')
+    return render(request, 'spa/index.html')
 
 def pages(request, page):
-	logger.debug(f'View function reached for page {page}')
-	return render(request, f'spa/pages/{page}.html')
+    return render(request, f'spa/pages/{page}.html')
 
+@login_required
 def view_self_profile(request):
-	
-	user: Player = request.user
+    print("view_self_profile called")  # Debug statement
+    user_profile = request.user
+    print(f"user_profile: {user_profile}")  # Debug statement
+    return render(request, 'spa/pages/profile.html', {'user_profile': user_profile, 'is_own_profile': True})
 
-	received_requests = FriendRequest.objects.filter(to_user=user)
-	friends = user.friends.all()
-	context = {
-		'user_profile':			request.user,
-		'is_own_profile':		True,
-		'friendship':			None,
-		'request_pending':  	None,
-		'blocked':				None,
-		'received_requests':	FriendRequest.objects.filter(to_user=user),
-		'friends':				user.friends.all()
-	}
-	
-	return render(request, 'spa/pages/profile.html', context)
-
-
-
+@login_required
 def view_profile(request, username):
-	user: Player = request.user
-	user_profile: Player = get_object_or_404(Player, username=username)
+    print("view_profile called with username:", username)  # Debug statement
+    user = request.user
+    user_profile = get_object_or_404(Player, username=username)
 
+    context = {
+        'user_profile':     user_profile,
+        'is_own_profile':   False,
+        'friends':          user.is_friend(player=user_profile),
+        'request_pending':  FriendRequest.objects.filter(from_user=user, to_user=user_profile).first(),
+        'blocked':          Block.objects.filter(from_user=user, to_user=user_profile).first()
+    }
+    
+    print("User profile context:", context)  # Debug statement
+    return render(request, 'spa/pages/profile.html', context)
 
-	context = {
-		'user_profile':			user_profile,
-		'is_own_profile':		False,
-		'friendship':			user.get_friendship(player=user_profile) if user.is_friend(user_profile) else None,
-		'request_pending':		FriendRequest.objects.filter(from_user=user, to_user=user_profile).first(),
-		'blocked':				Block.objects.filter(from_user=user, to_user=user_profile).first(),
-		'received_requests':	None,
-		'friends':				None,
-	}
-	print(context)
-	return render(request, 'spa/pages/profile.html', context)
-
+@login_required
 def view_friend_requests(request):
-	user = request.user
-	received_requests = FriendRequest.objects.filter(to_user=user)
-	friends = user.friends.all()
-	
-	context = {
-		'received_requests': received_requests,
-		'friends': friends,
-	}
-	return render(request, 'spa/pages/friend_requests.html', context)
+    print("view_friend_requests called")  # Debug statement
+    user = request.user
+    received_requests = FriendRequest.objects.filter(to_user=user)
+    friends = user.friends.all()
+    
+    context = {
+        'received_requests': received_requests,
+        'friends': friends,
+    }
+    return render(request, 'spa/pages/friend_requests.html', context)
 
-def view_chat(request, username=None):
-	# Get the user to chat with
-	if username:
-		user_to_chat = get_object_or_404(Player, username=username)
-	else:
-		user_to_chat = None
+@login_required
+def profile_editor(request):
+    return render(request, 'spa/pages/profile_editor.html', {
+        'update_profile_picture_url': reverse('update_profile_picture'),
+        'change_password_url': reverse('change_password')
+    })
 
-	# Get all users except the current user
-	users = Player.objects.exclude(username=request.user.username)
-	messages = []
-	if user_to_chat:
-		messages = Message.objects.filter(
-			(Q(sender=request.user) & Q(receiver=user_to_chat)) |
-			(Q(sender=user_to_chat) & Q(receiver=request.user))
-		).order_by('timestamp')
-		
-	context = {
-		'users': users,
-		'user_to_chat': user_to_chat,
-		'messages': messages,
-	}
-	return render(request, 'spa/pages/chat.html', context)
+@login_required
+def update_profile_picture(request):
+    if request.method == 'POST':
+        if 'image' in request.FILES:
+            profile_picture = request.FILES['image']
+            if profile_picture.content_type != 'image/png':
+                return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
+
+            image_name = f"{request.user.username}.png"
+            image_path = os.path.join('profile_pics', image_name)
+            default_storage.save(image_path, ContentFile(profile_picture.read()))
+            request.user.profile_picture = image_path
+            request.user.save()
+            return JsonResponse({'status': 'success', 'profile_picture': request.user.profile_picture.url})
+        return JsonResponse({'errors': {'image': 'No image file provided'}}, status=400)
+    return JsonResponse({'status': 'invalid method'}, status=405)
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        new_password2 = request.POST.get('new_password2')
+
+        if not request.user.check_password(old_password):
+            return JsonResponse({'errors': {'old_password': 'Old password is incorrect'}}, status=400)
+
+        if new_password != new_password2:
+            return JsonResponse({'errors': {'new_password2': "Passwords don't match"}}, status=400)
+
+        try:
+            validate_password(new_password, request.user)
+        except ValidationError as error:
+            return JsonResponse({'errors': {'new_password': error.messages}}, status=400)
+
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)  # Important to keep the user logged in
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'invalid method'}, status=405)

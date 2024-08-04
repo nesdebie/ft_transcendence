@@ -10,8 +10,6 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /etc/ssl/certs/selfsigned.crt \
     -subj "/C=FR/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
 
-RUN touch /var/log/nginx/error.log /var/log/nginx/access.log
-
 # Copiez le fichier de configuration nginx
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 

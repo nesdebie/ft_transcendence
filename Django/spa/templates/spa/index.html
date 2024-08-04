@@ -4,10 +4,13 @@
 <head>
   <title>Transcendence</title>
   <meta charset="utf-8">
+  <link rel="shortcut icon" href="{% static 'spa/css/images/favicon.ico'%}">
+  <!--<link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />-->
   <link rel="stylesheet" href="{% static 'spa/css/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/night-city-mode.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/shifumi.css' %}" />
+  <link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -19,7 +22,6 @@
               <a href="/pong" id="nav-pong" onclick="route()">Pong</a>
               <a href="/shifumi" id="nav-shifumi" onclick="route()">ShiFuMi</a>
               <a href="/profile" id="nav-profile" onclick="route()">Profile</a>
-              <a href="/chat" id="nav-chat" onclick="route()">Chats</a>
               <!--<a href="/friend_requests" id="nav-friend-requests" onclick="route()">Friend Requests</a>-->
               <a href="/about" id="nav-about" onclick="route()">About</a>
               <!--<a href="/logout" id="nav-logout" onclick="route()">Logout</a>-->
@@ -32,10 +34,10 @@
 
         <!-- NIGHT CITY MODE BUTTON -->
         <div class="buttons-container">
-          <button id="profile-button" class="socials-card" target="_blank">
+          <button id="profile-button" target="_blank">
             <img id="profile-button-logo" src="/media/profile_pics/default.jpg" width="40" height="45" class="mdi mdi-account-circle" alt="Profile Image">
           </button>
-          <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="button-default">
+          <button id="nightCityModeBtn" aria-label="Toggle Night Mode">
             <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
           </button>
           <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
@@ -46,7 +48,7 @@
           <audio id="click_night" src="{% static 'spa/js/audio/click_night.wav' %}"></audio>
         </div>
 
-        <button id="controlButton" class="btn btn-primary btn-block">
+        <button id="audioButton" class="btn btn-primary btn-block">
           <i class="mdi mdi-volume-high"></i>
         </button>
 

@@ -1,16 +1,16 @@
 all: up
 
 up:
-	docker compose --file ./docker-compose.yml up --build
+	docker-compose --file ./docker-compose.yml up --build
 
 detach:
-	docker compose --file ./docker-compose.yml up --detach --build
+	docker-compose --file ./docker-compose.yml up --detach --build
 
 down:
-	docker compose --file ./docker-compose.yml down
+	docker compose --file ./docker-compose.yml down --volumes
 
 fclean: down
-	docker volume rm $$(docker volume ls -q)
+	docker image prune --all --force
 	docker builder prune --all --force
 
 re: fclean all
