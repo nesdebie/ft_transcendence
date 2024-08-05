@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
+from django.views.decorators.http import require_POST
 
 def login_view(request):
 	if request.method == 'POST':
@@ -191,3 +192,29 @@ def find_user(request):
 			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
 	else:
 		return JsonResponse({'status': 'invalid method'}, status=405)
+
+@require_POST
+def update_profile_picture(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'errors': {'authentication': 'User is not authenticated'}}, status=401)
+
+    image = request.FILES.get('image')
+    if not image or image.content_type != 'image/png':
+        return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
+
+    username = request.user.username
+    image_name = f"{username}.png"
+    image_path = os.path.join('profile_pics', image_name)
+
+    # Delete the old profile picture if it exists
+    if default_storage.exists(image_path):
+        default_storage.delete(image_path)
+
+    # Save the new profile picture
+    default_storage.save(image_path, ContentFile(image.read()))
+
+    # Update the user's profile picture path
+    request.user.profile_picture = image_path
+    request.user.save()
+
+    return JsonResponse({'status': 'success'})

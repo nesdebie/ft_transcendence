@@ -3,6 +3,10 @@ from users.models import Player, FriendRequest, Block
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.http import JsonResponse
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
 
 def index(request):
     if request.user.is_authenticated:
@@ -64,8 +68,15 @@ def update_profile_picture(request):
             if profile_picture.content_type != 'image/png':
                 return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
 
-            image_name = f"{request.user.username}.png"
+            username = request.user.username
+            image_name = f"{username}.png"
             image_path = os.path.join('profile_pics', image_name)
+
+            # Delete the old profile picture if it exists
+            if default_storage.exists(image_path):
+                default_storage.delete(image_path)
+
+            # Save the new profile picture
             default_storage.save(image_path, ContentFile(profile_picture.read()))
             request.user.profile_picture = image_path
             request.user.save()

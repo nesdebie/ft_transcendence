@@ -1,50 +1,43 @@
-import { redirectToRoute } from "./router";
+import { redirectToRoute } from "./router.js";
+import { updateSidebar } from "./auth.js";
+import { getCookie } from "./utils.js";
 
 $(document).ready(function() {
-
-    // CSRF token setup for AJAX requests
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
     const csrftoken = getCookie('csrftoken');
 
-    // Update Profile Picture
     $('#updateProfilePictureForm').on('submit', function(e) {
         e.preventDefault();
         const image = document.getElementById('profilePicture').files[0];
 
-        if (image && image.type !== 'image/png') {
-            alert('Profile picture must be a PNG file.');
+        if (!image) {
+            alert('Please select a profile picture.');
             return;
         }
 
-        const formData = new FormData(this);
+        if (image.type !== 'image/png') {
+            alert('Profile picture must be a PNG file.');
+            return;
+        }
+        console.log("avant");
+        const formData = new FormData();
+        formData.append('image', image);
+        console.log("apres");
         $.ajax({
-            url: updateProfilePictureUrl,  // This should be defined in your Django context
+            url: '/users_api/update_profile_picture/',
             type: "POST",
             data: formData,
             contentType: false,
             processData: false,
             headers: {'X-CSRFToken': csrftoken},
-            success: function(response) {
+            success: function() {
                 alert('Profile picture updated successfully!');
+                updateSidebar();
+                redirectToRoute('/profile_editor');
             },
-            error: function(response) {
+            error: function() {
                 alert('Error updating profile picture.');
             }
         });
-        redirectToRoute('/profile')
     });
 
     // Change Password
@@ -56,10 +49,10 @@ $(document).ready(function() {
             type: "POST",
             data: formData,
             headers: {'X-CSRFToken': csrftoken},
-            success: function(response) {
+            success: function() {
                 alert('Password changed successfully!');
             },
-            error: function(response) {
+            error: function() {
                 alert('Error changing password.');
             }
         });

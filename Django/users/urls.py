@@ -11,8 +11,8 @@ urlpatterns = [
     path('accept_friend_request/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
     path('deny_friend_request/<int:request_id>/', views.deny_friend_request, name='deny_friend_request'),
     path('block_user/', views.block_user, name='block_user'),
-    path('unblock_user/', views.unblock_user, name='block_user'),
+    path('unblock_user/', views.unblock_user, name='unblock_user'),
     path('user_data/', views.current_user_data, name='current_user_data'),
     path('user_data/<str:username>', views.user_data, name='user_data'),
-    path ('find_user/', views.find_user, name='find_user'),
+    path('find_user/', views.find_user, name='find_user'),
 ]
