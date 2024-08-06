@@ -1,7 +1,7 @@
 import { register, login, logout, updateSidebar, find_user, checkAuthentication } from "./auth.js";
 import { redirectToRoute } from "./router.js";
 import { sendFriendRequest, acceptFriendRequest, denyFriendRequest, block_user, unblock_user } from "./friend_managment.js";
-
+import { updateProfilePicture } from "./profile_editor.js"
 $(document).ready(function() {
     $("#profile-button").click(function() {
       redirectToRoute("/profile");
@@ -11,7 +11,7 @@ $(document).ready(function() {
   });
   
 
-document.body.addEventListener('submit', function(event) {
+document.body.addEventListener('submit', function(event) { //
     if (event.target.id === 'register-form') {
         event.preventDefault();
         register(event);
@@ -21,6 +21,9 @@ document.body.addEventListener('submit', function(event) {
     } else if (event.target.id == 'find-user-form') {
         event.preventDefault();
         find_user(event);
+    } else if (event.target.id == 'updateProfilePictureForm') {
+        event.preventDefault();
+        updateProfilePicture(event);
     }
     updateSidebar();
 });
