@@ -1,5 +1,5 @@
 
-<div id="chat-data" data-current-user="{{ request.user.username }}" data-user_to_chat="{{ user_to_chat.username }}"></div>
+<div id="chat-data" data-current-username="{{ request.user.username }}" data-username_to_chat="{{ user_to_chat.username }}"></div>
 <div class="back-container">
     <div class="container front-container1">
         <div class="row chat-top">
@@ -29,48 +29,54 @@
                 <div class="contact-table-scroll">
                     <table class="table table-hover">
                         <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td><img src="{{ user.profile_picture.url }}" alt="" class="profile-image rounded-circle"></td>
-                                <td>
-                                    <a {% if user.online_status %} style="color: green" {% else %} style="color: grey" {% endif %} href="{{ '/chat/'|add:user.username }}">
-                                        {{ user.username }}
-                                    </a>
-                                </td>
-                            </tr>
+                            {% for friend in friends %}
+                                <tr>
+                                    <td>
+                                        <a href="/chat/{{ friend.username }}" onclick="route()" class="btn btn-link" style="display: block; text-align: left;">
+                                            <img src="{{ friend.profile_picture.url }}" alt="" width="40" height="45" class="profile-image rounded-circle">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a {% if friend.online_status %} style="color: green" {% else %} style="color: grey" {% endif %} href="/chat/{{ friend.username }}"  onclick="route()">
+                                            {{ friend.username }}
+                                        </a>
+                                    </td>
+                                </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="col-sm-8 message-area">
-                <div class="message-table-scroll">
-                    <table class="table">
-                        <tbody id="chat-body">
-                            {% for message in messages %}
-                            <tr>
-                                <td>
-                                    <p class="message {% if message.sender == request.user.username %}sent{% else %}received{% endif %}">
-                                        {{ message.message }}
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="timestamp">{{ message.timestamp|time:'H:i' }}</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="row message-box p-3">
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="message_input" placeholder="Write message...">
+            {% if user_to_chat != None %}
+                <div class="col-sm-8 message-area">
+                    <div class="message-table-scroll">
+                        <table class="table">
+                            <tbody id="chat-body">
+                                {% for message in messages %}
+                                <tr>
+                                    <td>
+                                        <p class="message {% if message.sender == request.user.username %}sent{% else %}received{% endif %}">
+                                            {{ message.message }}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="timestamp">{{ message.timestamp|time:'H:i' }}</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-sm-2">
-                        <button class="btn btn-success" id="chat-message-submit">Send</button>
+                    <div class="row message-box p-3">
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="message_input" placeholder="Write message...">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-success" id="chat-message-submit">Send</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>

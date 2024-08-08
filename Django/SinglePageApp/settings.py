@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+import logging
 
+# Initialize logging
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +37,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'users',
     'spa',
     'channels',
@@ -98,6 +102,7 @@ DATABASES = {
 }
 
 ASGI_APPLICATION = 'SinglePageApp.asgi.application'
+
 # Channels settings
 CHANNEL_LAYERS = {
     'default': {
@@ -112,6 +117,8 @@ CHANNEL_LAYERS = {
     },
 }
 
+# Ensure the channel layer configuration is correct
+print("Channel Layer Configuration: " + str(CHANNEL_LAYERS['default']['CONFIG']))
 
 
 # Password validation

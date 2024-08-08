@@ -1,7 +1,10 @@
-all: up
+all: build up
+
+build:
+	docker-compose --file ./docker-compose.yml build
 
 up:
-	docker-compose --file ./docker-compose.yml up --build
+	docker-compose --file ./docker-compose.yml up 
 
 detach:
 	docker-compose --file ./docker-compose.yml up --detach --build

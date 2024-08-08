@@ -25,7 +25,9 @@ services:
             - postgres_channels_data:/var/lib/postgresql/data
         networks:
             - backend
-        command: -p ${CHANNEL_DB_PORT}
+        ports:
+            - "${CHANNEL_DB_PORT}:5432"
+        command: -p 5432
 
     web:
         build:
@@ -40,10 +42,12 @@ services:
             - db_channels
         networks:
             - backend
+        ports:
+            - "8000:8000"
 
     nginx:
         build:
-            context: ./Django/nginx  # Répertoire contenant le Dockerfile de Nginx
+            context: ./nginx  # Répertoire contenant le Dockerfile de Nginx
         ports:
             - "443:443"
         depends_on:

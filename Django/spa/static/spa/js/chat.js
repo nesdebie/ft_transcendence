@@ -1,20 +1,28 @@
-
+function generateRoomName(user1, user2) {
+    // Sort the usernames alphabetically
+    const sortedUsers = [user1, user2].sort();
+    // Join the sorted usernames with an underscore
+    return `chat_${sortedUsers[0]}_${sortedUsers[1]}`;
+  }
 
 function initChat() {
 
     const chatDataElement = document.getElementById('chat-data');
-    const currentUser = chatDataElement.getAttribute('data-current-user');
-    const user_to_chat = chatDataElement.getAttribute('data-user_to_chat');
-
+    const current_username = chatDataElement.getAttribute('data-current-username');
+    const username_to_chat = chatDataElement.getAttribute('data-username_to_chat');
+    if (username_to_chat == null) {
+        console.log('username_to_chat = null')
+        return;
+    }
     const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + currentUser + '/' + user_to_chat + '/'
+        'wss://' + window.location.host + '/ws/chat/' + generateRoomName(current_username, username_to_chat) + '/'
     );
 
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         document.querySelector('#chat-body').innerHTML += (
             '<tr>' +
-                '<td><p class="message ' + (data.sender === currentUser ? 'sent' : 'received') + '">' + data.message + '</p></td>' +
+                '<td><p class="message ' + (data.sender === current_username ? 'sent' : 'received') + '">' + data.message + '</p></td>' +
                 '<td><p class="timestamp">' + data.timestamp + '</p></td>' +
             '</tr>'
         );

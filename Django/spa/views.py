@@ -68,7 +68,9 @@ def view_chat(request, username=None):
 		user_to_chat = None
 
 	# Get all users except the current user
-	users = Player.objects.exclude(username=request.user.username)
+	# users = Player.objects.exclude(username=request.user.username)
+
+	user: Player = request.user
 	messages = []
 	if user_to_chat:
 		messages = Message.objects.filter(
@@ -77,7 +79,7 @@ def view_chat(request, username=None):
 		).order_by('timestamp')
 		
 	context = {
-		'users': users,
+		'friends': user.friends.all(),
 		'user_to_chat': user_to_chat,
 		'messages': messages,
 	}
