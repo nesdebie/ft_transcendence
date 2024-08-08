@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+import logging
 
+# Initialize logging
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,10 +37,11 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
-    'spa',
+    'daphne',
     'channels',
     'channels_postgres',
+    'users',
+    'spa',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -94,24 +98,36 @@ DATABASES = {
         'PASSWORD': env('APP_DB_PASSWORD'),
         'HOST': env('APP_DB_HOST'),
         'PORT': env('APP_DB_PORT'),
+    },
+    'channels_postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('CHANNEL_DB_NAME'),
+        'USER': os.environ.get('CHANNEL_DB_USER'),
+        'PASSWORD': os.environ.get('CHANNEL_DB_PASSWORD'),
+        'HOST': os.environ.get('CHANNEL_DB_HOST'),
+        'PORT': os.environ.get('CHANNEL_DB_PORT'),
     }
 }
 
 ASGI_APPLICATION = 'SinglePageApp.asgi.application'
+
 # Channels settings
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_postgres.core.PostgresChannelLayer',
         'CONFIG': {
-            'database': env('CHANNEL_DB_NAME'),
-            'user': env('CHANNEL_DB_USER'),
-            'password': env('CHANNEL_DB_PASSWORD'),
-            'host': env('CHANNEL_DB_HOST'),
-            'port': env('CHANNEL_DB_PORT'),
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('CHANNEL_DB_NAME'),
+            'USER': os.environ.get('CHANNEL_DB_USER'),
+            'PASSWORD': os.environ.get('CHANNEL_DB_PASSWORD'),
+            'HOST': os.environ.get('CHANNEL_DB_HOST'),
+            'PORT': os.environ.get('CHANNEL_DB_PORT'),
+            'config': {
+                'maxsize': 20,  # Increase the connection pool size
+            },
         },
     },
 }
-
 
 
 # Password validation
@@ -168,4 +184,3 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-

@@ -2,11 +2,7 @@
 
 Compiling your contracts...
 ===========================
-> Compiling ./contracts/HelloWorld.sol
-> Compiling ./contracts/PongMatches.sol
-> Artifacts written to /app/blockchain/ALL_FILE_NEEDED/build/contracts
-> Compiled successfully using:
-   - solc: 0.8.0+commit.c7dfd78e.Emscripten.clang
+> Everything is up to date, there is nothing to compile.
 
 Compiling your contracts...
 ===========================
@@ -16,7 +12,7 @@ Compiling your contracts...
 Starting migrations...
 ======================
 > Network name:    'development'
-> Network id:      1722691380459
+> Network id:      1723129541862
 > Block gas limit: 30000000 (0x1c9c380)
 
 
@@ -25,12 +21,12 @@ Starting migrations...
 
    Deploying 'PongMatches'
    -----------------------
-   > transaction hash:    0x3342cb92a7d42648a22352bf0c4e3fde77e29f8b9d4c4315060dcab27fcf19a5
+   > transaction hash:    0x541d83419531cb0d786eb9199a0f21e973e824e0847845993e72c5fd5ca24aa9
    > Blocks: 0            Seconds: 0
-   > contract address:    0x738268B7eC3890CA010686dba460e58cfc449e6a
+   > contract address:    0x2542e10edDfbf7D2CCfba98431addb6A51e8137D
    > block number:        1
-   > block timestamp:     1722691408
-   > account:             0xBd5e89e3762eFCc0427768FD03FD739d6D5F196f
+   > block timestamp:     1723129554
+   > account:             0x40D33B28eDc5b332f8b0A86621d70275eBa89227
    > balance:             999.99641933425
    > gas used:            1060938 (0x10304a)
    > gas price:           3.375 gwei

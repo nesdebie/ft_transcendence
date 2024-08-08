@@ -116,7 +116,6 @@ class FriendRequest(models.Model):
 	def __str__(self):
 		return f"{self.from_user.username} sent a friend request to {self.to_user.username}"
 
-
 class Block(models.Model):
 	from_user = models.ForeignKey(Player, related_name='blocking', on_delete=models.CASCADE)
 	to_user = models.ForeignKey(Player, related_name='blocked_by', on_delete=models.CASCADE)
@@ -124,7 +123,6 @@ class Block(models.Model):
 	
 	def __str__(self):
 		return f"{self.blocker.username} blocked {self.blocked.username}"
-
 
 class OnlineStatus(models.Model):
 	user = models.OneToOneField(Player, on_delete=models.CASCADE)
