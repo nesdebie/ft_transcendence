@@ -61,26 +61,27 @@ def view_friend_requests(request):
 	return render(request, 'spa/pages/friend_requests.html', context)
 
 def view_chat(request, username=None):
-	# Get the user to chat with
-	if username:
-		user_to_chat = get_object_or_404(Player, username=username)
-	else:
-		user_to_chat = None
+    user: Player = request.user
+    if username:
+        user_to_chat = get_object_or_404(Player, username=username)
+    else:
+        user_to_chat = None
 
-	# Get all users except the current user
-	# users = Player.objects.exclude(username=request.user.username)
+    messages = []
+    if user_to_chat:
+        messages = Message.objects.filter(
+            (Q(sender=user) & Q(receiver=user_to_chat)) |
+            (Q(sender=user_to_chat) & Q(receiver=user))
+        ).order_by('timestamp')
 
-	user: Player = request.user
-	messages = []
-	if user_to_chat:
-		messages = Message.objects.filter(
-			(Q(sender=request.user) & Q(receiver=user_to_chat)) |
-			(Q(sender=user_to_chat) & Q(receiver=request.user))
-		).order_by('timestamp')
-		
-	context = {
-		'friends': user.friends.all(),
-		'user_to_chat': user_to_chat,
-		'messages': messages,
-	}
-	return render(request, 'spa/pages/chat.html', context)
+    if user_to_chat:
+        template = 'spa/pages/chat_interface.html'
+    else:
+        template = 'spa/pages/chat_friends_list.html'
+
+    context = {
+        'friends': user.friends.all(),
+        'user_to_chat': user_to_chat,
+        'messages': messages,
+    }
+    return render(request, template, context)

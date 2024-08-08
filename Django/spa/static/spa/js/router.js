@@ -47,8 +47,9 @@ const handleLocation = async () => {
 function call_page_functions(path) {
 	if (document.getElementById('user-profile-picture'))
 		fetchUserProfilePicture();
-    if (path.startsWith('/chat'))
+    if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
+    }
     // if (document.getElementById('user-username'))
 	// 	fetchUserProfileData();
 	//if ...

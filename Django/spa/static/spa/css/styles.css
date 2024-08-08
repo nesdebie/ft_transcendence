@@ -192,4 +192,32 @@ body::-webkit-scrollbar {
   #logout-button .mdi {
     margin-right: 8px; /* Adjust margin as needed */
   }
-  
+
+.sent-message {
+    text-align: right;
+}
+
+.received-message {
+    text-align: left;
+}
+
+.message {
+    display: inline-block;
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.sent-message .message {
+    background-color: #dcf8c6;
+}
+
+.received-message .message {
+    background-color: #f2f2f2;
+}
+
+.timestamp {
+    font-size: 0.8em;
+    color: #888;
+}

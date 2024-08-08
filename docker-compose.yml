@@ -27,7 +27,7 @@ services:
             - backend
         ports:
             - "${CHANNEL_DB_PORT}:5432"
-        command: -p 5432
+        command: -p 5433
 
     web:
         build:
@@ -37,6 +37,8 @@ services:
             - ./Django:/app
         env_file:
             - .env
+        environment:
+            - DJANGO_SETTINGS_MODULE=SinglePageApp.settings
         depends_on:
             - db
             - db_channels

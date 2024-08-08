@@ -1,0 +1,42 @@
+iv class="back-container">
+    <div class="container front-container1">
+        <!-- User's own info -->
+        <div class="row chat-top">
+            <div class="col-sm-12 border-right border-secondary">
+                <img src="{{ request.user.profile_picture.url }}" alt="" width="40" height="45" class="mdi mdi-account-circle">
+                <span class="ml-2">{{ request.user.username }}</span>
+                <!-- Chat icon -->
+                <span class="float-right mt-2">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-left-fill mx-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                    </svg>
+                </span>
+            </div>
+        </div>
+        <!-- Friends list -->
+        <div class="row">
+            <div class="col-sm-12 contacts">
+                <div class="contact-table-scroll">
+                    <table class="table table-hover">
+                        <tbody>
+                            {% for friend in friends %}
+                                <tr>
+                                    <td>
+                                        <a href="/chat/{{ friend.username }}" onclick="route()" class="btn btn-link" style="display: block; text-align: left;">
+                                            <img src="{{ friend.profile_picture.url }}" alt="" width="40" height="45" class="profile-image rounded-circle">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a {% if friend.online_status %} style="color: green" {% else %} style="color: grey" {% endif %} href="/chat/{{ friend.username }}"  onclick="route()">
+                                            {{ friend.username }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

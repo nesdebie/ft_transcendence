@@ -21,6 +21,7 @@ wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHAN
 
 # Run migrations
 python3 manage.py migrate
+python3 manage.py migrate channels_postgres --database=channels_postgres
 
 
 # Start Gunicorn to serve the Django application
