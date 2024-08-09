@@ -1,3 +1,4 @@
+{% load tz %}
 <div id="chat-data" data-current-username="{{ request.user.username }}" data-username_to_chat="{{ user_to_chat.username }}"></div>
 <div class="back-container">
     <div class="container front-container1">
@@ -56,11 +57,11 @@
                         <tbody id="chat-body">
                             {% for message in messages %}
                             <tr>
-                                <td class="{% if message.sender == request.user.username %}sent-message{% else %}received-message{% endif %}">
+                                <td class="{% if message.sender.username == request.user.username %}sent-message{% else %}received-message{% endif %}">
                                     <p class="message">
                                         {{ message.message }}
                                     </p>
-                                    <p class="timestamp">{{ message.timestamp|time:'H:i' }}</p>
+                                    <p class="timestamp">{% localtime on %}{{ message.timestamp|date:"Y-m-d H:i" }}{% endlocaltime %}</p>
                                 </td>
                             </tr>
                             {% endfor %}

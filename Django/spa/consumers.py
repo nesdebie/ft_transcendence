@@ -71,6 +71,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Save message to database
         await self.save_message(sender, receiver, message)
 
+        current_time = timezone.now()
+        formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+
         try:
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -78,7 +81,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': message,
                     'sender': sender,
-                    'timestamp': timezone.now().strftime('%H:%M')
+                    'timestamp': formatted_time
                 }
             )
         except Exception as e:

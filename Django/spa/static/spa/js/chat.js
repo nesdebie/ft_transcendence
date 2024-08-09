@@ -32,10 +32,10 @@ function initChat() {
         console.error('Chat socket closed unexpectedly');
     };
 
-    document.querySelector('#chat-message-submit').onclick = function(e) {
+    function sendMessage() {
         const messageInputDom = document.querySelector('#message_input');
-        const message = messageInputDom.value;
-        if (message.trim() !== '') {
+        const message = messageInputDom.value.trim();
+        if (message !== '') {
             chatSocket.send(JSON.stringify({
                 'message': message,
                 'sender': current_username,
@@ -43,15 +43,25 @@ function initChat() {
             }));
             messageInputDom.value = '';
         }
-    };
+    }
+
+    document.querySelector('#chat-message-submit').onclick = sendMessage;
+
+    document.querySelector('#message_input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent default form submission
+            sendMessage();
+        }
+    });
 }
 
 function appendMessage(data, current_username) {
+    const localTime = moment.utc(data.timestamp).local().format('YYYY-MM-DD HH:mm');
     document.querySelector('#chat-body').innerHTML += (
         '<tr>' +
             `<td class="${data.sender === current_username ? 'sent-message' : 'received-message'}">` +
                 `<p class="message">${data.message}</p>` +
-                `<p class="timestamp">${data.timestamp || 'Pending...'}</p>` +
+                `<p class="timestamp">${localTime}</p>` +
             '</td>' +
         '</tr>'
     );
