@@ -1,5 +1,5 @@
+import { updateSidebar } from "./auth.js";
 import { redirectToRoute } from "./router.js";
-//import { updateSidebar } from "./auth.js";
 import { getCookie } from "./utils.js";
 
 async function updateProfilePicture(event) {
@@ -20,7 +20,7 @@ async function updateProfilePicture(event) {
     formData.append('image', image);
 
     try {
-        const response = await fetch('/users_api/update_profile_picture/', {
+        const response = await fetch('/pages/update_profile_picture/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
@@ -32,8 +32,8 @@ async function updateProfilePicture(event) {
 
         if (response.ok) {
             alert('Profile picture updated successfully!');
-            //updateSidebar();
             redirectToRoute('/profile_editor');
+            updateSidebar();
         } else {
             handleErrors(data);
         }

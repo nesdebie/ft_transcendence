@@ -31,10 +31,9 @@ function update_path(path) {
 const handleLocation = async () => {
     const path = window.location.pathname;
     const route = update_path(path);
-    console.log("Handle location : " + path + "\n to route = " + route);
+    console.log("Handle location : " + path + "\n to route = " + route); // Debug statement
     const html = await fetch(route).then((data) => data.text());
     document.getElementById("main-page").innerHTML = html;
-    //call_page_functions();
     reapplyNightCityModeIfNecessary(); // Reapply cyberpunk mode if necessary
 };
 
