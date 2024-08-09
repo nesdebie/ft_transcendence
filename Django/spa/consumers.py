@@ -1,24 +1,11 @@
 import json
-import os
 from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
 from django.conf import settings
 from django.utils import timezone
 from channels.db import database_sync_to_async
-
+from django.urls import reverse
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.channel_layer = get_channel_layer()
-        print(f"Channel layer in __init__: {self.channel_layer}")
-        if self.channel_layer is None:
-            print("Channel layer is None in __init__. CHANNEL_LAYERS config:", settings.CHANNEL_LAYERS)
-            print("Environment variables:")
-            print(f"CHANNEL_DB_NAME: {os.environ.get('CHANNEL_DB_NAME')}")
-            print(f"CHANNEL_DB_USER: {os.environ.get('CHANNEL_DB_USER')}")
-            print(f"CHANNEL_DB_HOST: {os.environ.get('CHANNEL_DB_HOST')}")
-            print(f"CHANNEL_DB_PORT: {os.environ.get('CHANNEL_DB_PORT')}")
 
     async def connect(self):
         print("Connecting...")
@@ -64,13 +51,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        message_type = text_data_json.get('type', 'chat_message')
         sender = text_data_json['sender']
         receiver = text_data_json['receiver']
 
-        # Save message to database
-        await self.save_message(sender, receiver, message)
+        if message_type in ['game_invite', 'game_invite_accepted']:
+            message = f"{message_type.replace('_', ' ').title()}"
+        else:
+            message = text_data_json['message']
 
+        # Save message to database
+        await self.save_message(sender, receiver, message, message_type)
         current_time = timezone.now()
         formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -78,9 +69,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    'type': 'chat_message',
+                    'type': message_type,
                     'message': message,
                     'sender': sender,
+                    'receiver': receiver,
                     'timestamp': formatted_time
                 }
             )
@@ -88,14 +80,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f"Error sending message to group: {e}")
 
     @database_sync_to_async
-    def save_message(self, sender, receiver, message):
+    def save_message(self, sender, receiver, message, message_type='chat_message'):
         from users.models import Player, Message
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
         Message.objects.create(
             sender=sender_user,
             receiver=receiver_user,
-            message=message
+            message=message,
+            message_type=message_type
         )
 
     async def chat_message(self, event):
@@ -108,4 +101,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'sender': sender,
             'timestamp': timestamp
+        }))
+
+    async def game_invite(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'game_invite',
+            'sender': event['sender'],
+            'receiver': event['receiver']
+        }))
+
+    async def game_invite_accepted(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'game_invite_accepted',
+            'sender': event['sender'],
+            'receiver': event['receiver']
         }))

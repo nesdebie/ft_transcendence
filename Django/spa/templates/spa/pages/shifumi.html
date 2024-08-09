@@ -1,5 +1,5 @@
 <div class="page-container align-center">
-    <section id="shifumi-game" class="shifumi-game">
+    <section id="shifumi-game" class="shifumi-game" data-room-name="{{ room_name }}">
         <!--Title -->
         <div class="title">Rock Paper Scissor</div>
          
@@ -29,12 +29,6 @@
          
         <!--Final result of game -->
         <div class="result"></div>
+        <div class="countdown" style="display: none;"></div>
     </section>
-    <input type="range" id="difficultySlider" min="0" max="2" value="1" step="1" oninput="updateSliderValue(this.value)">
-    <label for="difficultySlider">Difficulty : <span id="sliderValue">Normal</span></label>
-    <div>
-        <input type="checkbox" id="mentalistMode">
-        <label for="mentalistMode">MENTALIST MODE (beta)</label>
-    </div>
-    <button id="shifumi-start" class="btn btn-dark">START GAME</button>
 </div>

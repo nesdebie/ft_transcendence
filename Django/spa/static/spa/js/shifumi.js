@@ -1,19 +1,32 @@
 window.ShifumiGame = (function() {
-    let playerScore, computerScore, moves, gameInitialized = false;
-    let mentalistMode = false;
+    let socket;
+    let playerScore = 0;
+    let opponentScore = 0;
+    let moves = 0;
     let playerOptions = [];
+    let currentRoom = '';
+    let isGameActive = false;
 
-    function initGame(difficulty, mentalist) {
-        if (gameInitialized) return;
-        gameInitialized = true;
+    function initGame(roomName) {
+        currentRoom = roomName;
+        socket = new WebSocket(`ws://${window.location.host}/ws/shifumi/${roomName}/`);
 
-        playerScore = 0;
-        computerScore = 0;
-        moves = 0;
-        mentalistMode = mentalist;
-        console.log("Shifumi initialized");
+        socket.onopen = function(e) {
+            console.log("WebSocket connection established");
+            socket.send(JSON.stringify({action: 'join'}));
+        };
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            handleServerMessage(data);
+        };
+
+        socket.onclose = function(e) {
+            console.error("WebSocket connection closed unexpectedly");
+        };
+
         resetGameState();
-        setupEventListeners(difficulty);
+        setupEventListeners();
     }
 
     function resetGameState() {
@@ -23,7 +36,7 @@ window.ShifumiGame = (function() {
         playerOptions = [rockBtn, paperBtn, scissorBtn];
 
         playerOptions.forEach(option => {
-            option.style.display = 'inline-block'; // Show all options
+            option.style.display = 'inline-block';
         });
 
         const movesLeft = document.querySelector('.movesleft');
@@ -39,97 +52,107 @@ window.ShifumiGame = (function() {
         result.style.color = '';
 
         const playerScoreBoard = document.querySelector('.p-count');
-        const computerScoreBoard = document.querySelector('.c-count');
+        const opponentScoreBoard = document.querySelector('.c-count');
         playerScoreBoard.textContent = '0';
-        computerScoreBoard.textContent = '0';
+        opponentScoreBoard.textContent = '0';
     }
 
-    function setupEventListeners(difficulty) {
-        playerOptions.forEach(option => {
-            option.addEventListener('click', function(event) {
-                handleClick(event, difficulty);
+    function setupEventListeners() {
+        const options = document.querySelectorAll('.options button');
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                const move = this.id;
+                socket.send(JSON.stringify({action: 'move', move: move}));
             });
         });
     }
 
-    function handleClick(event, difficulty) {
-        if (moves >= 10) return;
-
-        if (mentalistMode && moves < 10) {
-            goMentalist();
-        }
-        const movesLeft = document.querySelector('.movesleft');
-        moves++;
-        movesLeft.innerText = `Moves Left: ${10 - moves}`;
-
-        const choiceNumber = Math.floor(Math.random() * 3);
-        const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
-
-        determineWinner(event.target.innerText, computerChoice, difficulty);
-
-        if (moves === 10) {
-            endGame(playerOptions, movesLeft);
+    function handleServerMessage(data) {
+        if (data.type === 'game_move') {
+            updateGameState(data);
+        } else if (data.type === 'game_result') {
+            displayResult(data);
+        } else if (data.type === 'game_start') {
+            console.log("Game started");
+            startCountdown();
+        } else if (data.type === 'error') {
+            alert(data.message);
+            resetUI();
+        } else if (data.type === 'game_over') {
+            displayGameOver(data.winner);
         }
     }
 
-    function determineWinner(player, computer, difficulty) {
+    function startCountdown() {
+        let timeLeft = 10;
+        const countdownElement = document.querySelector('.countdown');
+        countdownElement.style.display = 'block';
+
+        const countdownInterval = setInterval(() => {
+            countdownElement.textContent = `Time left: ${timeLeft} seconds`;
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = 'none';
+            }
+        }, 1000);
+    }
+
+    function updateGameState(data) {
+        moves++;
+        const movesLeft = document.querySelector('.movesleft');
+        movesLeft.innerText = `Moves Left: ${10 - moves}`;
+
+        if (data.player === socket.username) {
+            // This is the current player's move
+            console.log(`You played ${data.move}`);
+        } else {
+            // This is the opponent's move
+            console.log(`Opponent played ${data.move}`);
+        }
+    }
+
+    function displayResult(data) {
         const result = document.querySelector('.result');
         const playerScoreBoard = document.querySelector('.p-count');
-        const computerScoreBoard = document.querySelector('.c-count');
-        player = player.toLowerCase();
-        computer = computer.toLowerCase();
+        const opponentScoreBoard = document.querySelector('.c-count');
 
-        if (difficulty === 0) {
-            result.textContent = 'Player Won';
+        if (data.winner === socket.username) {
+            result.textContent = 'You Won';
             playerScore++;
-        }
-        else if (difficulty === 2) {
-            result.textContent = 'Computer Won';
-            computerScore++;
-        }
-        else if (difficulty === 1) {
-            if (player === computer) {
-                result.textContent = 'Tie';
-            } else if ((player === 'rock' && computer === 'scissors') ||
-                    (player === 'scissors' && computer === 'paper') ||
-                    (player === 'paper' && computer === 'rock')) {
-                result.textContent = 'Player Won';
-                playerScore++;
-            } else {
-                result.textContent = 'Computer Won';
-                computerScore++;
-            }
+        } else if (data.winner === 'tie') {
+            result.textContent = 'Tie';
+        } else {
+            result.textContent = 'Opponent Won';
+            opponentScore++;
         }
 
         playerScoreBoard.textContent = playerScore;
-        computerScoreBoard.textContent = computerScore;
+        opponentScoreBoard.textContent = opponentScore;
+
+        if (moves === 10) {
+            endGame();
+        }
     }
 
-    function goMentalist() {
-        const chooseMove = document.querySelector('.move');
-        const choiceNumber = Math.floor(Math.random() * 3);
-        const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
-
-        chooseMove.innerText = '[CPU] : "I g0nna play ' + computerChoice + '!"';
-    }
-
-    function endGame(playerOptions, movesLeft) {
+    function endGame() {
         const chooseMove = document.querySelector('.move');
         const result = document.querySelector('.result');
 
         playerOptions.forEach(option => {
             option.style.display = 'none';
-            option.removeEventListener('click', handleClick); // Remove event listeners
+            option.removeEventListener('click', handleClick);
         });
 
         chooseMove.innerText = '[GAME OVER]';
-        movesLeft.style.display = 'none';
+        document.querySelector('.movesleft').style.display = 'none';
 
-        if (playerScore > computerScore) {
+        if (playerScore > opponentScore) {
             result.style.fontSize = '2rem';
             result.innerText = 'You Won The Game';
             result.style.color = '#308D46';
-        } else if (playerScore < computerScore) {
+        } else if (playerScore < opponentScore) {
             result.style.fontSize = '2rem';
             result.innerText = 'You Lost The Game';
             result.style.color = 'red';
@@ -139,18 +162,44 @@ window.ShifumiGame = (function() {
             result.style.color = 'grey';
         }
 
-        // Enable the start button to allow restarting the game
         $("#shifumi-start").prop("disabled", false);
-        gameInitialized = false; // Allow re-initialization
+    }
+
+    function resetUI() {
+        document.getElementById('game-setup').style.display = 'block';
+        document.getElementById('waiting-message').style.display = 'none';
+        document.getElementById('shifumi-game').style.display = 'none';
+    }
+
+    function displayGameOver(winner) {
+        // Display game over message
+        const result = document.querySelector('.result');
+        result.textContent = `Game Over! ${winner} wins!`;
+
+        // Disable game controls
+        playerOptions.forEach(option => {
+            option.disabled = true;
+        });
+
+        // Add a button to return to chat
+        const returnButton = document.createElement('button');
+        returnButton.textContent = 'Return to Chat';
+        returnButton.addEventListener('click', () => {
+            window.location.href = '/chat'; // Adjust this URL as needed
+        });
+        document.querySelector('.shifumi-game').appendChild(returnButton);
     }
 
     return {
-        init: function(difficulty, mentalistMode) {
-            initGame(difficulty, mentalistMode);
+        init: function(roomName) {
+            initGame(roomName);
             const gameContainer = document.getElementById('shifumi-game');
             if (gameContainer) {
-                $("#shifumi-start").prop("disabled", true); // Disable the button initially
+                $("#shifumi-start").prop("disabled", true);
             }
+        },
+        isActive: function() {
+            return isGameActive;
         }
     };
 })();
@@ -158,14 +207,8 @@ window.ShifumiGame = (function() {
 if (document.getElementById('shifumi-game')) {
     $(document).ready(function() {
         $("#shifumi-start").click(function() {
-            let difficulty = parseInt($("#difficultySlider").val());
-            let mentalistMode = $("#mentalistMode").is(":checked");
-            window.ShifumiGame.init(difficulty, mentalistMode);
+            const roomName = Math.random().toString(36).substring(7);
+            window.ShifumiGame.init(roomName);
         });
     });
-}
-
-function updateSliderValue(value) {
-    const difficulty = ['easy', 'normal', 'hard'];
-    document.getElementById('sliderValue').textContent = difficulty[value];
 }
