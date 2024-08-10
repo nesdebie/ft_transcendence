@@ -11,6 +11,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
 from django.views.decorators.http import require_POST
+import shutil
 
 def login_view(request):
 	if request.method == 'POST':
@@ -24,53 +25,44 @@ def login_view(request):
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def register_view(request):
-    if request.method == 'POST':
-        username    = request.POST.get('username')
-        password    = request.POST.get('password')
-        password2   = request.POST.get('password2')
-        email       = request.POST.get('email')
-        image       = request.FILES.get('image')
-        nickname    = request.POST.get('nickname')
-    
-        errors = {}
+	if request.method == 'POST':
+		username	= request.POST.get('username')
+		password 	= request.POST.get('password')
+		password2 	= request.POST.get('password2')
+		email 		= request.POST.get('email')
+		image		= request.FILES.get('image')
+		nickname	= request.POST.get('nickname')
 
-        if Player.objects.filter(username=username).exists():
-            errors['username'] = "Username exist already."
+		errors = {}
 
-        if Player.objects.filter(email=email).exists():
-            errors['email'] = "This email is already used, if it is yours try to log in instead."
+		if Player.objects.filter(username=username).exists():
+			errors['username'] = "Username exist already."
 
-        try:
-            validate_password(password, Player)
-        except ValidationError as error:
-            errors['password'] = error.messages
+		if Player.object.filter(email=email).exists():
+			errors['email'] = "This email is already used, if it is yours try to log in instead."
 
-        if password != password2:
-            errors['password2'] = "Passwords don't match"
+		try:
+			validate_password(password, Player)
+		except ValidationError as error:
+			errors['password'] = error.messages
 
-        if errors:
-            return JsonResponse({"errors": errors}, status=400)
 
-        # Check if profile picture already exists and delete it
-        image_name = f"{username}.png"
-        image_path = os.path.join('profile_pics', image_name)
-        if default_storage.exists(image_path):
-            default_storage.delete(image_path)
+		if (password != password2):
+			errors['password2'] = "Passwords don't match"
 
-        # Save the new profile picture
-        if image:
-            default_storage.save(image_path, ContentFile(image.read()))
+		if (errors):
+			return JsonResponse({"errors": errors}, status=400)
 
-        user = Player.objects.create_user(
-            username=username, 
-            password=password,
-            email=email,
-            nickname=nickname,
-            profile_picture=image_path
-        )
-        login(request, user)
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'invalid method'}, status=405)
+		user = Player.objects.create_user(
+			username=username, 
+			password=password,
+			email = email,
+			nickname = nickname,
+			profile_picture = image
+			)
+		login(request, user)
+		return JsonResponse({'status': 'success'})
+	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def logout_view(request):
 	logout(request)
@@ -193,28 +185,28 @@ def find_user(request):
 	else:
 		return JsonResponse({'status': 'invalid method'}, status=405)
 
-@require_POST
-def update_profile_picture(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'errors': {'authentication': 'User is not authenticated'}}, status=401)
+# @require_POST
+# def update_profile_picture(request):
+#     if not request.user.is_authenticated:
+#         return JsonResponse({'errors': {'authentication': 'User is not authenticated'}}, status=401)
 
-    image = request.FILES.get('image')
-    if not image or image.content_type != 'image/png':
-        return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
+#     image = request.FILES.get('image')
+#     if not image or image.content_type != 'image/png':
+#         return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
 
-    username = request.user.username
-    image_name = f"{username}.png"
-    image_path = os.path.join('profile_pics', image_name)
+#     username = request.user.username
+#     image_name = f"{username}.png"
+#     image_path = os.path.join('profile_pics', image_name)
 
-    # Delete the old profile picture if it exists
-    if default_storage.exists(image_path):
-        default_storage.delete(image_path)
+#     # Delete the old profile picture if it exists
+#     if default_storage.exists(image_path):
+#         default_storage.delete(image_path)
 
-    # Save the new profile picture
-    default_storage.save(image_path, ContentFile(image.read()))
+#     # Save the new profile picture
+#     default_storage.save(image_path, ContentFile(image.read()))
 
-    # Update the user's profile picture path
-    request.user.profile_picture = image_path
-    request.user.save()
+#     # Update the user's profile picture path
+#     request.user.profile_picture = image_path
+#     request.user.save()
 
-    return JsonResponse({'status': 'success'})
+#     return JsonResponse({'status': 'success'})

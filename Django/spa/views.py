@@ -7,6 +7,13 @@ from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os
+from PIL import Image
+import logging
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import update_session_auth_hash
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     if request.user.is_authenticated:
@@ -65,22 +72,21 @@ def update_profile_picture(request):
     if request.method == 'POST':
         if 'image' in request.FILES:
             profile_picture = request.FILES['image']
-            if profile_picture.content_type != 'image/png':
-                return JsonResponse({'errors': {'image': 'Profile picture must be a PNG file'}}, status=400)
+            if profile_picture.content_type not in ['image/png', 'image/jpeg']:
+                return JsonResponse({'errors': {'image': 'Profile picture must be a PNG or JPEG file'}}, status=400)
 
-            username = request.user.username
-            image_name = f"{username}.png"
+            # Use the original file name
+            image_name = profile_picture.name
             image_path = os.path.join('profile_pics', image_name)
-
-            # Delete the old profile picture if it exists
-            if default_storage.exists(image_path):
-                default_storage.delete(image_path)
 
             # Save the new profile picture
             default_storage.save(image_path, ContentFile(profile_picture.read()))
-            request.user.profile_picture = image_path
-            request.user.save()
-            return JsonResponse({'status': 'success', 'profile_picture': request.user.profile_picture.url})
+
+            # Update the user's profile picture path
+            user = request.user
+            user.profile_picture = image_path
+            user.save()
+            return JsonResponse({'status': 'success', 'profile_picture': user.profile_picture.url})
         return JsonResponse({'errors': {'image': 'No image file provided'}}, status=400)
     return JsonResponse({'status': 'invalid method'}, status=405)
 
@@ -105,5 +111,7 @@ def change_password(request):
         request.user.set_password(new_password)
         request.user.save()
         update_session_auth_hash(request, request.user)  # Important to keep the user logged in
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'invalid method'}, status=405)
+
+        return JsonResponse({'success': 'Password changed successfully'})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
