@@ -31,7 +31,7 @@ async function updateProfilePicture(event) {
         const data = await response.json();
 
         if (response.ok) {
-            alert('Profile picture updated successfully!');
+            //alert('Profile picture updated successfully!');
             // Update the profile picture on the page
             let profilePictureElement = document.getElementById('currentProfilePicture');
             if (!profilePictureElement) {

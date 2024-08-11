@@ -114,7 +114,9 @@ async function removeFriend(username) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
+			alert('Friend removed');
+			//redirectToRoute(window.location.pathname);
+			redirectToRoute('/profile')
 		}
 		else {
 			handleErrors(data);
@@ -139,7 +141,9 @@ async function         block_user(username) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
+			alert('User blocked !');
+			//redirectToRoute(window.location.pathname);
+			redirectToRoute('/profile')
 		}
 		else {
 			handleErrors(data);
@@ -164,7 +168,9 @@ async function         unblock_user(username) {
 
 		const data = await response.json()
 		if (response.ok && data.status == 'succes') {
-			redirectToRoute(window.location.pathname);
+			alert('User unblocked !');
+			//redirectToRoute(window.location.pathname);
+			redirectToRoute('/profile');
 		}
 		else {
 			handleErrors(data);
