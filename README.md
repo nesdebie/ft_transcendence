@@ -1,8 +1,15 @@
-
-Requirements :
+Launch Docker Desktop if you're out of the 42 environment, else :
 ```sh
-docker-compose up
-
-and go to https://localhost 
+correnv
 ```
+Then
+```sh
+make
+```
+OR
+```sh
+make detach
+```
+And go to https://localhost 
+
 
