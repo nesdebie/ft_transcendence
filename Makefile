@@ -10,10 +10,10 @@ detach:
 	docker-compose --file ./docker-compose.yml up --detach
 
 down:
-	docker-compose --file ./docker-compose.yml down
+	docker compose --file ./docker-compose.yml down --volumes
 
 fclean: down
-	docker volume rm $$(docker volume ls -q)
+	docker image prune --all --force
 	docker builder prune --all --force
 
 re: fclean all

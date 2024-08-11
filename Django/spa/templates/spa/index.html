@@ -4,10 +4,13 @@
 <head>
   <title>Transcendence</title>
   <meta charset="utf-8">
+  <link rel="shortcut icon" href="{% static 'spa/css/images/favicon.ico'%}">
+  <!--<link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />-->
   <link rel="stylesheet" href="{% static 'spa/css/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/night-city-mode.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/shifumi.css' %}" />
+  <link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -32,10 +35,10 @@
 
         <!-- NIGHT CITY MODE BUTTON -->
         <div class="buttons-container">
-          <button id="profile-button" class="socials-card" target="_blank">
+          <button id="profile-button" target="_blank">
             <img id="profile-button-logo" src="/media/profile_pics/default.jpg" width="40" height="45" class="mdi mdi-account-circle" alt="Profile Image">
           </button>
-          <button id="nightCityModeBtn" aria-label="Toggle Night Mode" class="button-default">
+          <button id="nightCityModeBtn" aria-label="Toggle Night Mode">
             <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
           </button>
           <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
@@ -46,7 +49,7 @@
           <audio id="click_night" src="{% static 'spa/js/audio/click_night.wav' %}"></audio>
         </div>
 
-        <button id="controlButton" class="btn btn-primary btn-block">
+        <button id="audioButton" class="btn btn-primary btn-block">
           <i class="mdi mdi-volume-high"></i>
         </button>
 

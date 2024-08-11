@@ -72,6 +72,12 @@ async function register(event) {
 	const two_factor_auth = document.getElementById('register-2fa').checked;
 	
 	
+
+	if (image && image.type !== 'image/png') {
+		alert('Profile picture must be a PNG file.');
+		return;
+	}
+
 	const formData = new FormData();
 	formData.append('username', username);
 	formData.append('password', password);
@@ -258,6 +264,7 @@ async function updateSidebar() {
     document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-chat').style.display = isAuthenticated ? 'block' : 'none';
+	document.getElementById('nightCityModeBtn').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
 	if (isAuthenticated)
 		document.getElementById('profile-button-logo').src = await fetchUserData('profile_picture.url');

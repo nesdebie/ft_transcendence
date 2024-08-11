@@ -1,21 +1,9 @@
-#shifumi-start {
+.btn-dark {
     color: black;
 }
 
-.night-city-mode #shifumi-start {
-    color: #fdf800;
-    text-shadow: 2px 2px 1px #ff1111;
-    background-color: black;
-}
-
-#rock, #paper, #scissor {
+.btn-light {
     color: black;
-}
-
-.night-city-mode #rock, .night-city-mode #paper, .night-city-mode #scissor {
-    color: #fdf800;
-    text-shadow: 2px 2px 1px #ff1111;
-    background-color: black;
 }
 
 #difficultySlider {

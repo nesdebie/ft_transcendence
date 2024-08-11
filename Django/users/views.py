@@ -13,6 +13,11 @@ import qrcode
 import base64
 from io import BytesIO
 from django.contrib.auth import login
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+from django.views.decorators.http import require_POST
+import shutil
 
 def login_view(request):
     if request.method == 'POST':

@@ -17,9 +17,9 @@ window.ShifumiGame = (function() {
     }
 
     function resetGameState() {
-        const rockBtn = document.querySelector('.rock');
-        const paperBtn = document.querySelector('.paper');
-        const scissorBtn = document.querySelector('.scissor');
+        const rockBtn = document.getElementById('rock');
+        const paperBtn = document.getElementById('paper');
+        const scissorBtn = document.getElementById('scissor');
         playerOptions = [rockBtn, paperBtn, scissorBtn];
 
         playerOptions.forEach(option => {
