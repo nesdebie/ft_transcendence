@@ -33,22 +33,30 @@ const handleLocation = async () => {
     const path = window.location.pathname;
     const route = update_path(path);
     console.log("Handle location : " + path + "\n to route = " + route); // Debug statement
-    const html = await fetch(route).then((data) => data.text());
-    document.getElementById("main-page").innerHTML = html;
-	call_page_functions(path)
+    try {
+        const response = await fetch(route);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${route}: ${response.statusText}`);
+        }
+        const html = await response.text();
+        document.getElementById("main-page").innerHTML = html;
+        call_page_functions(path);
+    } catch (error) {
+        console.error('Error fetching the route:', error);
+    }
 };
 
 // Permet de call des fonctions Js specifiques 
 // pour des element apparaissant dans le HTML 
 function call_page_functions(path) {
-	if (document.getElementById('user-profile-picture'))
-		fetchUserProfilePicture();
+    if (document.getElementById('user-profile-picture'))
+        fetchUserProfilePicture();
     if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
     }
     // if (document.getElementById('user-username'))
-	// 	fetchUserProfileData();
-	//if ...
+    //  fetchUserProfileData();
+    //if ...
 }
 
 // Function to reapply cyberpunk mode if it was active
@@ -58,10 +66,10 @@ function reapplyNightCityModeIfNecessary() {
     }
 }
 
-export const redirectToRoute = (path) => {
+export const redirectToRoute = async(path) => {
     window.history.replaceState({}, "", path);
+    await handleLocation();
     reapplyNightCityModeIfNecessary();
-    handleLocation();
 };
 
 window.onpopstate = handleLocation;

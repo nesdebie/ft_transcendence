@@ -31,18 +31,13 @@ async function updateProfilePicture(event) {
         const data = await response.json();
 
         if (response.ok) {
-            //alert('Profile picture updated successfully!');
-            // Update the profile picture on the page
             let profilePictureElement = document.getElementById('currentProfilePicture');
             if (!profilePictureElement) {
-                // If the element doesn't exist, create it
                 profilePictureElement = document.createElement('img');
                 profilePictureElement.id = 'currentProfilePicture';
                 profilePictureElement.width = 200;
                 profilePictureElement.height = 200;
                 profilePictureElement.alt = `${data.username}'s Profile Picture`;
-                // Append the new image element to the appropriate place in the DOM
-                //document.querySelector('.page-container.align-center').insertBefore(profilePictureElement, document.getElementById('user-username'));
             }
             profilePictureElement.src = data.profile_picture + '?t=' + new Date().getTime();
             updateSidebar();
@@ -50,7 +45,7 @@ async function updateProfilePicture(event) {
             handleErrors(data);
         }
     } catch (error) {
-        console.error('Error updating profile picture:', error); // Log the error to the console
+        console.error('Error updating profile picture:', error);
         alert('Error updating profile picture.');
     }
 }
@@ -59,7 +54,6 @@ async function setPassword(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
 
-    // Log form data for debugging
     for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
     }
@@ -78,28 +72,20 @@ async function setPassword(event) {
         if (contentType && contentType.indexOf('application/json') !== -1) {
             const data = await response.json();
             if (response.ok) {
-                //alert('Password changed successfully!');
-                logout(event);
+                await logout(event);
             } else {
-                console.error('Error changing password:', data); // Log the error details
+                console.error('Error changing password:', data);
                 alert('Error changing password.');
             }
         } else {
             const text = await response.text();
-            console.error('Unexpected response format:', text); // Log the unexpected response
+            console.error('Unexpected response format:', text);
             alert('Unexpected response from server.');
         }
     } catch (error) {
-        console.error('Error changing password:', error); // Log the error to the console
+        console.error('Error changing password:', error);
         alert('Error changing password.');
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const csrftoken = getCookie('csrftoken');
-
-    document.getElementById('updateProfilePictureForm').addEventListener('submit', updateProfilePicture);
-    document.getElementById('changePasswordForm').addEventListener('submit', setPassword);
-});
 
 export { updateProfilePicture, setPassword }

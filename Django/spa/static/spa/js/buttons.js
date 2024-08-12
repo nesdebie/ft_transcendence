@@ -12,23 +12,44 @@ $(document).ready(function() {
   });
   
 
-document.body.addEventListener('submit', function(event) {
+document.body.addEventListener('submit', async function(event) {
     if (event.target.id === 'register-form') {
         event.preventDefault();
-        register(event);
+        try {
+            await register(event);
+        } catch (error) {
+            console.error('Error during registration:', error);
+        }
     } else if (event.target.id === 'login-form') {
         event.preventDefault();
-        login(event);
+        try {
+            await login(event);
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     } else if (event.target.id == 'find-user-form') {
         event.preventDefault();
-        find_user(event);
+        try {
+            await find_user(event);
+        } catch (error) {
+            console.error('Error during find user:', error);
+        }
     } else if (event.target.id == 'updateProfilePictureForm') {
         event.preventDefault();
-        updateProfilePicture(event);
-    }
-    else if (event.target.id == 'changePasswordForm') {
+        try {
+            await updateProfilePicture(event);
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+            alert('Error updating profile picture.');
+        }
+    } else if (event.target.id == 'changePasswordForm') {
         event.preventDefault();
-        setPassword(event);
+        try {
+            await setPassword(event);
+        } catch (error) {
+            console.error('Error changing password:', error);
+            alert('Error changing password.');
+        }
     }
     updateSidebar();
 });
