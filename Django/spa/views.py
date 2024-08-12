@@ -82,3 +82,4 @@ def view_chat(request, username=None):
 		'messages': messages,
 	}
 	return render(request, 'spa/pages/chat.html', context)
+

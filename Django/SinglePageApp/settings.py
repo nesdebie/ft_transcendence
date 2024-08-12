@@ -30,6 +30,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
 
+# AUTH
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+REDIRECT_URI = 'https://localhost/users_api/callback'
+
+
 
 # Application definition
 

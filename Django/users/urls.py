@@ -17,6 +17,15 @@ urlpatterns = [
     path('user_data/', views.current_user_data, name='current_user_data'),
     path('user_data/<str:username>', views.user_data, name='user_data'),
     path ('find_user/', views.find_user, name='find_user'),
-	# 2FA 
+	
+    # 2FA 
     path('verify_otp/', views.verify_otp, name='verify_otp'),
+    #path('generate_qr_code/', views.generate_qr_code, name='generate_qr_code'),
+
+	
+    # AUTH 
+    path('login_42/', views.login_42, name='login_42'),
+    path('callback/', views.callback, name='callback'),
+
+
 ]

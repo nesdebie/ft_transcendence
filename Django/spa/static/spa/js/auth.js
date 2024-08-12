@@ -1,6 +1,8 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
+
+
 // 2FA 
 async function login(event) {
     event.preventDefault();
@@ -62,42 +64,71 @@ async function login(event) {
 
 
 async function register(event) {
-	event.preventDefault();
-	const username = document.getElementById('register-username').value;
-	const password = document.getElementById('register-password').value;
-	const password2 = document.getElementById('register-password2').value;
-	const email = document.getElementById('register-email').value;
-	const image = document.getElementById('register-image').files[0];
-    // 2FA
-	const two_factor_auth = document.getElementById('register-2fa').checked;
-	
-	
-	const formData = new FormData();
-	formData.append('username', username);
-	formData.append('password', password);
-	formData.append('password2', password2);
-	formData.append('email', email);
-	formData.append('image', image);
-	// 2FA
+    event.preventDefault();
+
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+    const password2 = document.getElementById('register-password2').value;
+    const email = document.getElementById('register-email').value;
+    const image = document.getElementById('register-image').files[0];
+    const two_factor_auth = document.getElementById('register-2fa').checked;
+
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    formData.append('password2', password2);
+    formData.append('email', email);
+    formData.append('image', image);
     formData.append('two_factor_auth', two_factor_auth ? 'on' : '');
-	
-	const response = await fetch('/users_api/register/', {
-		method: 'POST',
-		headers: {
-			'X-CSRFToken': getCookie('csrftoken')
-		},
-		body: formData
-		
-	});
-	const data = await response.json(); 
-	if (response.ok) {
-		await redirectToRoute('/');
-		updateSidebar();
-	} else {
-		await redirectToRoute('/register');
-		handleErrors(data);
-	}
+
+    const response = await fetch('/users_api/register/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    });
+
+	console.log("** First ");
+
+    const data = await response.json();
+
+	console.log("** Sec ");
+
+
+    if (response.ok) {
+
+		console.log("** three ");
+        if (data.status === '2fa') {
+            console.log("2FA is enabled, showing QR code.");
+
+            // Affiche le QR code à l'utilisateur
+            const qrCodeContainer = document.getElementById('qr-code-container');
+            const qrCodeElement = document.getElementById('qr-code');
+            qrCodeContainer.style.display = 'block';
+            qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
+
+            // Ajoute un événement pour soumettre le code OTP
+            document.getElementById('otp-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const otp = document.getElementById('otp').value;
+                const verifyResponse = await verifyOtp(data.username, otp);
+                if (verifyResponse) {
+                    await redirectToRoute('/');
+                    updateSidebar();
+                } else {
+                    alert('Invalid OTP. Please try again.');
+                }
+            });
+        } else {
+            await redirectToRoute('/');
+            updateSidebar();
+        }
+    } else {
+        handleErrors(data);
+    }
 }
+
 
 async function logout() {
 	const response = await fetch('/users_api/logout/', {
@@ -127,7 +158,11 @@ async function verifyOtp(username) {
 		});
 		const data = await response.json();
 		if (response.ok) {
-			await checkAuthentication();
+			if (checkAuthentication() == false)
+			{
+				console.log('Check authentification failed');
+				return false;
+			}
 			return true;
 		} else {
 			alert('Invalid OTP. Please try again.');
@@ -259,6 +294,9 @@ async function updateSidebar() {
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-chat').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
+	// 42 AUTH
+	// document.getElementById('42AUTH').style.display = isAuthenticated ? 'block' : 'none';
+
 	if (isAuthenticated)
 		document.getElementById('profile-button-logo').src = await fetchUserData('profile_picture.url');
 }

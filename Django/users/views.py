@@ -6,6 +6,75 @@ from django.core.exceptions import ValidationError
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
+from . import views
+from django.conf import settings  # Assurez-vous d'importer settings ici
+import requests 
+
+# AUTH 
+from django.shortcuts import render, get_object_or_404
+from .models import Player
+
+
+import requests
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.conf import settings
+
+def login_42(request):
+    authorize_url = f"https://api.intra.42.fr/oauth/authorize?client_id={settings.CLIENT_ID}&redirect_uri={settings.REDIRECT_URI}&response_type=code"
+    return redirect(authorize_url)
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import Player
+from .forms import UserProfileForm
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from .models import Player
+from .forms import UserProfileForm
+
+from django.http import JsonResponse
+
+from django.http import HttpResponse
+
+# AUTH 42
+def callback(request):
+    if request.method == 'GET':
+        code = request.GET.get('code')
+        if not code:
+            return JsonResponse({"error": "No code provided."}, status=400)
+
+        token_url = 'https://api.intra.42.fr/oauth/token'
+        token_data = {
+            'grant_type': 'authorization_code',
+            'client_id': settings.CLIENT_ID,
+            'client_secret': settings.CLIENT_SECRET,
+            'code': code,
+            'redirect_uri': settings.REDIRECT_URI,
+        }
+        token_response = requests.post(token_url, data=token_data)
+        token = token_response.json().get('access_token')
+
+        if not token:
+            return JsonResponse({"error": "Failed to retrieve access token."}, status=400)
+
+        user_info_response = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f'Bearer {token}'})
+        user_info = user_info_response.json()
+
+        # Utilisation uniquement de localStorage pour transmettre les informations
+        response_script = f"""
+        <script>
+            localStorage.setItem('user_info', JSON.stringify({{
+                username: '{user_info.get('login', '')}',
+                email: '{user_info.get('email', '')}',
+                nickname: '{user_info.get('login', '')}'
+            }}));
+            window.close();
+        </script>
+        """
+        return HttpResponse(response_script)
+
 
 # 2FA
 import pyotp
@@ -13,6 +82,7 @@ import qrcode
 import base64
 from io import BytesIO
 from django.contrib.auth import login
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -107,6 +177,8 @@ def register_view(request):
         return JsonResponse({'status': 'success'})
 
     return JsonResponse({'status': 'invalid method'}, status=405)
+
+
 
 def logout_view(request):
 	logout(request)
