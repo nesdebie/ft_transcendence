@@ -20,7 +20,9 @@ urlpatterns = [
 	
     # 2FA 
     path('verify_otp/', views.verify_otp, name='verify_otp'),
-    #path('generate_qr_code/', views.generate_qr_code, name='generate_qr_code'),
+    path('generate_qr_code/', views.generate_qr_code, name='generate_qr_code'),
+    #path('clear_temp_2fa_secret/', views.clear_temp_2fa_secret, name='clear_temp_2fa_secret'),
+
 
 	
     # AUTH 

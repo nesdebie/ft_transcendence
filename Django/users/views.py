@@ -90,24 +90,16 @@ def login_view(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            
             if user.two_factor_enabled:
-                secret = user.activation_code
-                otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
-                qr = qrcode.make(otp_url)
-                qr_bytes = BytesIO()
-                qr.save(qr_bytes)
-
-                qr_base = qr_bytes.getvalue()
-                qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
-
-                login(request, user) # 2FA added so user can connect normally with 2 FA
+                login(request, user)  # Authentifier l'utilisateur
 
                 return JsonResponse({
                     'status': 'success',
                     'two_factor_enabled': True,
-                    'qr_code_base64': qr_base64,
                     'username': user.username
                 })
+
             else:
                 login(request, user)
                 return JsonResponse({'status': 'success'})
@@ -116,6 +108,42 @@ def login_view(request):
     
     return JsonResponse({'status': 'invalid method'}, status=405)
 
+
+from django.http import JsonResponse
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
+
+from django.http import JsonResponse
+
+
+
+
+# WORKS 
+def generate_qr_code(request):
+    if request.method == 'POST':
+        secret = pyotp.random_base32()  # Génère un secret temporaire
+        otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=request.POST.get('username'), issuer_name='Transcendence')
+        qr = qrcode.make(otp_url)
+        qr_bytes = BytesIO()
+        qr.save(qr_bytes)
+
+        qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode('utf-8')
+
+        # Stocke le secret temporairement dans la session
+        # request.session['temp_2fa_secret'] = secret
+        # return JsonResponse({'qr_code_base64': qr_base64})
+
+		###########################
+		# test local storage 
+		# Renvoyer le secret au client pour qu'il soit stocké dans localStorage
+        return JsonResponse({'qr_code_base64': qr_base64, 'secret': secret})
+		##########################
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+# WORKS 
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -125,7 +153,10 @@ def register_view(request):
         image = request.FILES.get('image')
         nickname = request.POST.get('nickname')
         two_factor_auth = request.POST.get('two_factor_auth') == 'on'
-    
+		############### test local storage 
+        secret = request.POST.get('2fa_secret')  # Récupérer le secret depuis le POST
+		##################
+
         errors = {}
 
         if Player.objects.filter(username=username).exists():
@@ -152,12 +183,16 @@ def register_view(request):
             nickname=nickname,
             profile_picture=image
         )
-        if two_factor_auth:
-            secret = pyotp.random_base32()
-            user.activation_code = secret
-            user.two_factor_enabled = True
-            user.save()
 
+        if two_factor_auth:
+            # local storage 
+            if secret:
+                print("Activation code is ok")
+                user.activation_code = secret
+                user.two_factor_enabled = True
+                user.save()
+
+            # Génération du QR code et enregistrement comme avant
             otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
             qr = qrcode.make(otp_url)
             qr_bytes = BytesIO()
@@ -177,8 +212,6 @@ def register_view(request):
         return JsonResponse({'status': 'success'})
 
     return JsonResponse({'status': 'invalid method'}, status=405)
-
-
 
 def logout_view(request):
 	logout(request)

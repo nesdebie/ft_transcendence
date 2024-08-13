@@ -25,27 +25,25 @@ async function login(event) {
         const data = await response.json();
         
         if (response.ok) {
-            console.log("Response ok");
-            // 2FA -->
-            if (data.two_factor_enabled) {
-                // Affichez le QR code si 2FA est activée
-                const qrCodeContainer = document.getElementById('qr-code-container');
-                const qrCodeElement = document.getElementById('qr-code');
-                qrCodeContainer.style.display = 'block';
-                qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
-                
-                // Ajoutez un événement pour soumettre le code OTP
-                document.getElementById('otp-form').addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    verifyOtp(data.username).then(result => {
-                        if (result) {
+            // 2FA --> /** NO QR code  */
+			if (data.two_factor_enabled) {
+				// Afficher uniquement le formulaire pour entrer le code OTP
+				const otpFormContainer = document.getElementById('otp-form-container');
+				otpFormContainer.style.display = 'block';
+				
+				// Ajoutez un événement pour soumettre le code OTP
+				document.getElementById('otp-form').addEventListener('submit', function(event) {
+					event.preventDefault();
+					verifyOtp(data.username).then(result => {
+						if (result) {
 							redirectToRoute('/');
-                            updateSidebar();
+							updateSidebar();
 							return true;
-                        }
-                    });
-                });
-            } else { // <-- 2FA
+						}
+					});
+				});
+			} // <-- 2FA 
+			else {
 				// aut with no 2FA
                 await redirectToRoute('/');
                 updateSidebar();
@@ -61,6 +59,48 @@ async function login(event) {
         return false;
     }
 }
+
+// Écouteur pour les événements de changement sur le document
+document.body.addEventListener('change', async function(event) {
+
+    let target = event.target;
+
+
+    if (target.id === 'register-2fa') {
+        event.preventDefault();
+
+        if (target.checked) {
+            try {
+                const response = await fetch('/users_api/generate_qr_code/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    const qrCodeContainer = document.getElementById('qr-code-container');
+                    const qrCodeElement = document.getElementById('qr-code');
+                    qrCodeContainer.style.display = 'block';
+                    qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
+
+					/********** LOCAL STORAGE FOR 2FA secret */
+					// Stocker le secret dans localStorage
+					localStorage.setItem('2fa_secret', data.secret);
+					/********** */
+
+                } else {
+                    console.error('Error generating QR code:', data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        } else {
+            document.getElementById('qr-code-container').style.display = 'none';
+        }
+    } 
+});
+
 
 
 async function register(event) {
@@ -81,6 +121,14 @@ async function register(event) {
     formData.append('image', image);
     formData.append('two_factor_auth', two_factor_auth ? 'on' : '');
 
+	/*********** test local storage 2FA secret  */
+    // Récupérer le secret 2FA depuis localStorage
+    if (two_factor_auth) {
+        const secret = localStorage.getItem('2fa_secret');
+        formData.append('2fa_secret', secret);
+    }
+	/**************************************** */
+
     const response = await fetch('/users_api/register/', {
         method: 'POST',
         headers: {
@@ -89,18 +137,10 @@ async function register(event) {
         body: formData
     });
 
-	console.log("** First ");
-
     const data = await response.json();
 
-	console.log("** Sec ");
-
-
     if (response.ok) {
-
-		console.log("** three ");
         if (data.status === '2fa') {
-            console.log("2FA is enabled, showing QR code.");
 
             // Affiche le QR code à l'utilisateur
             const qrCodeContainer = document.getElementById('qr-code-container');
@@ -116,6 +156,14 @@ async function register(event) {
                 if (verifyResponse) {
                     await redirectToRoute('/');
                     updateSidebar();
+
+					/********* test local storage */
+					// Supprimer le secret du localStorage après enregistrement réussi
+					if (two_factor_auth) {
+						localStorage.removeItem('2fa_secret');
+					}
+					/***************************** */
+
                 } else {
                     alert('Invalid OTP. Please try again.');
                 }
@@ -123,6 +171,12 @@ async function register(event) {
         } else {
             await redirectToRoute('/');
             updateSidebar();
+			/********* test local storage */
+			// Supprimer le secret du localStorage après enregistrement réussi
+			if (two_factor_auth) {
+				localStorage.removeItem('2fa_secret');
+			}
+			/***************************** */
         }
     } else {
         handleErrors(data);
@@ -294,8 +348,6 @@ async function updateSidebar() {
 	document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('nav-chat').style.display = isAuthenticated ? 'block' : 'none';
 	document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
-	// 42 AUTH
-	// document.getElementById('42AUTH').style.display = isAuthenticated ? 'block' : 'none';
 
 	if (isAuthenticated)
 		document.getElementById('profile-button-logo').src = await fetchUserData('profile_picture.url');
