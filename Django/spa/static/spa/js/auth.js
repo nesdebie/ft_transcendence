@@ -1,6 +1,8 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
 
+
+
 // 2FA 
 async function login(event) {
     event.preventDefault();
@@ -23,26 +25,26 @@ async function login(event) {
         const data = await response.json();
         
         if (response.ok) {
-            console.log("Response ok");
-            // 2FA -->
-            if (data.two_factor_enabled) {
-                // Affichez le QR code si 2FA est activée
-                const qrCodeContainer = document.getElementById('qr-code-container');
-                const qrCodeElement = document.getElementById('qr-code');
-                qrCodeContainer.style.display = 'block';
-                qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
-                
-                // Ajoutez un événement pour soumettre le code OTP
-                document.getElementById('otp-form').addEventListener('submit', async function(event) {
-                    event.preventDefault();
-                    const result = await verifyOtp(data.username);
-                    if (result) {
-                        await redirectToRoute('/');
-                        updateSidebar();
-                    }
-                });
-            } else { // <-- 2FA
-                // aut with no 2FA
+            // 2FA --> /** NO QR code  */
+			if (data.two_factor_enabled) {
+				// Afficher uniquement le formulaire pour entrer le code OTP
+				const otpFormContainer = document.getElementById('otp-form-container');
+				otpFormContainer.style.display = 'block';
+				
+				// Ajoutez un événement pour soumettre le code OTP
+				document.getElementById('otp-form').addEventListener('submit', function(event) {
+					event.preventDefault();
+					verifyOtp(data.username).then(result => {
+						if (result) {
+							redirectToRoute('/');
+							updateSidebar();
+							return true;
+						}
+					});
+				});
+			} // <-- 2FA 
+			else {
+				// aut with no 2FA
                 await redirectToRoute('/');
                 updateSidebar();
             }
@@ -54,6 +56,48 @@ async function login(event) {
         console.error('Error during login:', error);
     }
 }
+
+// Écouteur pour les événements de changement sur le document
+document.body.addEventListener('change', async function(event) {
+
+    let target = event.target;
+
+
+    if (target.id === 'register-2fa') {
+        event.preventDefault();
+
+        if (target.checked) {
+            try {
+                const response = await fetch('/users_api/generate_qr_code/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    const qrCodeContainer = document.getElementById('qr-code-container');
+                    const qrCodeElement = document.getElementById('qr-code');
+                    qrCodeContainer.style.display = 'block';
+                    qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
+
+					/********** LOCAL STORAGE FOR 2FA secret */
+					// Stocker le secret dans localStorage
+					localStorage.setItem('2fa_secret', data.secret);
+					/********** */
+
+                } else {
+                    console.error('Error generating QR code:', data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        } else {
+            document.getElementById('qr-code-container').style.display = 'none';
+        }
+    } 
+});
+
 
 
 async function register(event) {
@@ -78,27 +122,68 @@ async function register(event) {
     formData.append('image', image);
     formData.append('two_factor_auth', two_factor_auth ? 'on' : '');
 
-    try {
-        const response = await fetch('/users_api/register/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: formData
-        });
+	/*********** test local storage 2FA secret  */
+    // Récupérer le secret 2FA depuis localStorage
+    if (two_factor_auth) {
+        const secret = localStorage.getItem('2fa_secret');
+        formData.append('2fa_secret', secret);
+    }
+	/**************************************** */
 
-        const data = await response.json();
-        if (response.ok) {
+    const response = await fetch('/users_api/register/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        if (data.status === '2fa') {
+
+            // Affiche le QR code à l'utilisateur
+            const qrCodeContainer = document.getElementById('qr-code-container');
+            const qrCodeElement = document.getElementById('qr-code');
+            qrCodeContainer.style.display = 'block';
+            qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
+
+            // Ajoute un événement pour soumettre le code OTP
+            document.getElementById('otp-form').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const otp = document.getElementById('otp').value;
+                const verifyResponse = await verifyOtp(data.username, otp);
+                if (verifyResponse) {
+                    await redirectToRoute('/');
+                    updateSidebar();
+
+					/********* test local storage */
+					// Supprimer le secret du localStorage après enregistrement réussi
+					if (two_factor_auth) {
+						localStorage.removeItem('2fa_secret');
+					}
+					/***************************** */
+
+                } else {
+                    alert('Invalid OTP. Please try again.');
+                }
+            });
+        } else {
             await redirectToRoute('/');
             updateSidebar();
-        } else {
-            await redirectToRoute('/register');
-            handleErrors(data);
+			/********* test local storage */
+			// Supprimer le secret du localStorage après enregistrement réussi
+			if (two_factor_auth) {
+				localStorage.removeItem('2fa_secret');
+			}
+			/***************************** */
         }
-    } catch (error) {
-        console.error('Error during registration:', error);
+    } else {
+        handleErrors(data);
     }
 }
+
 
 async function logout() {
     const response = await fetch('/users_api/logout/', {
@@ -118,26 +203,30 @@ async function verifyOtp(username) {
     formData.append('username', username);
     formData.append('otp_code', otp);
 
-    try {
-        const response = await fetch('/users_api/verify_otp/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: formData
-        });
-        const data = await response.json();
-        if (response.ok) {
-            await checkAuthentication();
-            return true;
-        } else {
-            alert('Invalid OTP. Please try again.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Error during OTP verification:', error);
-        return false;
-    }
+	try {
+		const response = await fetch('/users_api/verify_otp/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken')
+			},
+			body: formData
+		});
+		const data = await response.json();
+		if (response.ok) {
+			if (checkAuthentication() == false)
+			{
+				console.log('Check authentification failed');
+				return false;
+			}
+			return true;
+		} else {
+			alert('Invalid OTP. Please try again.');
+			return false;
+		}
+	} catch (error) {
+		console.error('Error during OTP verification:', error);
+		return false;
+	}
 }
 
 async function checkAuthentication() {

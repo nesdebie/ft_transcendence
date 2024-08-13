@@ -6,6 +6,75 @@ from django.core.exceptions import ValidationError
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
+from . import views
+from django.conf import settings  # Assurez-vous d'importer settings ici
+import requests 
+
+# AUTH 
+from django.shortcuts import render, get_object_or_404
+from .models import Player
+
+
+import requests
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.conf import settings
+
+def login_42(request):
+    authorize_url = f"https://api.intra.42.fr/oauth/authorize?client_id={settings.CLIENT_ID}&redirect_uri={settings.REDIRECT_URI}&response_type=code"
+    return redirect(authorize_url)
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import Player
+from .forms import UserProfileForm
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from .models import Player
+from .forms import UserProfileForm
+
+from django.http import JsonResponse
+
+from django.http import HttpResponse
+
+# AUTH 42
+def callback(request):
+    if request.method == 'GET':
+        code = request.GET.get('code')
+        if not code:
+            return JsonResponse({"error": "No code provided."}, status=400)
+
+        token_url = 'https://api.intra.42.fr/oauth/token'
+        token_data = {
+            'grant_type': 'authorization_code',
+            'client_id': settings.CLIENT_ID,
+            'client_secret': settings.CLIENT_SECRET,
+            'code': code,
+            'redirect_uri': settings.REDIRECT_URI,
+        }
+        token_response = requests.post(token_url, data=token_data)
+        token = token_response.json().get('access_token')
+
+        if not token:
+            return JsonResponse({"error": "Failed to retrieve access token."}, status=400)
+
+        user_info_response = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f'Bearer {token}'})
+        user_info = user_info_response.json()
+
+        # Utilisation uniquement de localStorage pour transmettre les informations
+        response_script = f"""
+        <script>
+            localStorage.setItem('user_info', JSON.stringify({{
+                username: '{user_info.get('login', '')}',
+                email: '{user_info.get('email', '')}',
+                nickname: '{user_info.get('login', '')}'
+            }}));
+            window.close();
+        </script>
+        """
+        return HttpResponse(response_script)
+
 
 # 2FA
 import pyotp
@@ -19,30 +88,23 @@ import os
 from django.views.decorators.http import require_POST
 import shutil
 
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            
             if user.two_factor_enabled:
-                secret = user.activation_code
-                otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
-                qr = qrcode.make(otp_url)
-                qr_bytes = BytesIO()
-                qr.save(qr_bytes)
-
-                qr_base = qr_bytes.getvalue()
-                qr_base64 = base64.b64encode(qr_base).decode('utf-8').replace('\n', '')
-
-                login(request, user) # 2FA added so user can connect normally with 2 FA
+                login(request, user)  # Authentifier l'utilisateur
 
                 return JsonResponse({
                     'status': 'success',
                     'two_factor_enabled': True,
-                    'qr_code_base64': qr_base64,
                     'username': user.username
                 })
+
             else:
                 login(request, user)
                 return JsonResponse({'status': 'success'})
@@ -51,6 +113,42 @@ def login_view(request):
     
     return JsonResponse({'status': 'invalid method'}, status=405)
 
+
+from django.http import JsonResponse
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
+
+from django.http import JsonResponse
+
+
+
+
+# WORKS 
+def generate_qr_code(request):
+    if request.method == 'POST':
+        secret = pyotp.random_base32()  # Génère un secret temporaire
+        otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=request.POST.get('username'), issuer_name='Transcendence')
+        qr = qrcode.make(otp_url)
+        qr_bytes = BytesIO()
+        qr.save(qr_bytes)
+
+        qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode('utf-8')
+
+        # Stocke le secret temporairement dans la session
+        # request.session['temp_2fa_secret'] = secret
+        # return JsonResponse({'qr_code_base64': qr_base64})
+
+		###########################
+		# test local storage 
+		# Renvoyer le secret au client pour qu'il soit stocké dans localStorage
+        return JsonResponse({'qr_code_base64': qr_base64, 'secret': secret})
+		##########################
+
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+# WORKS 
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -60,7 +158,10 @@ def register_view(request):
         image = request.FILES.get('image')
         nickname = request.POST.get('nickname')
         two_factor_auth = request.POST.get('two_factor_auth') == 'on'
-    
+		############### test local storage 
+        secret = request.POST.get('2fa_secret')  # Récupérer le secret depuis le POST
+		##################
+
         errors = {}
 
         if Player.objects.filter(username=username).exists():
@@ -87,12 +188,16 @@ def register_view(request):
             nickname=nickname,
             profile_picture=image
         )
-        if two_factor_auth:
-            secret = pyotp.random_base32()
-            user.activation_code = secret
-            user.two_factor_enabled = True
-            user.save()
 
+        if two_factor_auth:
+            # local storage 
+            if secret:
+                print("Activation code is ok")
+                user.activation_code = secret
+                user.two_factor_enabled = True
+                user.save()
+
+            # Génération du QR code et enregistrement comme avant
             otp_url = pyotp.totp.TOTP(secret).provisioning_uri(name=user.username, issuer_name='Transcendence')
             qr = qrcode.make(otp_url)
             qr_bytes = BytesIO()

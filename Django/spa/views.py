@@ -106,8 +106,6 @@ def view_chat(request, username=None):
 
 	for m in messages:
 		print(f'{m.sender.username} -> {m.receiver.username}: {m.message}\n')
-
-
 	return render(request, template, context)
 
 @login_required

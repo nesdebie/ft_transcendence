@@ -5,7 +5,7 @@
 			<form id="register-form" class="register-form" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div class="form-group">
-					<label for="register-username">Username</label>
+					<label id="1" for="register-username">Username</label>
 					<input type="text" class="form-control" id="register-username" name="username" required>
 					<span id="username-error" class="error-message text-danger"></span>
 				</div>
@@ -35,12 +35,20 @@
 					<span id="image-error" class="error-message text-danger"></span>
 				</div>
 				<!-- 2FA -->
-				<div class="form-group">
-                    <input type="checkbox" id="register-2fa" name="two_factor_auth">
-                    <label for="register-2fa">Enable Two-Factor Authentication (2FA)</label>
-                </div>
-				<!-- -->
-				<button id="register-form-button" type="submit" class="btn btn-dark">Register</button>
+				<div class="form-group" id="2fa-section" style="display: none;">
+					<input type="checkbox" id="register-2fa" name="two_factor_auth">
+					<label for="register-2fa">Enable Two-Factor Authentication (2FA)</label>
+				</div>
+				<!-- QR Code Display -->
+				<div id="qr-code-container" class="form-group" style="display:none;">
+				    <h3>Scan the QR Code with your Authenticator App</h3>
+				    <div id="qr-code"></div>
+				</div>
+				<!-- End of QR Code Display -->
+				<!-- AUTH -->
+				<button href="#" id="register-with-42" class="btn btn-primary btn-block">Register with 42</button>
+				<!---->
+				<button id="register-form-button" type="submit" class="btn btn-primary btn-block">Register</button>
 			</form>
 			<p class="text-center">
 				Have an account yet? <a href="/login" onclick="route(event)">Login</a>
