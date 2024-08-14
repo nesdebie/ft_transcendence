@@ -23,28 +23,31 @@ async function login(event) {
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
-            // 2FA --> /** NO QR code  */
-			if (data.two_factor_enabled) {
-				// Afficher uniquement le formulaire pour entrer le code OTP
-				const otpFormContainer = document.getElementById('otp-form-container');
-				otpFormContainer.style.display = 'block';
-				
-				// Ajoutez un événement pour soumettre le code OTP
-				document.getElementById('otp-form').addEventListener('submit', function(event) {
-					event.preventDefault();
-					verifyOtp(data.username).then(result => {
-						if (result) {
-							redirectToRoute('/');
-							updateSidebar();
-							return true;
-						}
-					});
-				});
-			} // <-- 2FA 
-			else {
-				// aut with no 2FA
+            // 2FA
+            if (data.two_factor_enabled) {
+
+                // Afficher uniquement le formulaire pour entrer le code OTP
+                const otpFormContainer = document.getElementById('otp-form-container');
+                otpFormContainer.style.display = 'block';
+
+                // Utilisation d'async/await pour s'assurer que la promesse est résolue avant de continuer
+                const otpForm = document.getElementById('otp-form');
+                otpForm.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const result = await verifyOtp(data.username);
+                    if (result) {
+                        await redirectToRoute('/');
+                        updateSidebar();
+                        return true;
+                    } else {
+                        console.log("OTP verification failed");
+                        // Gérer le cas où la vérification OTP échoue
+                    }
+                });
+            } else {
+                // Authentification sans 2FA
                 await redirectToRoute('/');
                 updateSidebar();
             }
@@ -56,6 +59,8 @@ async function login(event) {
         console.error('Error during login:', error);
     }
 }
+
+
 
 // Écouteur pour les événements de changement sur le document
 document.body.addEventListener('change', async function(event) {
@@ -202,6 +207,8 @@ async function verifyOtp(username) {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('otp_code', otp);
+
+    console.log("*** Verify otp");
 
 	try {
 		const response = await fetch('/users_api/verify_otp/', {

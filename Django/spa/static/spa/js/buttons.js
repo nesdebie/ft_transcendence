@@ -51,7 +51,9 @@ document.body.addEventListener('submit', async function(event) {
             alert('Error changing password.');
         }
     }
-    updateSidebar();
+    // fixing bug in login , please leave this condition , if this condition is not here 
+    if (event.target.id !== 'login-form')
+        updateSidebar();
 });
 
 // 42 AUTH 
