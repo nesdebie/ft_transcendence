@@ -63,7 +63,7 @@
 		{% endif %}
 	<!-- If own_profile -->
 	{% else %}
-		<h2>Find a User</h2>
+		<h3>Find a User</h3>
 		<form id="find-user-form">
 			{% csrf_token %}
 			<div class="form-group">
@@ -76,7 +76,7 @@
 			<button type="submit" class="btn btn-dark">Search</button>
 		</form>
 		
-		<h2>Your Friends</h2>
+		<h3>Your Friends</h3>
 		<div class="friends-grid">
 			{% for friend in friends %}
 			<div class="friend-card">
@@ -89,7 +89,7 @@
 		</div>
 	
 		
-		<h2>Friend Requests</h2>
+		<h3>Friend Requests</h3>
 		<ul>
 			{% for request in received_requests %}
 			<li>

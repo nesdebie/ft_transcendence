@@ -54,6 +54,9 @@ function call_page_functions(path) {
     if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
     }
+    if (document.body.classList.contains("cyberpunk")) {
+        applyNightCityMode();
+    }
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
     //if ...
