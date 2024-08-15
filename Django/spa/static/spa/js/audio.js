@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Apply mode on page load
-    applyNightCityModeOnLoad();
+    //applyNightCityModeOnLoad();
 
     document.querySelector("#nightCityModeBtn").addEventListener('click', function() {
         if (document.body.classList.contains("cyberpunk")) {
