@@ -20,8 +20,6 @@ from django.contrib.auth import update_session_auth_hash
 logger = logging.getLogger(__name__)
 
 def index(request):
-    if request.user.is_authenticated:
-        return redirect('self_profile')
     return render(request, 'spa/index.html')
 
 def pages(request, page):
