@@ -12,7 +12,7 @@ const route = (event, url_precision = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/shifumi', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
-    { paths: ['/profile', '/friend_requests', '/chat', '/profile_editor'], suffix: '' }
+    { paths: ['/profile', '/chat', '/profile_editor'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -54,9 +54,9 @@ function call_page_functions(path) {
     if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
     }
-    // if (document.body.classList.contains("cyberpunk")) {
-    //     applyNightCityMode();
-    // }
+    if (document.body.classList.contains("cyberpunk")) {
+        applyNightCityMode();
+    }
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
     //if ...
