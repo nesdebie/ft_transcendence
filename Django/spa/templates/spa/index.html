@@ -5,7 +5,7 @@
   <title>Transcendence</title>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="{% static 'spa/css/images/favicon.ico'%}">
-  <!--<link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />-->
+  <link rel="stylesheet" href="{% static 'spa/css/parallax.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/night-city-mode.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
@@ -16,6 +16,9 @@
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
 </head>
     <body>
+        <div id='stars'></div>
+        <div id='stars2'></div>
+        <div id='stars3'></div>
         <div id="root">
             <nav id="main-nav" class="sidebar">
               <a href="/" id="nav-home" onclick="route()">Home</a>
@@ -41,8 +44,8 @@
           <button id="nightCityModeBtn" aria-label="Toggle Night Mode">
             <img id="nightCityModeBtnImg" src="{% static 'spa/css/images/samurai.png'%}" width="40" height="45" alt="Button Image">
           </button>
-          <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Infraction.mp3' %}"></audio>
-          <audio id="dayModeMusic" src="{% static 'spa/js/audio/sci-fi-survival-dreamscape.mp3' %}"></audio>
+          <audio id="nightCityModeMusic" src="{% static 'spa/js/audio/Cyberpunk2077.mp3' %}"></audio>
+          <audio id="dayModeMusic" src="{% static 'spa/js/audio/Interstellar.mp3' %}"></audio>
           <audio id="hover_day" src="{% static 'spa/js/audio/hover_day.wav' %}"></audio>
           <audio id="click_day" src="{% static 'spa/js/audio/click_day.wav' %}"></audio>
           <audio id="hover_night" src="{% static 'spa/js/audio/hover_night.wav' %}"></audio>
