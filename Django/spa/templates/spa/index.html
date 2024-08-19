@@ -75,9 +75,13 @@
               for (let mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                   if (document.getElementById('pong-game')) {
-                    //loadPongScript();
                     const script = document.createElement('script');
                     script.src = "{% static 'spa/js/pong.js' %}";
+                    document.head.appendChild(script);
+                  }
+                  if (document.getElementById('shifumi-pve-game')) {
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/shifumi_pve.js' %}";
                     document.head.appendChild(script);
                   }
                 }
