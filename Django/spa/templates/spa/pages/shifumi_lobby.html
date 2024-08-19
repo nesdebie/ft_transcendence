@@ -1,0 +1,18 @@
+<div class="page-container align-center">
+    <h2>Shifumi Lobby</h2>
+    
+    <div class="shifumi-options">
+        <h3>Play against Computer</h3>
+        <button href="/shifumi/PVE" onclick="route()">Start PVE Game</button>
+    </div>
+
+    <div class="shifumi-options">
+        <h3>Active PVP Game</h3>
+        {% if active_game %}
+            <p>You have an active game: {{ active_game }}</p>
+            <button onclick="route(event, '/shifumi/{{ active_game }}')">Rejoin Game</button>
+        {% else %}
+            <p>No active PVP game.</p>
+        {% endif %}
+    </div>
+</div>

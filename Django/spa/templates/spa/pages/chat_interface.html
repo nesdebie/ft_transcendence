@@ -58,9 +58,16 @@
                             {% for message in messages %}
                             <tr>
                                 <td class="{% if message.sender.username == request.user.username %}sent-message{% else %}received-message{% endif %}">
-                                    <p class="message">
-                                        {{ message.message }}
-                                    </p>
+                                    {% if message.is_game_invite and message.sender.username != request.user.username %}
+                                        <p class="message">
+                                            {{ message.sender.username }} has invited you to play Shifumi. 
+                                            <button class="accept-invite" data-sender="{{ message.sender.username }}">Accept</button>
+                                        </p>
+                                    {% else %}
+                                        <p class="message">
+                                            {{ message.message }}
+                                        </p>
+                                    {% endif %}
                                     <p class="timestamp">{% localtime on %}{{ message.timestamp|date:"Y-m-d H:i" }}{% endlocaltime %}</p>
                                 </td>
                             </tr>
@@ -74,7 +81,8 @@
                         <input type="text" class="form-control" id="message_input" placeholder="Write message...">
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-success" id="chat-message-submit">Send</button>
+                        <button class="btn btn-success" id="send-message">Send</button>
+                        <button class="btn btn-primary" id="send-game-invite">Invite to Shifumi</button>
                     </div>
                 </div>
             </div>

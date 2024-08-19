@@ -40,6 +40,7 @@ class Player(AbstractUser):
 	activation_code 	= models.CharField(max_length=32, blank=True, null=True)  # Ajout de l'attribut activation_code
 	two_factor_enabled 	= models.BooleanField(default=False)  # Ajout de l'attribut two_factor_enabled
 
+	active_shifumi_game = models.CharField(max_length=100, null=True, blank=True)
 
 	friends 			= models.ManyToManyField('self', through='Friendship', symmetrical=False, related_name='related_friends')
 	friend_requests 	= models.ManyToManyField('self', through='FriendRequest', symmetrical=False, related_name='related_friend_requests')
@@ -90,6 +91,17 @@ class Player(AbstractUser):
 		except Block.DoesNotExist:
 			return False
 
+	def get_active_shifumi_game(self):
+		return self.active_shifumi_game
+
+	def set_active_shifumi_game(self, room_name):
+		self.active_shifumi_game = room_name
+		self.save()
+
+	def clear_active_shifumi_game(self):
+		self.active_shifumi_game = None
+		self.save()
+
 	def __str__(self):
 		return self.username
 
@@ -134,8 +146,10 @@ class Message(models.Model):
     sender = models.ForeignKey(Player, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(Player, related_name='received_messages', on_delete=models.CASCADE)
     message = models.TextField()
+    message_type = models.CharField(max_length=20, default='chat_message')
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    is_game_invite = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.sender} to {self.receiver} at {self.timestamp}'

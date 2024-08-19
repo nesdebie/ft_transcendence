@@ -13,4 +13,7 @@ urlpatterns = [
     path('profile_editor/', views.profile_editor, name='profile_editor'),
     path('update_profile_picture/', views.update_profile_picture, name='update_profile_picture'),
     path('change_password/', views.change_password, name='change_password'),
+    path('shifumi/', views.shifumi_lobby, name='shifumi_lobby'),
+    path('shifumi/PVE/', views.shifumi_game_PVE, name='shifumi_game_PVE'),
+    path('shifumi/<str:room_name>/', views.shifumi_game_PVP, name='shifumi_game_PVP'),
 ]

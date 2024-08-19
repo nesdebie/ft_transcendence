@@ -6,6 +6,22 @@
     color: black;
 }
 
+.night-city-mode #shifumi-start {
+    color: #fdf800;
+    text-shadow: 2px 2px 1px #ff1111;
+    background-color: black;
+}
+
+#rock, #paper, #scissors {
+    color: black;
+}
+
+.night-city-mode #rock, .night-city-mode #paper, .night-city-mode #scissors {
+    color: #fdf800;
+    text-shadow: 2px 2px 1px #ff1111;
+    background-color: black;
+}
+
 #difficultySlider {
     width: 200px; /* Adjust this value as needed */
 }
