@@ -1,158 +1,258 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
 import time
-import asyncio
+from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
 class ShifumiConsumer(AsyncWebsocketConsumer):
-	rooms = {}
-	player_games = {}
+    rooms = {}
 
-	@database_sync_to_async
-	def set_active_game(self, user, room_name):
-		from users.models import Player
-		player = Player.objects.get(username=user.username)
-		player.set_active_shifumi_game(room_name)
+    async def connect(self):
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = f'shifumi_{self.room_name}'
+        self.user = self.scope['user']
 
-	@database_sync_to_async
-	def clear_active_game(self, user):
-		from users.models import Player
-		player = Player.objects.get(username=user.username)
-		player.clear_active_shifumi_game()
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
 
-	async def connect(self):
-		self.room_name = self.scope['url_route']['kwargs']['room_name']
-		self.room_group_name = f'shifumi_{self.room_name}'
-		self.user = self.scope['user']
+        await self.accept()
 
-		if self.user.username in self.player_games:
-			await self.close()
-			return
+    async def websocket_disconnect(self, event):
+        print(f"WebSocket disconnected: {event}")
+        await self.disconnect(event.get('code'))
 
-		await self.channel_layer.group_add(
-			self.room_group_name,
-			self.channel_name
-		)
+    async def disconnect(self, close_code):
+        print(f"Disconnecting with close code: {close_code}")
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+        if self.room_name in self.rooms:
+            if self.user.username in self.rooms[self.room_name]['players_usernames']:
+                self.rooms[self.room_name]['players_usernames'].remove(self.user.username)
+            if not self.rooms[self.room_name]['players_usernames']:
+                del self.rooms[self.room_name]
+            else:
+                # Notify the other player that this player has left
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'player_left',
+                        'player': self.user.username
+                    }
+                )
+        await self.clear_active_game(self.user.username)
+        print(f"Disconnected. Rooms: {self.rooms}")
 
-		await self.accept()
-		await self.set_active_game(self.user, self.room_name)
+    async def receive(self, text_data):
+        try:
+            data = json.loads(text_data)
+            action = data['action']
+            
+            if action == 'join':
+                await self.join_game()
+            elif action == 'move':
+                await self.handle_move(data['move'])
+            else:
+                await self.send(text_data=json.dumps({
+                    'error': f"Unknown action: {action}"
+                }))
+        except json.JSONDecodeError:
+            await self.send(text_data=json.dumps({
+                'error': "Invalid JSON"
+            }))
+        except KeyError as e:
+            await self.send(text_data=json.dumps({
+                'error': f"Missing key in data: {str(e)}"
+            }))
+        except Exception as e:
+            print(f"Error in receive: {str(e)}")
+            await self.send(text_data=json.dumps({
+                'error': "An unexpected error occurred"
+            }))
 
-	async def disconnect(self, close_code):
-		await self.channel_layer.group_discard(
-			self.room_group_name,
-			self.channel_name
-		)
-		if self.room_name in self.rooms:
-			self.rooms[self.room_name]['players'].remove(self.channel_name)
-			if not self.rooms[self.room_name]['players']:
-				del self.rooms[self.room_name]
-		if self.user.username in self.player_games:
-			del self.player_games[self.user.username]
-		await self.clear_active_game(self.user)
+    async def join_game(self):
+        if self.room_name not in self.rooms:
+            self.rooms[self.room_name] = {
+                'players_usernames': [self.user.username],
+                'game_history': {},
+                'scores': {self.user.username: 0},
+                'round_number': 1
+            }
+        elif len(self.rooms[self.room_name]['players_usernames']) < 2:
+            self.rooms[self.room_name]['players_usernames'].append(self.user.username)
+            self.rooms[self.room_name]['scores'][self.user.username] = 0
+        
+        if len(self.rooms[self.room_name]['players_usernames']) == 2:
+            self.rooms[self.room_name]['players_usernames'].sort()  # Sort usernames alphabetically
+            await self.start_game()
 
-	async def receive(self, text_data):
-		data = json.loads(text_data)
-		action = data['action']
-		
-		if action == 'join':
-			await self.join_game()
-		elif action == 'move':
-			player_move = data['move']
-			await self.handle_move(player_move)
+    async def start_game(self):
+        room = self.rooms[self.room_name]
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'game_start',
+                'player1Username': room['players_usernames'][0],
+                'player2Username': room['players_usernames'][1],
+                'scores': room['scores']
+            }
+        )
+        await self.start_round()
 
-	async def handle_move(self, move):
-		room = self.rooms[self.room_name]
-		room['moves'][self.channel_name] = move
+    async def start_round(self):
+        room = self.rooms[self.room_name]
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'round_start',
+                'roundNumber': room['round_number']
+            }
+        )
 
-		if len(room['moves']) == 1:
-			# Start countdown for the other player
-			asyncio.create_task(self.start_countdown())
-		elif len(room['moves']) == 2:
-			# Both players have moved, resolve the game
-			await self.resolve_game()
+    async def handle_move(self, move):
+        room = self.rooms[self.room_name]
+        current_round = room['round_number']
+        
+        if current_round not in room['game_history']:
+            room['game_history'][current_round] = {}
+        
+        room['game_history'][current_round][self.user.username] = move
+        
+        if len(room['game_history'][current_round]) == 2:
+            await self.resolve_round()
+        else:
+            # Start countdown for the other player
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'start_countdown',
+                    'player': self.user.username
+                }
+            )
 
-	async def start_countdown(self):
-		await asyncio.sleep(10)
-		room = self.rooms[self.room_name]
-		if len(room['moves']) < 2:
-			# Time's up, add a 'timeout' move for the player who didn't respond
-			for player in room['players']:
-				if player not in room['moves']:
-					room['moves'][player] = 'timeout'
-			await self.resolve_game()
+    async def resolve_round(self):
+        room = self.rooms[self.room_name]
+        current_round = room['round_number']
+        players = room['players_usernames']
+        moves = room['game_history'][current_round]
+        
+        winner = self.get_winner(moves)
+        if winner:
+            room['scores'][winner] += 1
 
-	async def resolve_game(self):
-		room = self.rooms[self.room_name]
-		moves = list(room['moves'].values())
-		players = room['players']
-		
-		result = self.get_winner(moves[0], moves[1])
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'game_result',
+                'moves': moves,
+                'scores': room['scores'],
+                'roundNumber': current_round,
+                'player1Username': players[0],
+                'player2Username': players[1],
+                'winner': winner
+            }
+        )
+        room['round_number'] += 1
 
-		await self.channel_layer.group_send(
-			self.room_group_name,
-			{
-				'type': 'game_result',
-				'result': result,
-				'moves': dict(zip(players, moves))
-			}
-		)
-		room['moves'].clear()
+        if room['round_number'] > 10:
+            await self.end_game()
+        else:
+            await self.start_round()
 
-	def get_winner(self, move1, move2):
-		if 'timeout' in [move1, move2]:
-			return 'player1' if move2 == 'timeout' else 'player2'
-		elif move1 == move2:
-			return 'tie'
-		elif (move1 == 'rock' and move2 == 'scissors') or \
-			 (move1 == 'scissors' and move2 == 'paper') or \
-			 (move1 == 'paper' and move2 == 'rock'):
-			return 'player1'
-		else:
-			return 'player2'
+    async def end_game(self):
+        room = self.rooms[self.room_name]
+        scores = room['scores']
+        players = room['players_usernames']
+        winner = max(scores, key=scores.get) if scores[players[0]] != scores[players[1]] else None
 
-	async def game_move(self, event):
-		await self.send(text_data=json.dumps(event))
+            # Send the message directly to the player's channel
+        await self.channel_layer.group_send(
+            self.channel_name,  # Send to the specific player's channel
+            {
+                'type': 'game_over',
+                'winner': winner,
+                'scores': scores,
+                'result': 'tie' if winner is None else 'win' if self.user.username == winner else 'lose'
+            }
+        )
 
-	async def start_game(self):
-		if self.room_name in self.rooms and len(self.rooms[self.room_name]['players']) == 2:
-			await self.channel_layer.group_send(
-				self.room_group_name,
-				{
-					'type': 'game_start',
-					'message': 'Both players have joined. The game is starting!'
-				}
-			)
-		else:
-			await self.send(text_data=json.dumps({
-				'type': 'error',
-				'message': 'Waiting for another player to join.'
-			}))
+        # Clear the active game for both players
+        for player in players:
+            await self.clear_active_game(player)
+        
+        # Remove the room
+        if self.room_name in self.rooms:
+            del self.rooms[self.room_name]
 
-	async def game_start(self, event):
-		await self.send(text_data=json.dumps(event))
+    @database_sync_to_async
+    def clear_active_game(self, username):
+        from users.models import Player
+        player = Player.objects.get(username=username)
+        player.clear_active_shifumi_game()
 
-	async def game_result(self, event):
-		await self.send(text_data=json.dumps(event))
+    async def start_countdown(self, event):
+        if self.user.username != event['player']:
+            await self.send(text_data=json.dumps({
+                'type': 'start_countdown',
+                'message': 'Your turn to make a move'
+            }))
 
-	async def game_over(self, event):
-		await self.send(text_data=json.dumps({
-			'type': 'game_over',
-			'winner': event['winner']
-		}))
-		await self.clear_active_game(self.user)
+    async def game_start(self, event):
+        await self.send(text_data=json.dumps(event))
 
-	async def join_game(self):
-		if self.user.username in self.player_games:
-			await self.send(text_data=json.dumps({
-				'type': 'error',
-				'message': 'You already have an active game.'
-			}))
-			return
+    async def round_start(self, event):
+        await self.send(text_data=json.dumps(event))
 
-		if self.room_name not in self.rooms:
-			self.rooms[self.room_name] = {'players': [self.channel_name]}
-		elif len(self.rooms[self.room_name]['players']) < 2:
-			self.rooms[self.room_name]['players'].append(self.channel_name)
-		
-		self.player_games[self.user.username] = self.room_name
-		await self.start_game()
+    async def game_result(self, event):
+        players = [event['player1Username'], event['player2Username']]
+        opponent = event['player2Username'] if self.user.username == event['player1Username'] else event['player1Username']
+        
+        result = 'tie'
+        if event['winner']:
+            print(f"Winner: {event['winner']} and self.user.username: {self.user.username}")
+            result = 'win' if self.user.username == event['winner'] else 'lose'
+        
+        await self.send(text_data=json.dumps({
+            'type': 'game_result',
+            'result': result,
+            'moves': event['moves'],
+            'scores': event['scores'],
+            'roundNumber': event['roundNumber'],
+            'playerMove': event['moves'][self.user.username],
+            'opponentMove': event['moves'][opponent],
+            'player1Username': event['player1Username'],
+            'player2Username': event['player2Username']
+        }))
+
+    async def player_left(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'player_left',
+            'player': event['player']
+        }))
+
+    def get_winner(self, moves):
+        print(f"Moves: {moves}")
+        if len(moves) != 2:
+            return None
+
+        players = list(moves.keys())
+        move1, move2 = moves[players[0]], moves[players[1]]
+
+        if move1 == move2:
+            return None
+        elif (move1 == 'rock' and move2 == 'scissors') or \
+             (move1 == 'scissors' and move2 == 'paper') or \
+             (move1 == 'paper' and move2 == 'rock'):
+            return players[0]
+        else:
+            return players[1]
+    
+    async def game_over(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'game_over',
+            'winner': event['winner'],
+            'scores': event['scores'],
+            'result': event['result']
+        }))

@@ -61,6 +61,7 @@
         <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
         <script type="module" src="{% static 'spa/js/audio.js' %}"></script>
         <script type="module" src="{% static 'spa/js/router.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/shifumi.js' %}"></script>
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             // Observe changes to the main-page div
@@ -71,12 +72,6 @@
                     //loadPongScript();
                     const script = document.createElement('script');
                     script.src = "{% static 'spa/js/pong.js' %}";
-                    document.head.appendChild(script);
-                  }
-                  if (document.getElementById('shifumi-game')) {
-                    //loadPongScript();
-                    const script = document.createElement('script');
-                    script.src = "{% static 'spa/js/shifumi.js' %}";
                     document.head.appendChild(script);
                   }
                 }

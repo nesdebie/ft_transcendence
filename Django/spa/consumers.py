@@ -80,7 +80,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f"Error sending message to group: {e}")
 
     @database_sync_to_async
-    def save_message(self, sender, receiver, message, message_type='chat_message'):
+    def save_message(self, sender, receiver, message, message_type='chat_message', is_game_invite=False):
         from users.models import Player, Message
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
@@ -88,7 +88,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=sender_user,
             receiver=receiver_user,
             message=message,
-            message_type=message_type
+            message_type=message_type,
+            is_game_invite=is_game_invite
         )
 
     async def chat_message(self, event):
@@ -104,6 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     async def game_invite(self, event):
+        await self.save_message(event['sender'], event['receiver'], "Game invite", message_type='game_invite', is_game_invite=True)
         await self.send(text_data=json.dumps({
             'type': 'game_invite',
             'sender': event['sender'],

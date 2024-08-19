@@ -1,214 +1,188 @@
-window.ShifumiGame = (function() {
-    let socket;
-    let playerScore = 0;
-    let opponentScore = 0;
-    let moves = 0;
-    let playerOptions = [];
-    let currentRoom = '';
-    let isGameActive = false;
+import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.js";
 
-    function initGame(roomName) {
-        currentRoom = roomName;
-        socket = new WebSocket(`ws://${window.location.host}/ws/shifumi/${roomName}/`);
+function initShifumi(roomName) {
+    const websocket = new WebSocket(
+        'wss://' + window.location.host + '/ws/shifumi/' + roomName + '/'
+    );
+    let countdownIntervalId = null;
+    const playerUsername = document.getElementById('shifumi-game').getAttribute('data-player-username');
 
-        socket.onopen = function(e) {
-            console.log("WebSocket connection established");
-            socket.send(JSON.stringify({action: 'join'}));
-        };
 
-        socket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            handleServerMessage(data);
-        };
+    websocket.onopen = function(e) {
+        console.log("WebSocket connection established");
+        setWebSocket(websocket);
+        websocket.send(JSON.stringify({action: 'join'}));
+    };
 
-        socket.onclose = function(e) {
-            console.error("WebSocket connection closed unexpectedly");
-        };
+    websocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        handleServerMessage(data);
+    };
 
-        resetGameState();
-        setupEventListeners();
+    websocket.onclose = function(e) {
+        console.log("shifumi websocket connection closed");
+    };
+
+    function handleServerMessage(data) {
+    
+        if (data.type === 'game_start') {
+            updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+        } else if (data.type === 'round_start') {
+            enableButtons();
+            updateRoundInfo(data.roundNumber);
+        } else if (data.type === 'start_countdown') {
+            countdownIntervalId = startCountdown();
+        } else if (data.type === 'game_result') {
+            stopCountdown(countdownIntervalId);
+            countdownIntervalId = null;
+            displayResult(data);
+            updateRoundLog(data);
+            updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+        } else if (data.type === 'game_over') {
+            stopCountdown(countdownIntervalId);
+            countdownIntervalId = null;
+            endGame(data, playerUsername);
+        } else if (data.type === 'player_left') {
+            handlePlayerLeft(data.player);
+        } else if (data.type === 'error') {
+            alert(data.message);
+        }
     }
 
-    function resetGameState() {
-        const rockBtn = document.querySelector('.rock');
-        const paperBtn = document.querySelector('.paper');
-        const scissorBtn = document.querySelector('.scissor');
-        playerOptions = [rockBtn, paperBtn, scissorBtn];
+    function handlePlayerLeft(leftPlayer) {
+        alert(`${leftPlayer} has left the game.`);
+        // Optionally, you can disable buttons or show a message
+        disableButtons();
 
-        playerOptions.forEach(option => {
-            option.style.display = 'inline-block';
-        });
-
-        const movesLeft = document.querySelector('.movesleft');
-        movesLeft.style.display = 'block';
-        movesLeft.innerText = 'Moves Left: 10';
-
-        const chooseMove = document.querySelector('.move');
-        chooseMove.innerText = '';
-
-        const result = document.querySelector('.result');
-        result.style.fontSize = '';
-        result.innerText = '';
-        result.style.color = '';
-
-        const playerScoreBoard = document.querySelector('.p-count');
-        const opponentScoreBoard = document.querySelector('.c-count');
-        playerScoreBoard.textContent = '0';
-        opponentScoreBoard.textContent = '0';
+        // Check if both players have left
+        if (getWebSocket() && getWebSocket().readyState === WebSocket.CLOSED) {
+            endGame({ winner: null }); // End the game if both players have left
+        }
     }
 
     function setupEventListeners() {
-        const options = document.querySelectorAll('.options button');
-        options.forEach(option => {
+        const playerOptions = document.querySelectorAll('.options button');
+        playerOptions.forEach(option => {
             option.addEventListener('click', function() {
                 const move = this.id;
-                socket.send(JSON.stringify({action: 'move', move: move}));
+                websocket.send(JSON.stringify({action: 'move', move: move}));
+                disableButtons();
+                if (countdownIntervalId) {
+                    stopCountdown(countdownIntervalId);
+                    countdownIntervalId = null;
+                }
             });
         });
     }
 
-    function handleServerMessage(data) {
-        if (data.type === 'game_move') {
-            updateGameState(data);
-        } else if (data.type === 'game_result') {
-            displayResult(data);
-        } else if (data.type === 'game_start') {
-            console.log("Game started");
-            startCountdown();
-        } else if (data.type === 'error') {
-            alert(data.message);
-            resetUI();
-        } else if (data.type === 'game_over') {
-            displayGameOver(data.winner);
-        }
+    setupEventListeners();
+    console.log("Shifumi game initialized");
+
+}
+
+function endGame(data, playerUsername) {
+    // Hide all game elements
+    document.querySelectorAll('.shifumi-game > *:not(#game-over)').forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Show game over message
+    const gameOverDiv = document.getElementById('game-over');
+    const gameOverMessage = document.getElementById('game-over-message');
+    gameOverDiv.style.display = 'block';
+
+    if (data.winner === null) {
+        gameOverMessage.textContent = 'It\'s a tie!';
+        gameOverMessage.style.color = 'blue';
+    } else if (data.winner === playerUsername) {
+        gameOverMessage.textContent = 'GG Well Played!';
+        gameOverMessage.style.color = 'green';
+    } else {
+        gameOverMessage.textContent = 'GAME OVER';
+        gameOverMessage.style.color = 'red';
     }
 
-    function startCountdown() {
-        let timeLeft = 10;
-        const countdownElement = document.querySelector('.countdown');
-        countdownElement.style.display = 'block';
-
-        const countdownInterval = setInterval(() => {
-            countdownElement.textContent = `Time left: ${timeLeft} seconds`;
-            timeLeft--;
-
-            if (timeLeft < 0) {
-                clearInterval(countdownInterval);
-                countdownElement.style.display = 'none';
-            }
-        }, 1000);
-    }
-
-    function updateGameState(data) {
-        moves++;
-        const movesLeft = document.querySelector('.movesleft');
-        movesLeft.innerText = `Moves Left: ${10 - moves}`;
-
-        if (data.player === socket.username) {
-            // This is the current player's move
-            console.log(`You played ${data.move}`);
-        } else {
-            // This is the opponent's move
-            console.log(`Opponent played ${data.move}`);
-        }
-    }
-
-    function displayResult(data) {
-        const result = document.querySelector('.result');
-        const playerScoreBoard = document.querySelector('.p-count');
-        const opponentScoreBoard = document.querySelector('.c-count');
-
-        if (data.winner === socket.username) {
-            result.textContent = 'You Won';
-            playerScore++;
-        } else if (data.winner === 'tie') {
-            result.textContent = 'Tie';
-        } else {
-            result.textContent = 'Opponent Won';
-            opponentScore++;
-        }
-
-        playerScoreBoard.textContent = playerScore;
-        opponentScoreBoard.textContent = opponentScore;
-
-        if (moves === 10) {
-            endGame();
-        }
-    }
-
-    function endGame() {
-        const chooseMove = document.querySelector('.move');
-        const result = document.querySelector('.result');
-
-        playerOptions.forEach(option => {
-            option.style.display = 'none';
-            option.removeEventListener('click', handleClick);
-        });
-
-        chooseMove.innerText = '[GAME OVER]';
-        document.querySelector('.movesleft').style.display = 'none';
-
-        if (playerScore > opponentScore) {
-            result.style.fontSize = '2rem';
-            result.innerText = 'You Won The Game';
-            result.style.color = '#308D46';
-        } else if (playerScore < opponentScore) {
-            result.style.fontSize = '2rem';
-            result.innerText = 'You Lost The Game';
-            result.style.color = 'red';
-        } else {
-            result.style.fontSize = '2rem';
-            result.innerText = 'Tie';
-            result.style.color = 'grey';
-        }
-
-        $("#shifumi-start").prop("disabled", false);
-    }
-
-    function resetUI() {
-        document.getElementById('game-setup').style.display = 'block';
-        document.getElementById('waiting-message').style.display = 'none';
-        document.getElementById('shifumi-game').style.display = 'none';
-    }
-
-    function displayGameOver(winner) {
-        // Display game over message
-        const result = document.querySelector('.result');
-        result.textContent = `Game Over! ${winner} wins!`;
-
-        // Disable game controls
-        playerOptions.forEach(option => {
-            option.disabled = true;
-        });
-
-        // Add a button to return to chat
-        const returnButton = document.createElement('button');
-        returnButton.textContent = 'Return to Chat';
-        returnButton.addEventListener('click', () => {
-            window.location.href = '/chat'; // Adjust this URL as needed
-        });
-        document.querySelector('.shifumi-game').appendChild(returnButton);
-    }
-
-    return {
-        init: function(roomName) {
-            initGame(roomName);
-            const gameContainer = document.getElementById('shifumi-game');
-            if (gameContainer) {
-                $("#shifumi-start").prop("disabled", true);
-            }
-        },
-        isActive: function() {
-            return isGameActive;
-        }
-    };
-})();
-
-if (document.getElementById('shifumi-game')) {
-    $(document).ready(function() {
-        $("#shifumi-start").click(function() {
-            const roomName = Math.random().toString(36).substring(7);
-            window.ShifumiGame.init(roomName);
-        });
+    // Add event listener to go back button
+    document.getElementById('go-back-button').addEventListener('click', () => {
+        closeWebSocket();
+        window.history.back();
     });
 }
+
+function disableButtons() {
+    const playerOptions = document.querySelectorAll('.options button');
+    playerOptions.forEach(option => {
+        option.disabled = true;
+    });
+}
+
+function enableButtons() {
+    const playerOptions = document.querySelectorAll('.options button');
+    playerOptions.forEach(option => {
+        option.disabled = false;
+    });
+}
+
+function updateRoundInfo(roundNumber) {
+    const roundInfo = document.querySelector('.round-info');
+    roundInfo.textContent = `Round: ${roundNumber}/10`;
+}
+
+function startCountdown() {
+    const countdownElement = document.querySelector('.countdown');
+    countdownElement.style.display = 'block';
+    let timeLeft = 10;
+    const countdownInterval = setInterval(() => {
+        countdownElement.textContent = `Time left: ${timeLeft} seconds`;
+        timeLeft--;
+        if (timeLeft < 0) {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = 'none';
+            getWebSocket().send(JSON.stringify({action: 'move', move: 'timeout'}));
+        }
+    }, 1000);
+    
+    return countdownInterval;
+}
+
+function stopCountdown(intervalId) {
+    if (intervalId) {
+        clearInterval(intervalId);
+        const countdownElement = document.querySelector('.countdown');
+        countdownElement.style.display = 'none';
+    }
+}
+
+function updateScoreBoard(player1Username, player2Username, scores) {
+    const playerNames = document.getElementById('player-names');
+    const scoreDisplay = document.getElementById('player-scores');
+    playerNames.textContent = `${player1Username} - ${player2Username}`;
+    scoreDisplay.textContent = `${scores[player1Username]} - ${scores[player2Username]}`;
+}
+
+function displayResult(data) {
+    const result = document.querySelector('.result');
+    result.textContent = data.resultMessage;
+    updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+}
+
+function updateRoundLog(data) {
+    const logElement = document.querySelector('.round-log');
+    const resultMessage = getResultMessage(data.result, data.playerMove, data.opponentMove);
+    const logEntry = `Round ${data.roundNumber}: ${data.playerMove} vs ${data.opponentMove} - ${resultMessage}`;
+    logElement.innerHTML += logEntry + '<br>';
+}
+
+function getResultMessage(result, playerMove, opponentMove) {
+    if (result === 'tie') {
+        return "It's a tie!";
+    } else if (result === 'win') {
+        return `${playerMove} beats ${opponentMove}. You win!`;
+    } else {
+        return `${opponentMove} beats ${playerMove}. You lose!`;
+    }
+}
+
+
+
+export { initShifumi };

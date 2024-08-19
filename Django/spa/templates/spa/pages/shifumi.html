@@ -1,34 +1,32 @@
 <div class="page-container align-center">
-    <section id="shifumi-game" class="shifumi-game" data-room-name="{{ room_name }}">
+    <section id="shifumi-game" class="shifumi-game" data-room-name="{{ room_name }}" data-player-username="{{ request.user.username }}">
         <!--Title -->
         <div class="title">Rock Paper Scissor</div>
          
-        <!--Display Score of player and computer -->
+        <!--Display Score of players -->
         <div class="score">  
-            <div class="header">
-                <p>Player - Computer</p>
-            </div>
-            <div class="scores">
-                <p class="p-count count">0</p>
-                <p>-</p>
-                <p class="c-count count">0</p>
-            </div>
+            <div id="player-names"></div>
+            <div id="player-scores"></div>
         </div>
        
         <div class="move">Choose your move</div>
          
         <!--Number of moves left before game ends -->
-        <div class="movesleft">Moves Left: 10 </div>
+        <div class="round-info">Round: 1/10</div>
          
         <!--Options available to player to play game -->
         <div class="options">
             <button id="rock" class="rock">Rock</button>
             <button id="paper" class="paper">Paper</button>
-            <button id="scissor" class="scissor">Scissors</button>        
+            <button id="scissors" class="scissors">Scissors</button>        
         </div>
-         
+        <div class="round-log"></div>
         <!--Final result of game -->
         <div class="result"></div>
         <div class="countdown" style="display: none;"></div>
+        <div id="game-over" style="display: none;">
+            <h1 id="game-over-message" style="font-size: 3rem; text-align: center;"></h1>
+            <button id="go-back-button" style="font-size: 1.5rem; margin-top: 20px;">Go Back</button>
+        </div>
     </section>
 </div>

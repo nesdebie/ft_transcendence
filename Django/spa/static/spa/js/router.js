@@ -1,13 +1,21 @@
 import { fetchUserProfilePicture } from "./auth.js"
 import { initChat } from "./chat.js";
+import { initShifumi } from "./shifumi.js";
+import { closeWebSocket } from "./websocketManager.js";
 
-const route = (event, url_precision = null) => {
+let websocket = null; //global websocket variable
+
+const route = (event, url = null) => {
    // If an event is provided, prevent default behavior
 
     event = event || window.event;
     event.preventDefault();
 
-    window.history.pushState({}, "", event.target.href);
+    if (url == null)
+        window.history.pushState({}, "", event.target.href);
+    else
+        window.history.pushState({}, "", url);
+
     handleLocation();
 };
 
@@ -34,6 +42,8 @@ function update_path(path) {
 }
 
 const handleLocation = async () => {
+    closeWebSocket();
+
     const path = window.location.pathname;
     const route = update_path(path);
     console.log("Handle location : " + path + "\n to route = " + route);
@@ -49,6 +59,10 @@ function call_page_functions(path) {
 		fetchUserProfilePicture();
     if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
+    }
+    if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
+        const roomName = path.split('/')[2];
+        initShifumi(roomName);
     }
     // if (document.getElementById('user-username'))
 	// 	fetchUserProfileData();

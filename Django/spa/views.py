@@ -93,14 +93,20 @@ def view_chat(request, username=None):
 
 	return render(request, template, context)
 
-def shifumi_game(request, room_name=None):
-    user = request.user
+def shifumi_lobby(request):
+    user : Player = request.user
     active_game = user.get_active_shifumi_game()
     
-    if active_game:
-        return render(request, 'spa/pages/shifumi.html', {'room_name': active_game})
-    elif room_name:
-        user.set_active_shifumi_game(room_name)
-        return render(request, 'spa/pages/shifumi.html', {'room_name': room_name})
-    else:
-        return render(request, 'spa/pages/shifumi_no_game.html')
+    context = {
+        'active_game': active_game
+    }
+    
+    return render(request, 'spa/pages/shifumi_lobby.html', context)
+
+def shifumi_game_PVP(request, room_name):
+    user : Player = request.user
+    user.set_active_shifumi_game(room_name)
+    return render(request, 'spa/pages/shifumi.html', {'room_name': room_name})
+
+def shifumi_game_PVE(request):
+    return render(request, 'spa/pages/shifumi_pve.html')
