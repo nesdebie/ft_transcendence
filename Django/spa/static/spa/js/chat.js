@@ -115,7 +115,7 @@ export function initChat() {
 
     // Event listeners
     document.querySelector('#send-message').addEventListener('click', sendMessage);
-    document.querySelector('#send-game-invite').addEventListener('click', sendGameInvite);
+    document.querySelector('#send-shifumi-game-invite').addEventListener('click', sendGameInvite);
     document.querySelector('#message_input').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -140,7 +140,7 @@ function appendMessage(data, current_username) {
     const messageElement = document.createElement('tr');
     messageElement.innerHTML = `
         <td class="${data.sender === current_username ? 'sent-message' : 'received-message'}">
-            <p class="message">${data.message}</p>
+            <p class="message" style="color: black;">${data.message}</p>
             <p class="timestamp">${localTime}</p>
         </td>
     `;
@@ -150,4 +150,8 @@ function appendMessage(data, current_username) {
     }
     
     document.querySelector('#chat-body').appendChild(messageElement);
+    
+    // Scroll to the bottom of the message area when a new message is appended
+    const messageArea = document.getElementById('message-area');
+    messageArea.scrollTop = messageArea.scrollHeight; // Ensure new messages are visible
 }

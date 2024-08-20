@@ -24,6 +24,12 @@
                         Offline
                     {% endif %}
                 </small>
+                <button class="btn btn-primary" id="send-pong-game-invite">
+                    <i class="mdi mdi-table-tennis"></i>
+                </button>
+                <button class="btn btn-primary" id="send-shifumi-game-invite">
+                    <i class="mdi mdi-content-cut"></i>
+                </button>
             </div>
         </div>
         <div class="row">
@@ -51,7 +57,7 @@
                 </div>
             </div>
             <!-- Chat messages area -->
-            <div class="col-sm-8 message-area">
+            <div class="col-sm-8 message-area" style="height: 400px; overflow-y: auto;" id="message-area">
                 <div class="message-table-scroll">
                     <table class="table">
                         <tbody id="chat-body">
@@ -64,7 +70,7 @@
                                             <button class="accept-invite" data-sender="{{ message.sender.username }}">Accept</button>
                                         </p>
                                     {% else %}
-                                        <p class="message">
+                                        <p class="message" style="color: black;">
                                             {{ message.message }}
                                         </p>
                                     {% endif %}
@@ -76,13 +82,14 @@
                     </table>
                 </div>
                 <!-- Message input area -->
-                <div class="row message-box p-3">
+                <div class="row message-box p-3" style="position: sticky; bottom: 0; background: white;">
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="message_input" placeholder="Write message...">
                     </div>
                     <div class="col-sm-2">
-                        <button class="btn btn-success" id="send-message">Send</button>
-                        <button class="btn btn-primary" id="send-game-invite">Invite to Shifumi</button>
+                        <button class="btn btn-success" id="send-message">
+                            <i class="mdi mdi-send"></i>
+                        </button>
                     </div>
                 </div>
             </div>
