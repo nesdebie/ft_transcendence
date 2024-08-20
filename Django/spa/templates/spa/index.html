@@ -67,6 +67,7 @@
         <script type="module" src="{% static 'spa/js/utils.js' %}"></script>
         <script type="module" src="{% static 'spa/js/audio.js' %}"></script>
         <script type="module" src="{% static 'spa/js/router.js' %}"></script>
+        <script type="module" src="{% static 'spa/js/shifumi.js' %}"></script>
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             // Observe changes to the main-page div
@@ -74,15 +75,13 @@
               for (let mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                   if (document.getElementById('pong-game')) {
-                    //loadPongScript();
                     const script = document.createElement('script');
                     script.src = "{% static 'spa/js/pong.js' %}";
                     document.head.appendChild(script);
                   }
-                  if (document.getElementById('shifumi-game')) {
-                    //loadPongScript();
+                  if (document.getElementById('shifumi-pve-game')) {
                     const script = document.createElement('script');
-                    script.src = "{% static 'spa/js/shifumi.js' %}";
+                    script.src = "{% static 'spa/js/shifumi_pve.js' %}";
                     document.head.appendChild(script);
                   }
                 }

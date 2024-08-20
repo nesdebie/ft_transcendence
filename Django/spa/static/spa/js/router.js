@@ -1,18 +1,28 @@
 import { fetchUserProfilePicture } from "./auth.js"
 import { initChat } from "./chat.js";
 import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode function
+import { initShifumi } from "./shifumi.js";
+import { closeWebSocket } from "./websocketManager.js";
 
-const route = (event, url_precision = null) => {
+
+const route = (event, url = null) => {
+   // If an event is provided, prevent default behavior
+
     event = event || window.event;
     event.preventDefault();
-    window.history.pushState({}, "", event.target.href);
+
+    if (url == null)
+        window.history.pushState({}, "", event.target.href);
+    else
+        window.history.pushState({}, "", url);
+
     handleLocation();
 };
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/about', '/shifumi', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
-    { paths: ['/profile', '/chat', '/profile_editor'], suffix: '' }
+    { paths: ['/about', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
+    { paths: ['/profile', '/friend_requests', '/chat', '/shifumi', '/shifumi/PVE','/profile_editor'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -30,6 +40,8 @@ function update_path(path) {
 }
 
 const handleLocation = async () => {
+    closeWebSocket();
+
     const path = window.location.pathname;
     const route = update_path(path);
     console.log("Handle location : " + path + "\n to route = " + route); // Debug statement
@@ -56,6 +68,10 @@ function call_page_functions(path) {
     }
     if (document.body.classList.contains("cyberpunk")) {
         applyNightCityMode();
+    }
+    if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
+        const roomName = path.split('/')[2];
+        initShifumi(roomName);
     }
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();

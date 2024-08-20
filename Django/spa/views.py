@@ -161,3 +161,21 @@ def change_password(request):
         return JsonResponse({'success': 'Password changed successfully'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def shifumi_lobby(request):
+    user : Player = request.user
+    active_game = user.get_active_shifumi_game()
+    
+    context = {
+        'active_game': active_game
+    }
+    
+    return render(request, 'spa/pages/shifumi_lobby.html', context)
+
+def shifumi_game_PVP(request, room_name):
+    user : Player = request.user
+    user.set_active_shifumi_game(room_name)
+    return render(request, 'spa/pages/shifumi.html', {'room_name': room_name})
+
+def shifumi_game_PVE(request):
+    return render(request, 'spa/pages/shifumi_pve.html')

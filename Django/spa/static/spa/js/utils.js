@@ -1,3 +1,5 @@
+let websocket = null; //global websocket variable
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

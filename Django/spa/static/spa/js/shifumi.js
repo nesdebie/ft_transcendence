@@ -1,171 +1,188 @@
-window.ShifumiGame = (function() {
-    let playerScore, computerScore, moves, gameInitialized = false;
-    let mentalistMode = false;
-    let playerOptions = [];
+import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.js";
 
-    function initGame(difficulty, mentalist) {
-        if (gameInitialized) return;
-        gameInitialized = true;
+function initShifumi(roomName) {
+    const websocket = new WebSocket(
+        'wss://' + window.location.host + '/ws/shifumi/' + roomName + '/'
+    );
+    let countdownIntervalId = null;
+    const playerUsername = document.getElementById('shifumi-game').getAttribute('data-player-username');
 
-        playerScore = 0;
-        computerScore = 0;
-        moves = 0;
-        mentalistMode = mentalist;
-        console.log("Shifumi initialized");
-        resetGameState();
-        setupEventListeners(difficulty);
+
+    websocket.onopen = function(e) {
+        console.log("WebSocket connection established");
+        setWebSocket(websocket);
+        websocket.send(JSON.stringify({action: 'join'}));
+    };
+
+    websocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        handleServerMessage(data);
+    };
+
+    websocket.onclose = function(e) {
+        console.log("shifumi websocket connection closed");
+    };
+
+    function handleServerMessage(data) {
+    
+        if (data.type === 'game_start') {
+            updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+        } else if (data.type === 'round_start') {
+            enableButtons();
+            updateRoundInfo(data.roundNumber);
+        } else if (data.type === 'start_countdown') {
+            countdownIntervalId = startCountdown();
+        } else if (data.type === 'game_result') {
+            stopCountdown(countdownIntervalId);
+            countdownIntervalId = null;
+            displayResult(data);
+            updateRoundLog(data);
+            updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+        } else if (data.type === 'game_over') {
+            stopCountdown(countdownIntervalId);
+            countdownIntervalId = null;
+            endGame(data, playerUsername);
+        } else if (data.type === 'player_left') {
+            handlePlayerLeft(data.player);
+        } else if (data.type === 'error') {
+            alert(data.message);
+        }
     }
 
-    function resetGameState() {
-        const rockBtn = document.getElementById('rock');
-        const paperBtn = document.getElementById('paper');
-        const scissorBtn = document.getElementById('scissor');
-        playerOptions = [rockBtn, paperBtn, scissorBtn];
+    function handlePlayerLeft(leftPlayer) {
+        alert(`${leftPlayer} has left the game.`);
+        // Optionally, you can disable buttons or show a message
+        disableButtons();
 
-        playerOptions.forEach(option => {
-            option.style.display = 'inline-block'; // Show all options
-        });
-
-        const movesLeft = document.querySelector('.movesleft');
-        movesLeft.style.display = 'block';
-        movesLeft.innerText = 'Moves Left: 10';
-
-        const chooseMove = document.querySelector('.move');
-        chooseMove.innerText = '';
-
-        const result = document.querySelector('.result');
-        result.style.fontSize = '';
-        result.innerText = '';
-        result.style.color = '';
-
-        const playerScoreBoard = document.querySelector('.p-count');
-        const computerScoreBoard = document.querySelector('.c-count');
-        playerScoreBoard.textContent = '0';
-        computerScoreBoard.textContent = '0';
+        // Check if both players have left
+        if (getWebSocket() && getWebSocket().readyState === WebSocket.CLOSED) {
+            endGame({ winner: null }); // End the game if both players have left
+        }
     }
 
-    function setupEventListeners(difficulty) {
+    function setupEventListeners() {
+        const playerOptions = document.querySelectorAll('.options button');
         playerOptions.forEach(option => {
-            option.addEventListener('click', function(event) {
-                handleClick(event, difficulty);
+            option.addEventListener('click', function() {
+                const move = this.id;
+                websocket.send(JSON.stringify({action: 'move', move: move}));
+                disableButtons();
+                if (countdownIntervalId) {
+                    stopCountdown(countdownIntervalId);
+                    countdownIntervalId = null;
+                }
             });
         });
     }
 
-    function handleClick(event, difficulty) {
-        if (moves >= 10) return;
+    setupEventListeners();
+    console.log("Shifumi game initialized");
 
-        if (mentalistMode && moves < 10) {
-            goMentalist();
-        }
-        const movesLeft = document.querySelector('.movesleft');
-        moves++;
-        movesLeft.innerText = `Moves Left: ${10 - moves}`;
+}
 
-        const choiceNumber = Math.floor(Math.random() * 3);
-        const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
+function endGame(data, playerUsername) {
+    // Hide all game elements
+    document.querySelectorAll('.shifumi-game > *:not(#game-over)').forEach(el => {
+        el.style.display = 'none';
+    });
 
-        determineWinner(event.target.innerText, computerChoice, difficulty);
+    // Show game over message
+    const gameOverDiv = document.getElementById('game-over');
+    const gameOverMessage = document.getElementById('game-over-message');
+    gameOverDiv.style.display = 'block';
 
-        if (moves === 10) {
-            endGame(playerOptions, movesLeft);
-        }
+    if (data.winner === null) {
+        gameOverMessage.textContent = 'It\'s a tie!';
+        gameOverMessage.style.color = 'blue';
+    } else if (data.winner === playerUsername) {
+        gameOverMessage.textContent = 'GG Well Played!';
+        gameOverMessage.style.color = 'green';
+    } else {
+        gameOverMessage.textContent = 'GAME OVER';
+        gameOverMessage.style.color = 'red';
     }
 
-    function determineWinner(player, computer, difficulty) {
-        const result = document.querySelector('.result');
-        const playerScoreBoard = document.querySelector('.p-count');
-        const computerScoreBoard = document.querySelector('.c-count');
-        player = player.toLowerCase();
-        computer = computer.toLowerCase();
-
-        if (difficulty === 0) {
-            result.textContent = 'Player Won';
-            playerScore++;
-        }
-        else if (difficulty === 2) {
-            result.textContent = 'Computer Won';
-            computerScore++;
-        }
-        else if (difficulty === 1) {
-            if (player === computer) {
-                result.textContent = 'Tie';
-            } else if ((player === 'rock' && computer === 'scissors') ||
-                    (player === 'scissors' && computer === 'paper') ||
-                    (player === 'paper' && computer === 'rock')) {
-                result.textContent = 'Player Won';
-                playerScore++;
-            } else {
-                result.textContent = 'Computer Won';
-                computerScore++;
-            }
-        }
-
-        playerScoreBoard.textContent = playerScore;
-        computerScoreBoard.textContent = computerScore;
-    }
-
-    function goMentalist() {
-        const chooseMove = document.querySelector('.move');
-        const choiceNumber = Math.floor(Math.random() * 3);
-        const computerChoice = ['rock', 'paper', 'scissors'][choiceNumber];
-
-        chooseMove.innerText = '[CPU] : "I g0nna play ' + computerChoice + '!"';
-    }
-
-    function endGame(playerOptions, movesLeft) {
-        const chooseMove = document.querySelector('.move');
-        const result = document.querySelector('.result');
-
-        playerOptions.forEach(option => {
-            option.style.display = 'none';
-            option.removeEventListener('click', handleClick); // Remove event listeners
-        });
-
-        chooseMove.innerText = '[GAME OVER]';
-        movesLeft.style.display = 'none';
-
-        if (playerScore > computerScore) {
-            result.style.fontSize = '2rem';
-            result.innerText = 'You Won The Game';
-            result.style.color = '#308D46';
-        } else if (playerScore < computerScore) {
-            result.style.fontSize = '2rem';
-            result.innerText = 'You Lost The Game';
-            result.style.color = 'red';
-        } else {
-            result.style.fontSize = '2rem';
-            result.innerText = 'Tie';
-            result.style.color = 'grey';
-        }
-
-        // Enable the start button to allow restarting the game
-        $("#shifumi-start").prop("disabled", false);
-        gameInitialized = false; // Allow re-initialization
-    }
-
-    return {
-        init: function(difficulty, mentalistMode) {
-            initGame(difficulty, mentalistMode);
-            const gameContainer = document.getElementById('shifumi-game');
-            if (gameContainer) {
-                $("#shifumi-start").prop("disabled", true); // Disable the button initially
-            }
-        }
-    };
-})();
-
-if (document.getElementById('shifumi-game')) {
-    $(document).ready(function() {
-        $("#shifumi-start").click(function() {
-            let difficulty = parseInt($("#difficultySlider").val());
-            let mentalistMode = $("#mentalistMode").is(":checked");
-            window.ShifumiGame.init(difficulty, mentalistMode);
-        });
+    // Add event listener to go back button
+    document.getElementById('go-back-button').addEventListener('click', () => {
+        closeWebSocket();
+        window.history.back();
     });
 }
 
-function updateSliderValue(value) {
-    const difficulty = ['easy', 'normal', 'hard'];
-    document.getElementById('sliderValue').textContent = difficulty[value];
+function disableButtons() {
+    const playerOptions = document.querySelectorAll('.options button');
+    playerOptions.forEach(option => {
+        option.disabled = true;
+    });
 }
+
+function enableButtons() {
+    const playerOptions = document.querySelectorAll('.options button');
+    playerOptions.forEach(option => {
+        option.disabled = false;
+    });
+}
+
+function updateRoundInfo(roundNumber) {
+    const roundInfo = document.querySelector('.round-info');
+    roundInfo.textContent = `Round: ${roundNumber}/10`;
+}
+
+function startCountdown() {
+    const countdownElement = document.querySelector('.countdown');
+    countdownElement.style.display = 'block';
+    let timeLeft = 10;
+    const countdownInterval = setInterval(() => {
+        countdownElement.textContent = `Time left: ${timeLeft} seconds`;
+        timeLeft--;
+        if (timeLeft < 0) {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = 'none';
+            getWebSocket().send(JSON.stringify({action: 'move', move: 'timeout'}));
+        }
+    }, 1000);
+    
+    return countdownInterval;
+}
+
+function stopCountdown(intervalId) {
+    if (intervalId) {
+        clearInterval(intervalId);
+        const countdownElement = document.querySelector('.countdown');
+        countdownElement.style.display = 'none';
+    }
+}
+
+function updateScoreBoard(player1Username, player2Username, scores) {
+    const playerNames = document.getElementById('player-names');
+    const scoreDisplay = document.getElementById('player-scores');
+    playerNames.textContent = `${player1Username} - ${player2Username}`;
+    scoreDisplay.textContent = `${scores[player1Username]} - ${scores[player2Username]}`;
+}
+
+function displayResult(data) {
+    const result = document.querySelector('.result');
+    result.textContent = data.resultMessage;
+    updateScoreBoard(data.player1Username, data.player2Username, data.scores);
+}
+
+function updateRoundLog(data) {
+    const logElement = document.querySelector('.round-log');
+    const resultMessage = getResultMessage(data.result, data.playerMove, data.opponentMove);
+    const logEntry = `Round ${data.roundNumber}: ${data.playerMove} vs ${data.opponentMove} - ${resultMessage}`;
+    logElement.innerHTML += logEntry + '<br>';
+}
+
+function getResultMessage(result, playerMove, opponentMove) {
+    if (result === 'tie') {
+        return "It's a tie!";
+    } else if (result === 'win') {
+        return `${playerMove} beats ${opponentMove}. You win!`;
+    } else {
+        return `${opponentMove} beats ${playerMove}. You lose!`;
+    }
+}
+
+
+
+export { initShifumi };

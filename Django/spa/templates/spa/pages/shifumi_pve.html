@@ -1,0 +1,40 @@
+<div class="page-container align-center">
+    <section id="shifumi-game" class="shifumi-game">
+        <!--Title -->
+        <h1> ShiFuMi </h1>
+         
+        <!--Display Score of player and computer -->
+        <div class="score">  
+            <div class="header">
+                <p>Player - Computer</p>
+            </div>
+            <p class="scores">
+                <span class="p-count count">0</span>
+                <span class="dash">-</span>
+                <span class="c-count count">0</span>
+            </p>
+        </div>
+       
+        <div class="move">Choose your move</div>
+         
+        <!--Number of moves left before game ends -->
+        <div class="movesleft">Moves Left: 10 </div>
+         
+        <!--Options available to player to play game -->
+        <div class="options">
+            <button id="rock" class="btn btn-light">Rock</button>
+            <button id="paper" class="btn btn-light">Paper</button>
+            <button id="scissor" class="btn btn-light">Scissors</button>        
+        </div>
+         
+        <!--Final result of game -->
+        <div class="result"></div>
+    </section>
+    <input type="range" id="difficultySlider" min="0" max="2" value="1" step="1" oninput="updateSliderValue(this.value)">
+    <label for="difficultySlider">Difficulty : <span id="sliderValue">Normal</span></label>
+    <div>
+        <input type="checkbox" id="mentalistMode">
+        <label for="mentalistMode">MENTALIST MODE (beta)</label>
+    </div>
+    <button id="shifumi-start" class="btn btn-dark">START GAME</button>
+</div>
