@@ -1,7 +1,7 @@
-<div class="page-container align-center">
+<div class="page-container align-center" ">
   <h1>PONG</h1>
   <div class="row">
-      <canvas id="pong-game" width="500" height="500"></canvas>
+      <canvas id="pong-game" width="500" height="500" data-game-id="{{ game_id }}"></canvas>
   </div>
   <div>
     <input type="range" id="scoreSlider" min="1" max="5" value="1" step="1" oninput="updateSliderValue(this.value)">

@@ -3,6 +3,7 @@ import { initChat } from "./chat.js";
 import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode function
 import { initShifumi } from "./shifumi.js";
 import { closeWebSocket } from "./websocketManager.js";
+import { initPong } from "./pong.js";
 
 
 const route = (event, url = null) => {
@@ -21,8 +22,8 @@ const route = (event, url = null) => {
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/about', '/pong', '/logout', '/register', '/login'], suffix: '.html' },
-    { paths: ['/profile', '/friend_requests', '/chat', '/shifumi','/profile_editor'], suffix: '' }
+    { paths: ['/about', '/logout', '/register', '/login', '/pong_lobby'], suffix: '.html' },
+    { paths: ['/profile', '/friend_requests', '/chat', '/shifumi','/profile_editor', '/pong'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -72,6 +73,9 @@ function call_page_functions(path) {
     if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
         const roomName = path.split('/')[2];
         initShifumi(roomName);
+    }
+    if (path.startsWith('/pong/') && path !== '/pong/') {
+        initPong();
     }
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();

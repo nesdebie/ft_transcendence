@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'channels_postgres',
     'users',
     'spa',
+	'pong_game',   
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
