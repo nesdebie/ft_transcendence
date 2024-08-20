@@ -7,8 +7,77 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 from . import views
-from django.conf import settings  # Assurez-vous d'importer settings ici
+from django.conf import settings 
 import requests 
+
+
+# LOGIN 42 AUTH 
+
+from django.http import JsonResponse
+from django.contrib.auth import login
+from django.views.decorators.csrf import csrf_protect
+from .models import Player
+
+
+from django.contrib.auth import login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from .models import Player
+
+@csrf_protect
+def login_user_by_username(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if not username:
+            return JsonResponse({'errors': {'login-user': 'Username is required'}}, status=400)
+        
+        try:
+            user = Player.objects.get(username=username)
+            login(request, user)  # Authentifier l'utilisateur
+            return JsonResponse({
+                'status': 'success',
+                'message': f'User {username} logged in successfully.'
+            })
+        except Player.DoesNotExist:
+            return JsonResponse({'errors': {'login-user': 'User does not exist'}}, status=400)
+        except Exception as e:
+            return JsonResponse({'errors': {'login-user': f'An unexpected error occurred: {str(e)}'}}, status=500)
+    else:
+        return JsonResponse({'status': 'invalid method'}, status=405)
+
+@csrf_protect
+def find_user_for_login_with_username(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        if not username:
+            return JsonResponse({'errors': {'find-user': 'Username is required'}}, status=400)
+        
+        try:
+            user = Player.objects.get(username=username)
+            # Si l'utilisateur existe, on vérifie si la 2FA est activée
+			
+            if user.two_factor_enabled:
+                # login(request, user)
+                return JsonResponse({
+                    'status': 'success',
+                    'user_exists': True,
+                    'two_factor_enabled': True
+                })
+            else:
+                # Connecter automatiquement l'utilisateur si la 2FA n'est pas activée
+                login(request, user)
+                return JsonResponse({
+                    'status': 'success',
+                    'user_exists': True,
+                    'two_factor_enabled': False
+                })
+        except Player.DoesNotExist:
+            return JsonResponse({'status': 'success', 'user_exists': False})
+        except Exception as e:
+            return JsonResponse({'errors': {'find-user': f'An unexpected error occurred: {str(e)}'}}, status=500)
+    else:
+        return JsonResponse({'status': 'invalid method'}, status=405)
+
 
 # AUTH 
 from django.shortcuts import render, get_object_or_404
@@ -24,10 +93,6 @@ def login_42(request):
     authorize_url = f"https://api.intra.42.fr/oauth/authorize?client_id={settings.CLIENT_ID}&redirect_uri={settings.REDIRECT_URI}&response_type=code"
     return redirect(authorize_url)
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import Player
-from .forms import UserProfileForm
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
@@ -35,6 +100,16 @@ from .models import Player
 from .forms import UserProfileForm
 
 from django.http import JsonResponse
+
+# gen password for user
+import random
+import string
+
+def generate_strong_password(length=12):
+    """Génère un mot de passe robuste avec des lettres majuscules, minuscules, des chiffres et des caractères spéciaux."""
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for i in range(length))
+    return password
 
 from django.http import HttpResponse
 
@@ -61,6 +136,16 @@ def callback(request):
 
         user_info_response = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f'Bearer {token}'})
         user_info = user_info_response.json()
+		
+        # Debug: Print the full JSON response to the console
+        print(user_info)
+		
+        # Générer un mot de passe robuste
+        generated_password = generate_strong_password()
+		
+        # Récupérer l'URL de la photo de profil
+        profile_image_url = user_info.get('image', {}).get('versions', {}).get('medium', '')
+        #profile_image_url = user_info.get('image_url', '')
 
         # Utilisation uniquement de localStorage pour transmettre les informations
         response_script = f"""
@@ -68,7 +153,10 @@ def callback(request):
             localStorage.setItem('user_info', JSON.stringify({{
                 username: '{user_info.get('login', '')}',
                 email: '{user_info.get('email', '')}',
-                nickname: '{user_info.get('login', '')}'
+                nickname: '{user_info.get('login', '')}', 
+                password: '{generated_password}', 
+                profile_image: '{profile_image_url}'
+
             }}));
             window.close();
         </script>
@@ -97,7 +185,7 @@ def login_view(request):
         if user is not None:
             
             if user.two_factor_enabled:
-                login(request, user)  # Authentifier l'utilisateur
+                #login(request, user)  # Authentifier l'utilisateur
 
                 return JsonResponse({
                     'status': 'success',

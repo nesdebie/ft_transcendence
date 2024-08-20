@@ -1,36 +1,37 @@
 {% csrf_token %}
 <div class="page-container">
-	<div class="row">
-		<div class="col-md-6 col-md-offset-3">
-			<h2 class="text-center">Login</h2>
-			<form id="login-form" class="login-form">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="text-center">Login</h2>
+            <form id="login-form" class="login-form">
                 <div class="form-group">
                     <span id="login-error" class="error-message text-danger"></span>
-                </div>				
-				<div class="form-group">
-					<label for="login-username">Username</label>
-					<input type="text" class="form-control" id="login-username" name="login-username" required>
-				</div>
-				<div class="form-group">
-					<label for="login-password">Password</label>
-					<input type="password" class="form-control" id="login-password" name="login-password" required>
-				</div>
-				<button type="submit" class="btn btn-primary btn-block">Login</button>
-			</form>
-			<!-- 2FA --> 
-			<div id="otp-form-container" class="form-group" style="display:none;">
-			    <form id="otp-form" class="otp-form">
-			        <div class="form-group">
-			            <label for="otp">Enter the code from your authenticator app:</label>
-			            <input type="text" class="form-control" id="otp" name="otp" required>
-			        </div>
-			        <button type="submit" class="btn btn-primary btn-block">Verify</button>
-			    </form>
-			</div>	
-			<!---->
-			<p class="text-center">
-				Don't have an account yet? <a href="/register" onclick="route(event)">Register</a>
-			</p>
-		</div>
-	</div>
+                </div>                
+                <div class="form-group" id="username-container">
+                    <label for="login-username">Username</label>
+                    <input type="text" class="form-control" id="login-username" name="login-username" required>
+                </div>
+                <div class="form-group" id="password-container">
+                    <label for="login-password">Password</label>
+                    <input type="password" class="form-control" id="login-password" name="login-password" required>
+                </div>
+                <button id="login_button" type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            <!-- 2FA --> 
+            <div id="otp-form-container" class="form-group" style="display:none;">
+                <form id="otp-form" class="otp-form">
+                    <div class="form-group">
+                        <label for="otp">Enter the code from your authenticator app:</label>
+                        <input type="text" class="form-control" id="otp" name="otp" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Verify</button>
+                </form>
+            </div>  
+			<!-- login 42 -->
+			<button href="#" id="login-with-42" class="btn btn-dark btn-block">Login with 42</button>
+            <p class="text-center">
+                Don't have an account yet? <a href="/register" onclick="route(event)">Register</a>
+            </p>
+        </div>
+    </div>
 </div>

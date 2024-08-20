@@ -21,10 +21,11 @@ urlpatterns = [
     # 2FA 
     path('verify_otp/', views.verify_otp, name='verify_otp'),
     path('generate_qr_code/', views.generate_qr_code, name='generate_qr_code'),
-    #path('clear_temp_2fa_secret/', views.clear_temp_2fa_secret, name='clear_temp_2fa_secret'),
 
+    # LOGIN 42 AUTH
+	path('find_user_for_login_with_username/', views.find_user_for_login_with_username, name='find_user_for_login_with_username'),
+    path('login_user/', views.login_user_by_username, name='login_user_by_username'),
 
-	
     # AUTH 
     path('login_42/', views.login_42, name='login_42'),
     path('callback/', views.callback, name='callback'),

@@ -1,6 +1,6 @@
 import { getCookie } from "./utils.js"
 import { redirectToRoute } from "./router.js"
-
+import {login_user_after_otp} from "./buttons.js"
 
 
 // 2FA 
@@ -37,13 +37,19 @@ async function login(event) {
                 otpForm.addEventListener('submit', async function(event) {
                     event.preventDefault();
                     const result = await verifyOtp(data.username);
-                    if (result) {
-                        await redirectToRoute('/');
-                        updateSidebar();
-                        return true;
+                    if (result == true) {
+                        console.log("OTP verification succeeded");
+                        const loginSuccess = await login_user_after_otp(data.username);
+                        if (loginSuccess) {
+                            console.log("User logged in successfully after OTP verification.");
+                            return true;
+                        } else {
+                            console.log("Failed to log in user after OTP verification.");
+                            return false;
+                        }
                     } else {
-                        console.log("OTP verification failed");
                         // Gérer le cas où la vérification OTP échoue
+                        console.log("OTP verification failed");
                     }
                 });
             } else {
@@ -56,7 +62,8 @@ async function login(event) {
             handleErrors(data);
         }
     } catch (error) {
-        console.error('Error during login:', error);
+        console.log("error during login");
+        //console.error('Error during login:', error);
     }
 }
 
@@ -66,7 +73,6 @@ async function login(event) {
 document.body.addEventListener('change', async function(event) {
 
     let target = event.target;
-
 
     if (target.id === 'register-2fa') {
         event.preventDefault();
@@ -95,7 +101,8 @@ document.body.addEventListener('change', async function(event) {
                     console.error('Error generating QR code:', data);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.log("error during generation QR code");
+                //console.error('Error:', error);
             }
         } else {
             document.getElementById('qr-code-container').style.display = 'none';
@@ -202,7 +209,7 @@ async function logout() {
 }
 
 // 2FA , fonction ajouter pour vérifier OPT si le code est bien scanné et le code bien rentré 
-async function verifyOtp(username) {
+export async function verifyOtp(username) {
     const otp = document.getElementById('otp').value;
     const formData = new FormData();
     formData.append('username', username);
@@ -218,8 +225,11 @@ async function verifyOtp(username) {
 			},
 			body: formData
 		});
-		const data = await response.json();
+		
+        const data = await response.json();
+
 		if (response.ok) {
+
 			if (checkAuthentication() == false)
 			{
 				console.log('Check authentification failed');
@@ -231,32 +241,36 @@ async function verifyOtp(username) {
 			return false;
 		}
 	} catch (error) {
-		console.error('Error during OTP verification:', error);
+		//console.error('Error during OTP verification:', error);
 		return false;
 	}
 }
 
 async function checkAuthentication() {
-    const response = await fetch('/users_api/check_authentication/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    });
-    
-    if (response.ok) {
-        const data = await response.json();
-        if (data.authenticated) {
-            console.log("CheckAuthentification OK : ", data);
-            return true;
+    try {
+        const response = await fetch('/users_api/check_authentication/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.authenticated) {
+                console.log("CheckAuthentification OK : ", data);
+                return true;
+            } else {
+                console.log("CheckAuthentification NOK : ", data);
+                return false;
+            }
         } else {
-            console.log("CheckAuthentification NOK : ", data);
+            console.error('Error checking authentication');
             return false;
         }
-    } else {
-        console.error('Error checking authentication');
-        return false;
-    }
+    } catch(error) {
+        return error;
+    }    
 }
 
 function handleErrors(data) {
