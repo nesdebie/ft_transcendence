@@ -224,3 +224,23 @@ body::-webkit-scrollbar {
     font-size: 0.8em;
     color: #888;
 }
+
+/* Custom scrollbar styles for the message area */
+body:not(.cyberpunk) #message-area {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: black white; /* thumb color, track color */
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+body:not(.cyberpunk) #message-area::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+body:not(.cyberpunk) #message-area::-webkit-scrollbar-track {
+    background: white; /* Track color */
+}
+
+body:not(.cyberpunk) #message-area::-webkit-scrollbar-thumb {
+    background: black; /* Thumb color */
+    border-radius: 10px; /* Rounded corners for the thumb */
+}

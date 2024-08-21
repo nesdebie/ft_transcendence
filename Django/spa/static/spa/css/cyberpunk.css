@@ -440,7 +440,7 @@
   
   /* Paragraphs and lists */
   
-  p.cyberpunk,
+  /* p.cyberpunk,
   .cyberpunk p {
     border: 30px solid var(--black-color);
     border-right: 5px solid var(--black-color);
@@ -579,7 +579,7 @@
     animation-iteration-count: infinite;
     animation-timing-function: linear;
     animation-direction: alternate;
-  }
+  } */
   
   @keyframes scannedv {
     0% {
