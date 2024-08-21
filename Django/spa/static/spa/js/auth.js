@@ -123,7 +123,7 @@ async function register(event) {
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
     if (image && !allowedTypes.includes(image.type)) {
-        alert('Profile picture must be a PNG, JPEG, or JPG file. Cheh');
+        alert('Profile picture must be a PNG, JPEG, or JPG file.');
         return;
     }
 
