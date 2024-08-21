@@ -23,6 +23,7 @@ function initPong() {
             const data = JSON.parse(e.data);
             if (data.type === 'game_state_update') {
                 gameState = data.game_state;
+                console.log('Game State in onmessage:', gameState);
                 drawGame();
             }
         };
@@ -44,8 +45,10 @@ function initPong() {
     }
 
     function drawGame() {
-        if (!gameState) return;
-
+        if (!gameState || !gameState.paddles || gameState.paddles.length < 2) {
+            console.error('Game State:', gameState);
+            return;
+        }
         // Clear the canvas
         context.fillStyle = 'black';
         context.fillRect(0, 0, canvas.width, canvas.height);
