@@ -106,62 +106,6 @@ def view_chat(request, username=None):
 		print(f'{m.sender.username} -> {m.receiver.username}: {m.message}\n')
 	return render(request, template, context)
 
-@login_required
-def profile_editor(request):
-    return render(request, 'spa/pages/profile_editor.html', {
-        'update_profile_picture_url': reverse('update_profile_picture'),
-        'change_password_url': reverse('change_password')
-    })
-
-@login_required
-def update_profile_picture(request):
-    if request.method == 'POST':
-        if 'image' in request.FILES:
-            profile_picture = request.FILES['image']
-            if profile_picture.content_type not in ['image/png', 'image/jpeg']:
-                return JsonResponse({'errors': {'image': 'Profile picture must be a PNG or JPEG file'}}, status=400)
-
-            # Use the original file name
-            image_name = profile_picture.name
-            image_path = os.path.join('profile_pics', image_name)
-
-            # Save the new profile picture
-            default_storage.save(image_path, ContentFile(profile_picture.read()))
-
-            # Update the user's profile picture path
-            user = request.user
-            user.profile_picture = image_path
-            user.save()
-            return JsonResponse({'status': 'success', 'profile_picture': user.profile_picture.url})
-        return JsonResponse({'errors': {'image': 'No image file provided'}}, status=400)
-    return JsonResponse({'status': 'invalid method'}, status=405)
-
-@login_required
-def change_password(request):
-    if request.method == 'POST':
-        old_password = request.POST.get('old_password')
-        new_password = request.POST.get('new_password')
-        new_password2 = request.POST.get('new_password2')
-
-        if not request.user.check_password(old_password):
-            return JsonResponse({'errors': {'old_password': 'Old password is incorrect'}}, status=400)
-
-        if new_password != new_password2:
-            return JsonResponse({'errors': {'new_password2': "Passwords don't match"}}, status=400)
-
-        try:
-            validate_password(new_password, request.user)
-        except ValidationError as error:
-            return JsonResponse({'errors': {'new_password': error.messages}}, status=400)
-
-        request.user.set_password(new_password)
-        request.user.save()
-        update_session_auth_hash(request, request.user)  # Important to keep the user logged in
-
-        return JsonResponse({'success': 'Password changed successfully'})
-
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 def shifumi_lobby(request):
     user : Player = request.user
     active_game = user.get_active_shifumi_game()
@@ -177,5 +121,9 @@ def shifumi_game_PVP(request, room_name):
     user.set_active_shifumi_game(room_name)
     return render(request, 'spa/pages/shifumi.html', {'room_name': room_name})
 
-def shifumi_game_PVE(request):
-    return render(request, 'spa/pages/shifumi_pve.html')
+@login_required
+def profile_editor(request):
+    return render(request, 'spa/pages/profile_editor.html', {
+        'update_profile_picture_url': reverse('update_profile_picture'),
+        'change_password_url': reverse('change_password')
+    })

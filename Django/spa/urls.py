@@ -10,10 +10,7 @@ urlpatterns = [
     path('chat/', views.view_chat, name='chat_messages'),
     path('chat/<str:username>/', views.view_chat , name='chat_with_user'),
     path('friend_requests/', views.view_friend_requests, name='friend_requests'),
-    path('profile_editor/', views.profile_editor, name='profile_editor'),
-    path('update_profile_picture/', views.update_profile_picture, name='update_profile_picture'),
-    path('change_password/', views.change_password, name='change_password'),
     path('shifumi/', views.shifumi_lobby, name='shifumi_lobby'),
-    path('shifumi/pve/', views.shifumi_game_PVE, name='shifumi_game_PVE'),
     path('shifumi/<str:room_name>/', views.shifumi_game_PVP, name='shifumi_game_PVP'),
+    path('profile_editor/', views.profile_editor, name='profile_editor'),
 ]

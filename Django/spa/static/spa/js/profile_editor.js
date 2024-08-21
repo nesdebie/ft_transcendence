@@ -20,7 +20,7 @@ async function updateProfilePicture(event) {
     formData.append('image', image);
 
     try {
-        const response = await fetch('/pages/update_profile_picture/', {
+        const response = await fetch('/users_api/update_profile_picture/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken')
@@ -59,7 +59,7 @@ async function setPassword(event) {
     }
 
     try {
-        const response = await fetch('/pages/change_password/', {
+        const response = await fetch('/users_api/change_password/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),

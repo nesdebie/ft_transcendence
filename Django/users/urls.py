@@ -17,6 +17,8 @@ urlpatterns = [
     path('user_data/', views.current_user_data, name='current_user_data'),
     path('user_data/<str:username>', views.user_data, name='user_data'),
     path ('find_user/', views.find_user, name='find_user'),
+    path('update_profile_picture/', views.update_profile_picture, name='update_profile_picture'),
+    path('change_password/', views.change_password, name='change_password'),
 	
     # 2FA 
     path('verify_otp/', views.verify_otp, name='verify_otp'),
