@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from . import views
 from django.conf import settings 
 import requests 
-
+from django.contrib.auth import update_session_auth_hash
 
 # LOGIN 42 AUTH 
 
@@ -478,12 +478,6 @@ def verify_otp(request):
             return JsonResponse({'detail': 'User not found'}, status=404)
     return JsonResponse({'detail': 'Invalid method'}, status=405)
 
-@login_required
-def profile_editor(request):
-    return render(request, 'spa/pages/profile_editor.html', {
-        'update_profile_picture_url': reverse('update_profile_picture'),
-        'change_password_url': reverse('change_password')
-    })
 
 @login_required
 def update_profile_picture(request):
