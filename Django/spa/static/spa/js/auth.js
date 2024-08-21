@@ -121,8 +121,9 @@ async function register(event) {
     const image = document.getElementById('register-image').files[0];
     const two_factor_auth = document.getElementById('register-2fa').checked;
 
-    if (image && image.type !== 'image/png') {
-        alert('Profile picture must be a PNG file.');
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (image && !allowedTypes.includes(image.type)) {
+        alert('Profile picture must be a PNG, JPEG, or JPG file. Cheh');
         return;
     }
 
