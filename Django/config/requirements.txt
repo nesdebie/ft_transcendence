@@ -73,6 +73,7 @@ Twisted==24.3.0
 txaio==23.1.1
 typing_extensions==4.12.2
 urllib3==2.2.2
+uvicorn==0.22.0
 web3==6.20.1
 websockets==12.0
 yarl==1.9.4
