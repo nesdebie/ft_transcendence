@@ -1,3 +1,4 @@
+
 # Use Debian base image
 FROM debian:bullseye
 
@@ -5,8 +6,8 @@ FROM debian:bullseye
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-# Install OpenSSL and Node.js
-RUN apt-get update && apt-get install -y curl openssl && \
+# Install Node.js
+RUN apt-get update && apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
@@ -33,8 +34,15 @@ WORKDIR /app/blockchain/ALL_FILE_NEEDED
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs 
 
+RUN which npm || echo "npm not found"
+
+RUN node --version && npm --version
+
 # Install Ganache and Truffle globally
 RUN npm install -g ganache@7.9.1 truffle@5.11.5 --unsafe-perm
+
+# Initialize a new Truffle project
+RUN truffle init
 
 # Change working directory back to app folder
 WORKDIR /app
@@ -45,8 +53,10 @@ RUN chmod +x /app/config/entrypoint.sh /app/blockchain/ALL_FILE_NEEDED/start.sh
 COPY ./config/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Expose port 443 for HTTPS
-EXPOSE 443
+# Expose ports for Django and Ganache
+EXPOSE 8000 7545
+
+RUN chmod +x /app/config/entrypoint.sh
 
 # Use the new entrypoint script
 ENTRYPOINT ["/app/config/entrypoint.sh"]

@@ -15,8 +15,6 @@ down:
 fclean: down
 	docker image prune --all --force
 	docker builder prune --all --force
-	rm -f ./Django/certificate.crt
-	rm -f ./Django/private.key
 
 re: fclean all
 
