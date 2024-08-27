@@ -54,20 +54,20 @@
 		{% endif %}
 	<!-- If own_profile -->
 	{% else %}
-		<h3>Find a User</h3>
+		<!-- <h3>Find a User</h3> -->
 		<form id="find-user-form">
 			{% csrf_token %}
 			<div class="form-group">
 				<span id="find-user-error" class="error-message text-danger"></span>
 			</div>				
 			<div class="form-group">
-				<label for="find-user-username">Username</label>
-				<input type="text" class="form-control" id="find-user-username" name="find-user-username" required>
+				<!-- <label for="find-user-username">Username</label> -->
+				<input type="text" class="form-control" id="find-user-username"  placeholder="find users" name="find-user-username" required>
 			</div>
 			<button type="submit" class="btn btn-dark">Search</button>
 		</form>
 		
-		<h3>Your Friends</h3>
+		<h3>Friendlist</h3>
 		<div class="friends-grid">
 			{% for friend in friends %}
 			<div class="friend-card">
