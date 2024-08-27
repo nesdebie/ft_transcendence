@@ -43,7 +43,6 @@ REDIRECT_URI = 'https://localhost/users_api/callback'
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
     'channels',
     'channels_postgres',
     'users',
