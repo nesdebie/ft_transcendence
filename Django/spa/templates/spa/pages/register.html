@@ -6,31 +6,31 @@
 				{% csrf_token %}
 				<div class="form-group">
 					<label id="1" for="register-username">Username</label>
-					<input type="text" class="form-control" id="register-username" name="username" required>
+					<input type="text" class="form-control" id="register-username" placeholder="username" name="username" required>
 					<span id="username-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
 					<label for="register-password">Password</label>
-					<input type="password" class="form-control" id="register-password" name="password" required>
+					<input type="password" class="form-control" id="register-password" placeholder="password" name="password" required>
 					<span id="password-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
-					<label for="register-password2">Password confirmation</label>
-					<input type="password" class="form-control" id="register-password2" name="password2" required>
+					<!-- <label for="register-password2">Password confirmation</label> -->
+					<input type="password" class="form-control" id="register-password2" placeholder="password confirmation" name="password2" required>
 					<span id="password2-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
-					<label for="register-nickname">Nickname</label>
-					<input type="text" class="form-control" id="register-nickname" name="nickname">
+					<label for="register-nickname">Nickname (optional)</label>
+					<input type="text" class="form-control" id="register-nickname" placeholder="nickname" name="nickname">
 					<span id="nickname-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
 					<label for="register-email">Email</label>
-					<input type="email" class="form-control" id="register-email" name="email" required>
+					<input type="email" class="form-control" id="register-email" placeholder="example@s19.be" name="email" required>
 					<span id="email-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
-					<label for="register-image">Profile Picture</label>
+					<label for="register-image">Profile Picture (optional)</label>
 					<input type="file" class="form-control" id="register-image" name="image">
 					<span id="image-error" class="error-message text-danger"></span>
 				</div>
@@ -45,10 +45,10 @@
 				    <div id="qr-code"></div>
 				</div>
 				<!-- End of QR Code Display -->
-				<!-- AUTH -->
-				<button href="#" id="register-with-42" class="btn btn-dark">Register with 42</button>
 				<!---->
 				<button id="register-form-button" type="submit" class="btn btn-primary btn-block">Register</button>
+				<!-- AUTH -->
+				<button href="#" id="register-with-42" class="btn btn-dark btn-block">Register with 42</button>
 			</form>
 			<p class="text-center">
 				Have an account yet? <a href="/login" onclick="route(event)">Login</a>
