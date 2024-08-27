@@ -3,8 +3,8 @@ import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.j
 function initPong() {
     let canvas, context;
     let gameState;
-    let gameId;
-    console.log(`gameId: ${gameId}`);
+    let room_name;
+    console.log(`room_name: ${room_name}`);
 
     function init() {
         canvas = document.getElementById('pong-game');
@@ -12,12 +12,12 @@ function initPong() {
             context = canvas.getContext('2d');
             document.addEventListener('keydown', handleKeyPress);
         }
-        gameId = canvas.getAttribute('data-game-id');
-        connectWebSocket(gameId);
+        room_name = canvas.getAttribute('data-game-id');
+        connectWebSocket(room_name);
     }
 
-    function connectWebSocket(gameId) {
-        const socket = new WebSocket(`wss://${window.location.host}/ws/pong/${gameId}/`);
+    function connectWebSocket(room_name) {
+        const socket = new WebSocket(`wss://${window.location.host}/ws/pong/${room_name}/`);
 
         socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
@@ -26,11 +26,17 @@ function initPong() {
                 console.log('Game State in onmessage:', gameState);
                 drawGame();
             }
+            else if (data.type = 'game_over') {
+                gameState = data.game_state;
+                console.log('Game over: ', gameState);
+                game_over(data)
+            }
         };
 
         socket.onopen = function(e) {
+            console.log('Pong websocket connection made')
             setWebSocket(socket);
-            socket.send(JSON.stringify({action: 'start_game'}));
+            socket.send(JSON.stringify({action: 'join'}));
         };
     }
 
@@ -68,6 +74,39 @@ function initPong() {
         context.font = '24px Arial';
         context.fillText(gameState.score[players[0]], 100, 50);
         context.fillText(gameState.score[players[1]], 400, 50);
+    }
+
+    function game_over() {
+        document.querySelectorAll('pong-game').forEach(el => {
+            el.style.display = 'none';
+        });
+
+        // Show game over message
+        const gameOverDiv = document.getElementById('game-over');
+        const gameOverMessage = document.getElementById('game-over-message');
+        gameOverDiv.style.display = 'block';
+
+        const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
+        const opponentUsername = Object.keys(data.scores).find(user => user !== username);
+        
+        const playerScore = data.score[playerUsername];
+        const opponentScore = data.score[opponentUsername];
+        
+        if (playerScore = opponentScore) {
+            gameOverMessage.textContent = 'It\'s a tie!';
+            gameOverMessage.style.color = 'blue';
+        } else if (playerScore > opponentScore) {
+            gameOverMessage.textContent = 'GG Well Played!';
+            gameOverMessage.style.color = 'green';
+        } else {
+            gameOverMessage.textContent = 'GAME OVER';
+            gameOverMessage.style.color = 'red';
+        }
+        // Add event listener to go back button
+        document.getElementById('go-back-button').addEventListener('click', () => {
+            closeWebSocket();
+            window.history.back();
+        });
     }
 
     init();

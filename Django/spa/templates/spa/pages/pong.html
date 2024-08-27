@@ -1,11 +1,10 @@
 <div class="page-container align-center" ">
   <h1>PONG</h1>
   <div class="row">
-      <canvas id="pong-game" width="500" height="500" data-game-id="{{ game_id }}"></canvas>
+      <canvas id="pong-game" width="500" height="500" data-room_name="{{ room_name }}" data-player-username="{{ request.user.username }}"></canvas>
   </div>
-  <div>
-    <input type="range" id="scoreSlider" min="1" max="5" value="1" step="1" oninput="updateSliderValue(this.value)">
-    <label for="scoreSlider">First to <span id="sliderValue">1</span> point(s)</label>    
+  <div id="game-over" style="display: none;">
+    <h1 id="game-over-message" style="font-size: 3rem; text-align: center;"></h1>
+    <button id="go-back-button" style="font-size: 1.5rem; margin-top: 20px;">Go Back</button>
   </div>
-  <button id="pong-start" class="btn btn-dark">START GAME</button>
 </div>

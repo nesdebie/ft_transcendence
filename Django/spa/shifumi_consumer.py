@@ -18,9 +18,6 @@ class ShifumiConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    async def websocket_disconnect(self, event):
-        print(f"WebSocket disconnected: {event}")
-        await self.disconnect(event.get('code'))
 
     async def disconnect(self, close_code):
         print(f"Disconnecting with close code: {close_code}")

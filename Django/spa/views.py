@@ -178,5 +178,5 @@ def shifumi_game_PVP(request, room_name):
 def shifumi_game_PVE(request):
     return render(request, 'spa/pages/shifumi_pve.html')
 
-def pong_game(request, game_id):
-    return render(request, 'spa/pages/pong.html', {'game_id': game_id})
+def pong_game(request, room_name):
+    return render(request, 'spa/pages/pong.html', {'game_id': room_name})

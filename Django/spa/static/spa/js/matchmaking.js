@@ -20,14 +20,14 @@ function startMatchmaking() {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === 'matched') {
-				startGame(data.game_id);
+				startGame(data.room_name);
 			} else {
 				setTimeout(() => pollForMatch(matchmakingId), 2000);
 			}
 		});
 	}
 	
-	function startGame(gameId) {
+	function startGame(room_name) {
 		const lobbyStatus = document.getElementById('lobby-status');
 		const matchStatus = document.getElementById('match-status');
 		const matchmakingBtn = document.getElementById('matchmaking-btn');
@@ -35,7 +35,7 @@ function startMatchmaking() {
 		matchmakingBtn.style.display = 'none';
 		matchStatus.textContent = 'Match found! Starting game...';
 		matchStatus.style.display = 'block';
-		redirectToRoute(`/pong/${gameId}`);
+		redirectToRoute(`/pong/${room_name}`);
 }
 
 export { startMatchmaking };

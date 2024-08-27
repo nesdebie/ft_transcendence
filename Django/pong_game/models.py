@@ -16,6 +16,7 @@ class Matchmaking(models.Model):
     player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     matched = models.BooleanField(default=False)
+    room_name = models.CharField(max_length=70 ,default='')
     game = models.ForeignKey(PongGame, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

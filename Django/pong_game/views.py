@@ -6,44 +6,10 @@ from users.models import Player
 import json
 
 @csrf_exempt
-def create_game(request):
-    if request.method == 'POST':
-        game = PongGame.objects.create(player1=request.user)
-        return JsonResponse({'game_id': str(game.id)})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-def get_game_state(request, game_id):
-    try:
-        game = PongGame.objects.get(id=game_id)
-        return JsonResponse({
-            'player1': game.player1.username,
-            'player2': game.player2.username,
-            'score1': game.score1,
-            'score2': game.score2,
-            'is_active': game.is_active
-        })
-    except PongGame.DoesNotExist:
-        return JsonResponse({'error': 'Game not found'}, status=404)
-
-@csrf_exempt
-def update_score(request, game_id):
-    if request.method == 'POST':
-        try:
-            game = PongGame.objects.get(id=game_id)
-            data = json.loads(request.body)
-            game.score1 = data.get('score1', game.score1)
-            game.score2 = data.get('score2', game.score2)
-            game.save()
-            return JsonResponse({'success': True})
-        except PongGame.DoesNotExist:
-            return JsonResponse({'error': 'Game not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_exempt
 def start_matchmaking(request):
     if request.method == 'POST':
         player :Player = request.user
-        matchmaking, created = Matchmaking.objects.get_or_create(player=player, matched=False)
+        matchmaking, created = Matchmaking.objects.get_or_create(player=player)
         
         # Check if there's another player waiting
         other_matchmaking = Matchmaking.objects.filter(matched=False).exclude(player=player).first()
@@ -54,14 +20,16 @@ def start_matchmaking(request):
             
             # Update both matchmaking entries
             matchmaking.matched = True
+            matchmaking.room_name = other_matchmaking.player.username + player.username
             matchmaking.game = game
             matchmaking.save()
             
             other_matchmaking.matched = True
+            other_matchmaking.room_name = other_matchmaking.player.username + player.username
             other_matchmaking.game = game
             other_matchmaking.save()
             
-            return JsonResponse({'status': 'matched', 'game_id': str(game.id)})
+            return JsonResponse({'status': 'matched', 'room_name': str(game.player1.username) + str(game.player2.username)})
         
         return JsonResponse({'status': 'waiting', 'matchmaking_id': str(matchmaking.id)})
     
@@ -71,9 +39,45 @@ def check_matchmaking(request, matchmaking_id):
     player = request.user
     matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).first()   
     if matchmaking.matched:
-        return JsonResponse({'status': 'matched', 'game_id': str(matchmaking.game.id)})
+        return JsonResponse({'status': 'matched', 'room_name': str(matchmaking.room_name)})
     
     return JsonResponse({'status': 'waiting'})
+
+
+# @csrf_exempt
+# def create_game(request):
+#     if request.method == 'POST':
+#         game = PongGame.objects.create(player1=request.user)
+#         return JsonResponse({'game_id': str(game.id)})
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# def get_game_state(request, game_id):
+#     try:
+#         game = PongGame.objects.get(id=game_id)
+#         return JsonResponse({
+#             'player1': game.player1.username,
+#             'player2': game.player2.username,
+#             'score1': game.score1,
+#             'score2': game.score2,
+#             'is_active': game.is_active
+#         })
+#     except PongGame.DoesNotExist:
+#         return JsonResponse({'error': 'Game not found'}, status=404)
+
+# @csrf_exempt
+# def update_score(request, game_id):
+#     if request.method == 'POST':
+#         try:
+#             game = PongGame.objects.get(id=game_id)
+#             data = json.loads(request.body)
+#             game.score1 = data.get('score1', game.score1)
+#             game.score2 = data.get('score2', game.score2)
+#             game.save()
+#             return JsonResponse({'success': True})
+#         except PongGame.DoesNotExist:
+#             return JsonResponse({'error': 'Game not found'}, status=404)
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 def get_game_state(request, game_id):
     game = get_object_or_404(PongGame, id=game_id)
