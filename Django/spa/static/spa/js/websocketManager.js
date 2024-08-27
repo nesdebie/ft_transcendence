@@ -9,7 +9,7 @@ function getWebSocket() {
 }
 
 function closeWebSocket() {
-    if (currentWebSocket) {
+    if (currentWebSocket != null) {
         currentWebSocket.close();
         currentWebSocket = null;
     }
