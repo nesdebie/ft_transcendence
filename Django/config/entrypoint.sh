@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-# Generate a self-signed SSL certificate
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /app/private.key \
-    -out /app/certificate.crt \
-    -subj "/C=FR/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
-
 # Function to wait for a service to be ready
 wait_for_service() {
     echo "Waiting for $1 to be ready..."
@@ -18,22 +12,29 @@ wait_for_service() {
     echo "$1 is ready!"
 }
 
-# Start ganache / blockchain
+# ganache / blockchain
 echo "starting ganache ..."
 cd ./blockchain/ALL_FILE_NEEDED
+echo "pwd" 
+pwd
 ./start.sh 
 
 cd ../..
+
+
 
 echo "start database .."
 # Wait for databases to be ready
 wait_for_service "App database" "$APP_DB_HOST" "$APP_DB_PORT" "$APP_DB_USER"
 wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHANNEL_DB_USER"
 
+# echo "migrations .."
+# 2FA make migrations 
+# python3 manage.py makemigrations
 # Run migrations
 python3 manage.py migrate
 python3 manage.py migrate channels_postgres --database=channels_postgres
 
 # Start Uvicorn to serve the Django application over HTTPS
 echo "Starting Uvicorn with SSL..."
-uvicorn SinglePageApp.asgi:application --host 0.0.0.0 --port 443 --ssl-keyfile /app/private.key --ssl-certfile /app/certificate.crt
+uvicorn SinglePageApp.asgi:application --host 0.0.0.0 --port 443 --ssl-keyfile /app/private.key --ssl-certfile /app/certificate.cr
