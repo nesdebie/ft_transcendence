@@ -34,6 +34,6 @@ wait_for_service "Channel database" "$CHANNEL_DB_HOST" "$CHANNEL_DB_PORT" "$CHAN
 python3 manage.py migrate
 python3 manage.py migrate channels_postgres --database=channels_postgres
 
-echo "Starting Uvicorn with SSL..."
 # Start Uvicorn to serve the Django application over HTTPS
+echo "Starting Uvicorn with SSL..."
 uvicorn SinglePageApp.asgi:application --host 0.0.0.0 --port 443 --ssl-keyfile /app/private.key --ssl-certfile /app/certificate.crt
