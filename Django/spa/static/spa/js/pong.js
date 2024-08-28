@@ -4,15 +4,15 @@ function initPong() {
     let canvas, context;
     let gameState;
     let room_name;
-    console.log(`room_name: ${room_name}`);
-
+    
     function init() {
         canvas = document.getElementById('pong-game');
         if (canvas) {
             context = canvas.getContext('2d');
             document.addEventListener('keydown', handleKeyPress);
         }
-        room_name = canvas.getAttribute('data-game-id');
+        room_name = canvas.getAttribute('data-room_name');
+        console.log(`room_name: ${room_name}`);
         connectWebSocket(room_name);
     }
 
@@ -21,20 +21,22 @@ function initPong() {
 
         socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            console.log("received: ", data);
             if (data.type === 'game_state_update') {
                 gameState = data.game_state;
-                console.log('Game State in onmessage:', gameState);
                 drawGame();
-            }
-            else if (data.type = 'game_over') {
+            } else if (data.type === 'game_over') {
                 gameState = data.game_state;
-                console.log('Game over: ', gameState);
                 game_over(data)
+            } else if (data.type === 'game_start') {
+                console.log('Game start');
+            } else {
+                console.error(e);
             }
         };
 
         socket.onopen = function(e) {
-            console.log('Pong websocket connection made')
+            console.log('Pong websocket connection made, Sending join')
             setWebSocket(socket);
             socket.send(JSON.stringify({action: 'join'}));
         };
@@ -87,10 +89,10 @@ function initPong() {
         gameOverDiv.style.display = 'block';
 
         const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
-        const opponentUsername = Object.keys(data.scores).find(user => user !== username);
+        const opponentUsername = Object.keys(gameState.scores).find(user => user !== username);
         
-        const playerScore = data.score[playerUsername];
-        const opponentScore = data.score[opponentUsername];
+        const playerScore = gameState.score[playerUsername];
+        const opponentScore = gameState.score[opponentUsername];
         
         if (playerScore = opponentScore) {
             gameOverMessage.textContent = 'It\'s a tie!';

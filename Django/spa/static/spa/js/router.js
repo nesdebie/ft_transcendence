@@ -53,10 +53,10 @@ const handleLocation = async () => {
         }
         const html = await response.text();
         document.getElementById("main-page").innerHTML = html;
-        call_page_functions(path);
     } catch (error) {
         console.error('Error fetching the route:', error);
     }
+    call_page_functions(path);
 };
 
 // Permet de call des fonctions Js specifiques 

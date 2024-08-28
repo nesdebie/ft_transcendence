@@ -19,8 +19,10 @@ class PongGameLogic:
         self.score = {}
         self.game_running = False
 
+
+
     def add_player(self, username):
-        if len(self.players) < 2:
+        if len(self.players_usernames) < 2:
             self.players_usernames.append(username)
             self.paddles[username] = {'y': self.height // 2 - self.paddle_height // 2}
             self.score[username] = 0
@@ -29,13 +31,16 @@ class PongGameLogic:
     def start(self, consumer):
         if len(self.players_usernames) == 2:
             self.game_running = True
-        thread = threading.Thread(target=self.__update, args=[self, consumer])
-        thread.start()
+            thread = threading.Thread(target=self.__update, args=[consumer])
+            thread.start()
+        else:
+            print(f'?? player are: {self.players_usernames}')
         
     async def __update(self, consumer):
+        print('Thread is starting')
         while self.game_running:
             self.__update_ball_position()
-            # Send game state update to all players
+            # Send game state update to all players_usernames
             await self.__send_game_sate(consumer)
 
             sleep(0.1)
@@ -43,6 +48,7 @@ class PongGameLogic:
         await self.__finish_game(consumer)
 
     async def __send_game_sate(self, consumer):
+        print(f'Game state: {self.get_game_state()}')
         await consumer.channel_layer.group_send(
             consumer.game_group_name,
             {
@@ -61,7 +67,7 @@ class PongGameLogic:
         )
 
     def __update_ball_position(self):
-        if not self.game_running or len(self.players) != 2:
+        if not self.game_running or len(self.players_usernames) != 2:
             return
 
         self.ball['x'] += self.ball['dx'] * self.ball_speed

@@ -10,7 +10,7 @@ function startMatchmaking() {
 				lobbyStatus.textContent = 'Waiting for an opponent...';
 				pollForMatch(data.matchmaking_id);
 			} else if (data.status === 'matched') {
-				startGame(data.game_id);
+				startGame(data.room_name);
 			}
 		});
 	}
@@ -19,6 +19,7 @@ function startMatchmaking() {
 		fetch(`/api/pong/matchmaking/${matchmakingId}/`)
 		.then(response => response.json())
 		.then(data => {
+			console.log('Matchmaking data: ',data);
 			if (data.status === 'matched') {
 				startGame(data.room_name);
 			} else {

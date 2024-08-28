@@ -27,45 +27,50 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
+            print(f' received: {data}') 
             action = data['action']
             
-            if action == 'join':
-                await self.join_game()
-            elif action == 'move':
-                await self.handle_move(data['move'])
-            else:
-                await self.send(text_data=json.dumps({
-                    'error': f"Unknown action: {action}"
-                }))
         except json.JSONDecodeError:
             await self.send(text_data=json.dumps({
                 'error': "Invalid JSON"
             }))
         except KeyError as e:
+            print(f'KeyError: {str(e)}')
             await self.send(text_data=json.dumps({
                 'error': f"Missing key in data: {str(e)}"
             }))
-        except Exception as e:
-            print(f"Error in receive: {str(e)}")
+
+        if action == 'join':
+            print(f'Calling join_game function with {self.user.username}')
+            await self.join_game()
+        elif action == 'move':
+            await self.handle_move(data['move'])
+        else:
+            await self.send(text_data=json.dumps({
+                'error': f"Unknown action: {action}"
+            }))
 
     async def join_game(self):
         if self.room_name not in self.rooms:
             self.rooms[self.room_name] = {
                 'players_usernames': [],
+                'scores': {},
                 'game': PongGameLogic()
             }
-        elif len(self.rooms[self.room_name]['players_usernames']) < 2:
+        else:
+            print(f'{self.user.username} has joined the game the room usernames are {self.rooms[self.room_name]["players_usernames"]}')
+        
+        if len(self.rooms[self.room_name]['players_usernames']) < 2:
+            print(f'{self.user.username} is added to the list')
             self.rooms[self.room_name]['players_usernames'].append(self.user.username)
             self.rooms[self.room_name]['scores'][self.user.username] = 0
-        
+            print(f'list = {self.rooms[self.room_name]["players_usernames"]} and len = {len(self.rooms[self.room_name]["players_usernames"])}')
         if len(self.rooms[self.room_name]['players_usernames']) == 2:
-            self.rooms[self.room_name]['players_usernames'].sort()  # Sort players alphabetically
-
             await self.start_game()
 
 
     async def start_game(self):
-        print(f'Starting game for {self.game_id} with players {self.rooms[self.game_id]["players"]}')
+        print(f'Starting game for {self.room_name} with players {self.rooms[self.room_name]["players_usernames"]}')
         room = self.rooms[self.room_name]
         game = room['game']
         for player_username in room['players_usernames']:
@@ -75,10 +80,11 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'game_start',
-                'game': game
+                'game': vars(game)
             }
         )
         game.start(self);
+        print(f'game has started !')
 
     async def handle_move(self, move):
         room = self.rooms[self.room_name]
@@ -109,7 +115,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
 #Not usefull ?
     async def send_game_state(self):
-        game_state = self.rooms[self.game_id]['game'].get_game_state()
+        game_state = self.rooms[self.room_name]['game'].get_game_state()
         await self.channel_layer.group_send(
             self.game_group_name,
             {

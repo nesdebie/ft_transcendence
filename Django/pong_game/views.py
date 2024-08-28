@@ -18,18 +18,14 @@ def start_matchmaking(request):
             # Create a new game
             game = PongGame.objects.create(player1=player, player2=other_matchmaking.player)
             
-            # Update both matchmaking entries
-            matchmaking.matched = True
-            matchmaking.room_name = other_matchmaking.player.username + player.username
-            matchmaking.game = game
-            matchmaking.save()
-            
             other_matchmaking.matched = True
-            other_matchmaking.room_name = other_matchmaking.player.username + player.username
+            other_matchmaking.room_name = other_matchmaking.player.username + "_" + player.username
             other_matchmaking.game = game
             other_matchmaking.save()
             
-            return JsonResponse({'status': 'matched', 'room_name': str(game.player1.username) + str(game.player2.username)})
+            matchmaking.delete()
+            print(f'Matchmaking roomname {other_matchmaking.room_name}')
+            return JsonResponse({'status': 'matched', 'room_name': other_matchmaking.room_name})
         
         return JsonResponse({'status': 'waiting', 'matchmaking_id': str(matchmaking.id)})
     
@@ -39,7 +35,10 @@ def check_matchmaking(request, matchmaking_id):
     player = request.user
     matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).first()   
     if matchmaking.matched:
-        return JsonResponse({'status': 'matched', 'room_name': str(matchmaking.room_name)})
+        room_name = matchmaking.room_name
+        matchmaking.delete()
+        print(f'Matchmaking join room name: {room_name}')
+        return JsonResponse({'status': 'matched', 'room_name': room_name})
     
     return JsonResponse({'status': 'waiting'})
 
@@ -48,12 +47,12 @@ def check_matchmaking(request, matchmaking_id):
 # def create_game(request):
 #     if request.method == 'POST':
 #         game = PongGame.objects.create(player1=request.user)
-#         return JsonResponse({'game_id': str(game.id)})
+#         return JsonResponse({'room_name': str(game.id)})
 #     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-# def get_game_state(request, game_id):
+# def get_game_state(request, room_name):
 #     try:
-#         game = PongGame.objects.get(id=game_id)
+#         game = PongGame.objects.get(id=room_name)
 #         return JsonResponse({
 #             'player1': game.player1.username,
 #             'player2': game.player2.username,
@@ -65,10 +64,10 @@ def check_matchmaking(request, matchmaking_id):
 #         return JsonResponse({'error': 'Game not found'}, status=404)
 
 # @csrf_exempt
-# def update_score(request, game_id):
+# def update_score(request, room_name):
 #     if request.method == 'POST':
 #         try:
-#             game = PongGame.objects.get(id=game_id)
+#             game = PongGame.objects.get(id=room_name)
 #             data = json.loads(request.body)
 #             game.score1 = data.get('score1', game.score1)
 #             game.score2 = data.get('score2', game.score2)
@@ -79,8 +78,8 @@ def check_matchmaking(request, matchmaking_id):
 #     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-def get_game_state(request, game_id):
-    game = get_object_or_404(PongGame, id=game_id)
+def get_game_state(request, room_name):
+    game = get_object_or_404(PongGame, id=room_name)
     player :Player = request.user
     
     if player not in [game.player1, game.player2]:
