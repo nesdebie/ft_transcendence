@@ -16,6 +16,10 @@
     color: black;
 }
 
+.cyberpunk #rock, .cyberpunk #paper, .cyberpunk #scissors {
+    color: white;
+}
+
 #difficultySlider {
     width: 200px; /* Adjust this value as needed */
 }
