@@ -3,7 +3,9 @@ import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.j
 function initPong() {
     let canvas, context;
     let gameState;
+    let game_data;
     let room_name;
+
     
     function init() {
         canvas = document.getElementById('pong-game');
@@ -15,34 +17,49 @@ function initPong() {
         console.log(`room_name: ${room_name}`);
         connectWebSocket(room_name);
     }
-
+    
     function connectWebSocket(room_name) {
         const socket = new WebSocket(`wss://${window.location.host}/ws/pong/${room_name}/`);
 
         socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            console.log("received: ", data);
             if (data.type === 'game_state_update') {
                 gameState = data.game_state;
-                drawGame();
+                updateBoard();
             } else if (data.type === 'game_over') {
+                console.log('Game over');
                 gameState = data.game_state;
-                game_over(data)
+                game_over(data);
             } else if (data.type === 'game_start') {
-                console.log('Game start');
+                game_data = data.game;
+                drawBoard();
             } else {
                 console.error(e);
             }
         };
-
+        
         socket.onopen = function(e) {
-            console.log('Pong websocket connection made, Sending join')
+            console.log('Pong websocket connection made, Sending join');
             setWebSocket(socket);
             socket.send(JSON.stringify({action: 'join'}));
         };
+        
+        socket.onclose = function(e) {
+            console.log('Pong websocket connection closed');
+        };
     }
+    
 
+    let lastMoveTime = 0;
+    const moveInterval = 50; // ms
+    
     function handleKeyPress(event) {
+        const currentTime = Date.now();
+        if (currentTime - lastMoveTime < moveInterval) {
+            return;
+        }
+        lastMoveTime = currentTime;
+    
         let action;
         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             action = {action: 'move_paddle', direction: event.key === 'ArrowUp' ? 'up' : 'down'};
@@ -52,33 +69,67 @@ function initPong() {
         }
     }
 
-    function drawGame() {
-        if (!gameState || !gameState.paddles || gameState.paddles.length < 2) {
-            console.error('Game State:', gameState);
+    function drawBoard() {
+        if (!game_data) {
+            console.error('Game data not available');
             return;
         }
+        canvas.width = game_data.width;
+        canvas.height = game_data.height;
+        
         // Clear the canvas
         context.fillStyle = 'black';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Draw center line
+        context.strokeStyle = 'white';
+        context.setLineDash([5, 15]);
+        context.beginPath();
+        context.moveTo(canvas.width / 2, 0);
+        context.lineTo(canvas.width / 2, canvas.height);
+        context.stroke();
+
+        // Reset line dash
+        context.setLineDash([]);
+    }
+
+    function updateBoard() {
+        if (!gameState || !gameState.paddles || Object.keys(gameState.paddles).length < 2) {
+            console.error('Invalid game state:', gameState);
+            return;
+        }
+
+        // Clear the canvas
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Redraw center line
+        context.strokeStyle = 'white';
+        context.setLineDash([5, 15]);
+        context.beginPath();
+        context.moveTo(canvas.width / 2, 0);
+        context.lineTo(canvas.width / 2, canvas.height);
+        context.stroke();
+        context.setLineDash([]);
+
         // Draw paddles
         context.fillStyle = 'white';
         const players = Object.keys(gameState.paddles);
-        context.fillRect(0, gameState.paddles[players[0]].y, 10, 50);
-        context.fillRect(490, gameState.paddles[players[1]].y, 10, 50);
+        context.fillRect(0, gameState.paddles[players[0]].y, game_data.paddle_width, game_data.paddle_height);
+        context.fillRect(canvas.width - game_data.paddle_width, gameState.paddles[players[1]].y, game_data.paddle_width, game_data.paddle_height);
 
         // Draw ball
         context.beginPath();
-        context.arc(gameState.ball.x, gameState.ball.y, 5, 0, Math.PI * 2);
+        context.arc(gameState.ball.x, gameState.ball.y, game_data.ball_size / 2, 0, Math.PI * 2);
         context.fill();
 
         // Draw scores
         context.font = '24px Arial';
-        context.fillText(gameState.score[players[0]], 100, 50);
-        context.fillText(gameState.score[players[1]], 400, 50);
+        context.fillText(gameState.score[players[0]], canvas.width / 4, 50);
+        context.fillText(gameState.score[players[1]], 3 * canvas.width / 4, 50);
     }
 
-    function game_over() {
+    function game_over(data) {
         document.querySelectorAll('pong-game').forEach(el => {
             el.style.display = 'none';
         });
@@ -89,7 +140,7 @@ function initPong() {
         gameOverDiv.style.display = 'block';
 
         const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
-        const opponentUsername = Object.keys(gameState.scores).find(user => user !== username);
+        const opponentUsername = Object.keys(gameState.scores).find(user => user !== playerUsername);
         
         const playerScore = gameState.score[playerUsername];
         const opponentScore = gameState.score[opponentUsername];

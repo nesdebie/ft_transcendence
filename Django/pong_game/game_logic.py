@@ -1,16 +1,17 @@
 import random
 import threading
-from asyncio import sleep
+import asyncio
 
 class PongGameLogic: 
     def __init__(self):
         self.width = 500
         self.height = 500
         self.paddle_width = 10
-        self.paddle_height = 50
+        self.paddle_height = 150
         self.ball_size = 10
-        self.paddle_speed = 5
+        self.paddle_speed = 10
         self.ball_speed = 5
+        self.ball_speed_increase = 0.5
         self.max_score = 10
 
         self.players_usernames = [] #gives order of users
@@ -28,11 +29,11 @@ class PongGameLogic:
             self.score[username] = 0
 
 
-    def start(self, consumer):
+    async def start(self, consumer):
+        print(f'Starting game in python file with players: {self.players_usernames}')
         if len(self.players_usernames) == 2:
             self.game_running = True
-            thread = threading.Thread(target=self.__update, args=[consumer])
-            thread.start()
+            asyncio.create_task(self.__update(consumer))
         else:
             print(f'?? player are: {self.players_usernames}')
         
@@ -41,28 +42,35 @@ class PongGameLogic:
         while self.game_running:
             self.__update_ball_position()
             # Send game state update to all players_usernames
-            await self.__send_game_sate(consumer)
+            await self.__send_game_state(consumer)
 
-            sleep(0.1)
+            await asyncio.sleep(0.016)
         
         await self.__finish_game(consumer)
 
-    async def __send_game_sate(self, consumer):
-        print(f'Game state: {self.get_game_state()}')
+    async def __send_game_state(self, consumer):
         await consumer.channel_layer.group_send(
-            consumer.game_group_name,
+            consumer.room_group_name,
             {
                 'type': 'game_state_update',
-                'game_state': self.get_game_state()
+                'game_state': {
+                    'paddles': self.paddles,
+                    'ball': self.ball,
+                    'score': self.score
+                }
             }
         )
 
     async def __finish_game(self, consumer):
         await consumer.channel_layer.group_send(
-            consumer.game_group_name,
+            consumer.room_group_name,
             {
                 'type': 'game_over',
-                'game_state': self.get_game_state()
+                'game_state': {
+                    'paddles': self.paddles,
+                    'ball': self.ball,
+                    'score': self.score
+                }
             }
         )
 
@@ -84,7 +92,7 @@ class PongGameLogic:
            (self.ball['x'] >= self.width - self.paddle_width - self.ball_size and
             self.paddles[player2]['y'] <= self.ball['y'] <= self.paddles[player2]['y'] + self.paddle_height):
             self.ball['dx'] *= -1
-
+            self.ball_speed += self.ball_speed_increase
         # Scoring
         if self.ball['x'] <= 0:
             self.score[player2] += 1
@@ -99,6 +107,7 @@ class PongGameLogic:
 
     def __reset_ball(self):
         self.ball = {'x': self.width // 2, 'y': self.height // 2, 'dx': random.choice([-1, 1]), 'dy': random.choice([-1, 1])}
+        self.ball_speed = 5
 
     def get_game_state(self):
         return {

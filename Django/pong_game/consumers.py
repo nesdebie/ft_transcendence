@@ -43,8 +43,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         if action == 'join':
             print(f'Calling join_game function with {self.user.username}')
             await self.join_game()
-        elif action == 'move':
-            await self.handle_move(data['move'])
+        elif action == 'move_paddle':
+            await self.handle_move(data['direction'])
         else:
             await self.send(text_data=json.dumps({
                 'error': f"Unknown action: {action}"
@@ -72,7 +72,7 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def start_game(self):
         print(f'Starting game for {self.room_name} with players {self.rooms[self.room_name]["players_usernames"]}')
         room = self.rooms[self.room_name]
-        game = room['game']
+        game : PongGameLogic = room['game']
         for player_username in room['players_usernames']:
             game.add_player(player_username)
 
@@ -83,13 +83,13 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'game': vars(game)
             }
         )
-        game.start(self);
+        await game.start(self);
         print(f'game has started !')
 
-    async def handle_move(self, move):
+    async def handle_move(self, direction):
         room = self.rooms[self.room_name]
-        game = room['game']
-        game.handle_move(move)
+        game : PongGameLogic = room['game']
+        game.move_paddle(self.user.username, direction)
 
     async def game_start(self, event):
         game = event['game']
@@ -111,6 +111,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'game_over',
             'game_state': game_state
         }))
+        if self.room_name in self.rooms:
+           self.rooms.pop(self.room_name)
 
 
 #Not usefull ?
