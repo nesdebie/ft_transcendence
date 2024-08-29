@@ -1,6 +1,7 @@
 // Function to apply night city mode
 function applyNightCityMode() {
     document.body.classList.add("cyberpunk");
+    document.querySelector('.loader').style.display = 'flex';
 
     // Handle btn btn-dark
     document.querySelectorAll(".btn.btn-dark").forEach(function(element) {
@@ -24,6 +25,7 @@ function applyNightCityMode() {
 // Function to remove night city mode
 function removeNightCityMode() {
     document.body.classList.remove("cyberpunk");
+    document.querySelector('.loader').style.display = 'none';
 
     // Restore original class for .cyberpunk elements
     document.querySelectorAll(".cyberpunk").forEach(function(element) {
