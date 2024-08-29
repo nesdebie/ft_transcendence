@@ -14,7 +14,7 @@
 .loader_ring {
    width: 200px;
    height: 200px;
-   border: 70px solid rgba(255, 190, 0, 0.08);
+   border: 50px solid rgba(255, 190, 0, 0.08);
    position: absolute;
    border-radius: 100%;
    left: -169px;
@@ -37,13 +37,31 @@
 
 .loader_ascii p {
    position: absolute;
-   font-family: Arial, Helvetica, sans-serif;
    top: -20px;
-   -webkit-animation: ascii_art 2s infinite;
-   -moz-animation: ascii_art 2s infinite;
-   -o-animation: ascii_art 2s infinite;
-   -ms-animation: ascii_art 2s infinite;
-   animation: ascii_art 2s infinite; /* Standard syntax */
+   -webkit-animation: ascii_art 1s infinite;
+   -moz-animation: ascii_art 1s infinite;
+   -o-animation: ascii_art 1s infinite;
+   -ms-animation: ascii_art 1s infinite;
+   animation: ascii_art 1s infinite; /* Standard syntax */
+}
+
+.loader_credit {
+   position: absolute;
+   left: -80px;
+   top: 70px;
+   width: 200px;
+   height: 200px;
+   overflow: hidden;
+}
+
+.loader_credit p {
+   position: absolute;
+   top: -20px;
+   -webkit-animation: textCenter 1s infinite;
+   -moz-animation: textCenter 1s infinite;
+   -o-animation: textCenter 1s infinite;
+   -ms-animation: textCenter 1s infinite;
+   animation: textCenter 1s infinite; /* Standard syntax */
 }
 
 .loader_inner__text {
@@ -155,6 +173,26 @@
    60% { top: -30px; }
    80% { top: -12px; }
    100% { top: 0px; }
+}
+
+@-webkit-keyframes textCenter {
+   0% { left: 0px; }
+   20% { left: -1px }
+   40% { left: +1px }
+   45% { left: -1px }
+   60% { left: +1px }
+   80% { left: -1px }
+   100% { left: +1px }
+}
+
+@keyframes textCenter {
+   0% { left: 0px; }
+   20% { left: -1px }
+   40% { left: +1px }
+   45% { left: -1px }
+   60% { left: +1px }
+   80% { left: -1px }
+   100% { left: +1px }
 }
 
 @-webkit-keyframes outerPulse {
