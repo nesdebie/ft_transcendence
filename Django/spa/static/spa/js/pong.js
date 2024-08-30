@@ -81,14 +81,6 @@ function initPong() {
         context.fillStyle = 'black';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Draw center line
-        context.strokeStyle = 'white';
-        context.setLineDash([5, 15]);
-        context.beginPath();
-        context.moveTo(canvas.width / 2, 0);
-        context.lineTo(canvas.width / 2, canvas.height);
-        context.stroke();
-
         // Reset line dash
         context.setLineDash([]);
     }
@@ -103,14 +95,6 @@ function initPong() {
         context.fillStyle = 'black';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Redraw center line
-        context.strokeStyle = 'white';
-        context.setLineDash([5, 15]);
-        context.beginPath();
-        context.moveTo(canvas.width / 2, 0);
-        context.lineTo(canvas.width / 2, canvas.height);
-        context.stroke();
-        context.setLineDash([]);
 
         // Draw paddles
         context.fillStyle = 'white';
@@ -125,8 +109,8 @@ function initPong() {
 
         // Draw scores
         context.font = '24px Arial';
-        context.fillText(gameState.score[players[0]], canvas.width / 4, 50);
-        context.fillText(gameState.score[players[1]], 3 * canvas.width / 4, 50);
+        context.fillText(gameState.scores[players[0]], canvas.width / 4, 50);
+        context.fillText(gameState.scores[players[1]], 3 * canvas.width / 4, 50);
     }
 
     function game_over(data) {
@@ -142,10 +126,10 @@ function initPong() {
         const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
         const opponentUsername = Object.keys(gameState.scores).find(user => user !== playerUsername);
         
-        const playerScore = gameState.score[playerUsername];
-        const opponentScore = gameState.score[opponentUsername];
+        const playerScore = gameState.scores[playerUsername];
+        const opponentScore = gameState.scores[opponentUsername];
         
-        if (playerScore = opponentScore) {
+        if (playerScore == opponentScore) {
             gameOverMessage.textContent = 'It\'s a tie!';
             gameOverMessage.style.color = 'blue';
         } else if (playerScore > opponentScore) {

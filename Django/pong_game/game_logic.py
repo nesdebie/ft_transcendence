@@ -1,32 +1,43 @@
 import random
-import threading
+import math
 import asyncio
 
 class PongGameLogic: 
     def __init__(self):
         self.width = 500
         self.height = 500
-        self.paddle_width = 10
+        self.paddle_width = 15
         self.paddle_height = 150
         self.ball_size = 10
         self.paddle_speed = 10
         self.ball_speed = 5
-        self.ball_speed_increase = 0.5
-        self.max_score = 10
+        self.ball_speed_increase = 1
+        self.max_score = 5
 
         self.players_usernames = [] #gives order of users
         self.paddles = {} # Player_username : {y : position }
-        self.ball = {'x': self.width // 2, 'y': self.height // 2, 'dx': random.choice([-1, 1]), 'dy': random.choice([-1, 1])}
-        self.score = {}
+        self.ball = self.__initialize_ball()
+        self.scores = {}
         self.game_running = False
 
+    def __initialize_ball(self):
+        # Choose a random angle, excluding ±π/2
+        angle = random.uniform(-math.pi, math.pi)
+        while abs(abs(angle) - math.pi/2) < math.pi/4:  # Avoid angles too close to ±π/2
+            angle = random.uniform(-math.pi, math.pi)
 
+        return {
+            'x': self.width // 2,
+            'y': self.height // 2,
+            'dx': math.cos(angle),
+            'dy': math.sin(angle)
+        }
 
     def add_player(self, username):
         if len(self.players_usernames) < 2:
             self.players_usernames.append(username)
             self.paddles[username] = {'y': self.height // 2 - self.paddle_height // 2}
-            self.score[username] = 0
+            self.scores[username] = 0
 
 
     async def start(self, consumer):
@@ -44,7 +55,7 @@ class PongGameLogic:
             # Send game state update to all players_usernames
             await self.__send_game_state(consumer)
 
-            await asyncio.sleep(0.016)
+            await asyncio.sleep(0.03)
         
         await self.__finish_game(consumer)
 
@@ -56,7 +67,7 @@ class PongGameLogic:
                 'game_state': {
                     'paddles': self.paddles,
                     'ball': self.ball,
-                    'score': self.score
+                    'scores': self.scores
                 }
             }
         )
@@ -69,7 +80,7 @@ class PongGameLogic:
                 'game_state': {
                     'paddles': self.paddles,
                     'ball': self.ball,
-                    'score': self.score
+                    'scores': self.scores
                 }
             }
         )
@@ -86,34 +97,53 @@ class PongGameLogic:
             self.ball['dy'] *= -1
 
         # Ball collision with paddles
-        player1, player2 = self.players_usernames
+        player1, player2 = self.players_usernames[0], self.players_usernames[1]
+
+        # Check collision with left paddle (player1)
         if (self.ball['x'] <= self.paddle_width and
-            self.paddles[player1]['y'] <= self.ball['y'] <= self.paddles[player1]['y'] + self.paddle_height) or \
-           (self.ball['x'] >= self.width - self.paddle_width - self.ball_size and
+            self.paddles[player1]['y'] <= self.ball['y'] <= self.paddles[player1]['y'] + self.paddle_height):
+            self.__handle_paddle_collision(player1)
+
+        # Check collision with right paddle (player2)
+        elif (self.ball['x'] >= self.width - self.paddle_width - self.ball_size and
             self.paddles[player2]['y'] <= self.ball['y'] <= self.paddles[player2]['y'] + self.paddle_height):
-            self.ball['dx'] *= -1
-            self.ball_speed += self.ball_speed_increase
+            self.__handle_paddle_collision(player2)
+
         # Scoring
         if self.ball['x'] <= 0:
-            self.score[player2] += 1
+            self.scores[player2] += 1
             self.__reset_ball()
         elif self.ball['x'] >= self.width - self.ball_size:
-            self.score[player1] += 1
+            self.scores[player1] += 1
             self.__reset_ball()
         
-        # end game
-        if self.score[player1] >= self.max_score or self.score[player2] >= self.max_score:
+        # End game
+        if self.scores[player1] >= self.max_score or self.scores[player2] >= self.max_score:
             self.game_running = False
 
+    def __handle_paddle_collision(self, player):
+        paddle_center = self.paddles[player]['y'] + self.paddle_height / 2
+        hit_position = (self.ball['y'] - paddle_center) / (self.paddle_height / 2)
+        
+        # Calculate new angle based on hit position
+        angle = hit_position * (math.pi / 4)  # Max angle of 45 degrees (pi/4 radians)
+        
+        self.ball['dx'] = -1 if player == self.players_usernames[1] else 1  # Reverse x direction
+        self.ball['dx'] *= math.cos(angle)
+        self.ball['dy'] = math.sin(angle)
+        
+        # Increase ball speed
+        self.ball_speed += self.ball_speed_increase
+
     def __reset_ball(self):
-        self.ball = {'x': self.width // 2, 'y': self.height // 2, 'dx': random.choice([-1, 1]), 'dy': random.choice([-1, 1])}
+        self.ball = self.__initialize_ball()
         self.ball_speed = 5
 
     def get_game_state(self):
         return {
             'paddles': self.paddles,
             'ball': self.ball,
-            'score': self.score
+            'scores': self.scores
         }
 
     def move_paddle(self, username, direction):
