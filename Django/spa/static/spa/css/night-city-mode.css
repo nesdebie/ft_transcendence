@@ -31,6 +31,7 @@ body.cyberpunk title,
 body.cyberpunk h1 { /* Apply font-family to h6 elements only if body has cyberpunk class */
   font-family: 'CP2077'; /* Set font-family for all headings */
   background-color: 'CP2077';
+  font-size: 64px;
   color: black;
   text-shadow: 2px 2px 1px #55ead4;
   font-family: 'CP2077';

@@ -9,9 +9,11 @@
    left: 0;
    right: 0;
    bottom: 0;
+   pointer-events: none;
 }
 
-.loader_ring, .loader_ascii, .loader_credit, .loader_inner__data {
+.loader_ring, .loader_credit, 
+.loader_ring, .loader_ring_blue, .loader_inner__data {
    position: absolute; /* Keep absolute positioning for centering */
    /* Centering styles */
    left: 50%; /* Center horizontally */
@@ -19,36 +21,64 @@
 }
 
 .loader_ring {
-   width: 200px;
-   height: 200px;
-   border: 1px solid #ff003c;
+   width: 1000px;
+   height: 1000px;
+   top: 0%;
+   left: 25%;
+   border: 3px solid #ff003c;
    border-radius: 100%;
-   -webkit-animation: outerPulse 1s infinite;
-   -moz-animation: outerPulse 1s infinite;
-   -o-animation: outerPulse 1s infinite;
-   -ms-animation: outerPulse 1s infinite;
-   animation: outerPulse 1s infinite; /* Standard syntax */
+   -webkit-animation: outerPulse 4s infinite;
+   -moz-animation: outerPulse 4s infinite;
+   -o-animation: outerPulse 4s infinite;
+   -ms-animation: outerPulse 4s infinite;
+   animation: outerPulse 4s infinite; /* Standard syntax */
 }
 
-.loader_ascii {
-   width: 800px;
-   height: 900px;
+.loader_ring_blue {
+   width: 1000px;
+   height: 1000px;
+   top: 0%;
+   left: 25%;
+   border: 3px solid #55ead4;
+   border-radius: 100%;
+   -webkit-animation: innerPulse 4s infinite;
+   -moz-animation: innerPulse 4s infinite;
+   -o-animation: innerPulse 4s infinite;
+   -ms-animation: innerPulse 4s infinite;
+   animation: innerPulse 4s infinite; /* Standard syntax */
+}
+
+.loader_border_ascii {
+   position: absolute;
+   top: 40%;
+   left: 87.5%;
+   width: 200px;
+   height: 240px;
+   border: 1px solid black;
+}
+
+.loader_ascii pre {
+   position: absolute;
+   top: 40%;
+   left: 85%;
+   font-size: 6px;
+   font-weight: bolder;
+   white-space: pre;
    overflow: hidden;
+   background: transparent;
+   border: none;
+   animation: typewriter 500ms steps(40, end) infinite normal both,
+              hideText 2s forwards infinite;
 }
 
 .loader_credit {
    position: absolute; /* Keep absolute positioning */
-   left: 200px; /* Adjust to avoid overlap with the sidebar */
+   left: 50%; /* Adjust to avoid overlap with the sidebar */
    bottom: 10px; /* Position it at the bottom */
    /* Other existing styles can remain */
    color: black; /* Ensure text color is visible */
    font-size: 12px; /* Match the font size of loader_inner__text */
    /* Add any additional styles if necessary */
-}
-
-.loader_inner__data {
-   left: 50%; /* Center horizontally */
-   transform: translateX(-50%); /* Adjust for width */
 }
 
 .loader_inner__text {
@@ -66,24 +96,9 @@
    justify-content: center; /* Center content horizontally */
 }
 
-.loader_ascii pre {
-   position: absolute;
-   top: 25%;
-   left: 25%;
-   font-size: 6px;
-   font-weight: bolder;
-   white-space: pre; /* Ensures the text wraps and maintains whitespace */
-   overflow: hidden; /* Hides the text as it "types" */
-   background: transparent; /* Ensures the background is transparent */
-   border: none; /* Removes the border */
-   animation: typewriter 500ms steps(40, end) infinite normal both,
-              hideText 2s forwards infinite; /* Looping hide effect */
-}
-
 .loader_credit p {
    position: absolute;
    overflow: hidden;
-   bottom: 90%;
    animation: typewriter 2s steps(40, end) infinite normal both, /* Adjust duration */
               hideText 4s forwards infinite; /* Looping hide effect */
 }
@@ -120,24 +135,6 @@
    animation: hiddenText 2s infinite; /* Standard syntax */
 }
 
-.loader_inner__data p {
-   position: absolute;
-   top: -20px;
-   width : 200px;
-   -webkit-animation: chinese 2s infinite;
-   -moz-animation: chinese 2s infinite;
-   -o-animation: chinese 2s infinite;
-   -ms-animation: chinese 2s infinite;
-   animation: chinese 2s infinite; /* Standard syntax */
-}
-
-.loader_ascii p {
-   /* color: #efc02b; */
-   color: black;
-   font-size: 8px;
-   width: 50px;
-}
-
 .loader p span {
    /* background-color: #efc02b; */
    background-color: black;
@@ -163,26 +160,6 @@
    100% { left: 0px; }
 }
 
-@-webkit-keyframes chinese {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
-}
-
-@keyframes chinese {
-   0% { left: 0; }
-   20% { left: -10px; }
-   40% { left: -20px; }
-   45% { left: 0px; }
-   60% { left: -30px; }
-   80% { left: -12px; }
-   100% { left: 0px; }
-}
-
 @-webkit-keyframes textCenter {
    0% { left: 0px; }
    20% { left: -1px }
@@ -204,15 +181,21 @@
 }
 
 @-webkit-keyframes outerPulse {
-   0% { transform: scale(7.5); opacity: 0.7; }
+   0% { transform: scale(0.01); opacity: 0.7; }
    100% { transform: scale(1.0); opacity: 0.7; }
 }
 
 @keyframes outerPulse {
-   0% { transform: scale(1.5); opacity: 0.7; }
-   20% { transform: scale(1.4); opacity: 0.7; }
-   40% { transform: scale(1.5); opacity: 0.7; }
-   60% { transform: scale(1.4); opacity: 0.7; }
-   80% { transform: scale(1.5); opacity: 0.7; }
-   100% { transform: scale(1.4); opacity: 0.7; }
+   0% { transform: scale(0.01); opacity: 0.7; }
+   100% { transform: scale(1.0); opacity: 0.7; }
+}
+
+@-webkit-keyframes innerPulse {
+   0% { transform: scale(1.0); opacity: 0.7; }
+   100% { transform: scale(0.01); opacity: 0.7; }
+}
+
+@keyframes innerPulse {
+   0% { transform: scale(1.0); opacity: 0.7; }
+   100% { transform: scale(0.01); opacity: 0.7; }
 }
