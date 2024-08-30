@@ -4,6 +4,7 @@ import { sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriend
 import { updateProfilePicture, setPassword } from "./profile_editor.js";
 import { getCookie } from "./utils.js"
 
+import { startMatchmaking } from "./matchmaking.js";
 
 $(document).ready(function() {
     $("#profile-button").click(function() {
@@ -100,6 +101,9 @@ document.body.addEventListener('click', async function(event) {
     } else if (target.id == 'unblock-user-button') {
         const username = target.getAttribute('data-username');
         unblock_user(username);
+    } else if (target.id == 'matchmaking-btn') {
+        console.log("starting matchmaking");
+        startMatchmaking();
     }  else if (target.id == 'register-with-42') {
         // Gestion de l'authentification 42 dans un nouvel onglet
         event.preventDefault();
