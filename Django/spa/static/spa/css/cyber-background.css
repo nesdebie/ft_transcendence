@@ -1,10 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Play:400,700);
 
 .loader {
-   display: none; /* Use flexbox for centering */
-   justify-content: center; /* Center horizontally */
-   align-items: center; /* Center vertically */
-   position: absolute; /* Positioning for absolute centering */
+   display: none;
+   justify-content: center;
+   align-items: center;
+   position: absolute;
    top: 0;
    left: 0;
    right: 0;
@@ -12,41 +12,13 @@
    pointer-events: none;
 }
 
-.loader_ring, .loader_credit, 
-.loader_ring, .loader_ring_blue, .loader_inner__data {
-   position: absolute; /* Keep absolute positioning for centering */
-   /* Centering styles */
-   left: 50%; /* Center horizontally */
-   transform: translateX(-50%); /* Adjust for width */
+.loader_ring, .loader_inner__data {
+   position: absolute;
+   left: 50%;
+   transform: translateX(-50%);
 }
 
-.loader_ring {
-   width: 1000px;
-   height: 1000px;
-   top: 0%;
-   left: 25%;
-   border: 3px solid #ff003c;
-   border-radius: 100%;
-   -webkit-animation: outerPulse 4s infinite;
-   -moz-animation: outerPulse 4s infinite;
-   -o-animation: outerPulse 4s infinite;
-   -ms-animation: outerPulse 4s infinite;
-   animation: outerPulse 4s infinite; /* Standard syntax */
-}
-
-.loader_ring_blue {
-   width: 1000px;
-   height: 1000px;
-   top: 0%;
-   left: 25%;
-   border: 3px solid #55ead4;
-   border-radius: 100%;
-   -webkit-animation: innerPulse 4s infinite;
-   -moz-animation: innerPulse 4s infinite;
-   -o-animation: innerPulse 4s infinite;
-   -ms-animation: innerPulse 4s infinite;
-   animation: innerPulse 4s infinite; /* Standard syntax */
-}
+/* JOHNNY SILVERHAND */
 
 .loader_border_ascii {
    position: absolute;
@@ -54,7 +26,53 @@
    left: 87.5%;
    width: 200px;
    height: 240px;
-   border: 1px solid black;
+   /* Remove the solid border */
+}
+
+.loader_border_ascii:before, .loader_border_ascii:after,
+.loader_border_ascii div:before, .loader_border_ascii div:after {
+   content: '';
+   position: absolute;
+   border: 1px solid black; /* Border color and width */
+}
+
+.loader_border_ascii:before, .loader_border_ascii:after {
+   width: 20px; /* Width of the corner lines */
+   height: 20px; /* Height of the corner lines */
+}
+
+.loader_border_ascii:before {
+   top: 0;
+   left: 0;
+   border-right: none;
+   border-bottom: none;
+}
+
+.loader_border_ascii:after {
+   top: 0;
+   right: 0;
+   border-left: none;
+   border-bottom: none;
+}
+
+.loader_border_ascii div {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+}
+
+.loader_border_ascii div:before {
+   bottom: 0;
+   left: 0;
+   border-top: none;
+   border-right: none;
+}
+
+.loader_border_ascii div:after {
+   bottom: 0;
+   right: 0;
+   border-top: none;
+   border-left: none;
 }
 
 .loader_ascii pre {
@@ -69,38 +87,6 @@
    border: none;
    animation: typewriter 500ms steps(40, end) infinite normal both,
               hideText 2s forwards infinite;
-}
-
-.loader_credit {
-   position: absolute; /* Keep absolute positioning */
-   left: 50%; /* Adjust to avoid overlap with the sidebar */
-   bottom: 10px; /* Position it at the bottom */
-   /* Other existing styles can remain */
-   color: black; /* Ensure text color is visible */
-   font-size: 12px; /* Match the font size of loader_inner__text */
-   /* Add any additional styles if necessary */
-}
-
-.loader_inner__text {
-   position: absolute; /* Position it relative to the loader */
-   left: calc(130px + 5px); /* Adjust to the right of the sidebar */
-   top: 60%; /* Center vertically */
-   transform: translateY(-50%); /* Adjust for height */
-   width: 150px; /* Set a visible width */
-   height: 600px; /* Allow height to adjust responsively */
-   overflow: hidden; /* Hide overflow if necessary */
-   color: black; /* Ensure text color is visible */
-   font-size: 12px; /* Match the font size of loader_credit */
-   display: flex; /* Use flexbox for inner content alignment */
-   align-items: center; /* Center content vertically */
-   justify-content: center; /* Center content horizontally */
-}
-
-.loader_credit p {
-   position: absolute;
-   overflow: hidden;
-   animation: typewriter 2s steps(40, end) infinite normal both, /* Adjust duration */
-              hideText 4s forwards infinite; /* Looping hide effect */
 }
 
 @keyframes typewriter {
@@ -126,13 +112,61 @@
    100% { opacity: 0; }
 }
 
+
+/* INFO CONTINUE */
+
+.loader_credit {
+  position: absolute;
+  left: 100px; /* Start 100px from the left edge of the viewport */
+  right: 0; /* Extend to the right edge of the viewport */
+  bottom: 0;
+  height: 40px; /* Height of the black band */
+  background-color: black; /* Black background */
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.loader_credit p {
+  position: absolute;
+  display: inline-block;
+  font-size: 40px;
+  animation: ticker 20s linear infinite;
+  color: #fdf800; /* Ensuring text color is visible on black */
+  text-shadow: 2px 2px 1px #ff003c;
+  display: inline-block;
+  margin: 0; /* Remove default margin */
+  line-height: 40px; /* Align text vertically in the middle */
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+/* CENSURE */
+
+.loader_inner__text {
+   position: absolute;
+   left: calc(130px + 5px);
+   top: 60%;
+   transform: translateY(-50%);
+   width: 150px;
+   height: 600px;
+   overflow: hidden;
+   color: black;
+   font-size: 12px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
 .loader_inner__text p {
    position: absolute;
    -webkit-animation: hiddenText 2s infinite;
    -moz-animation: hiddenText 2s infinite;
    -o-animation: hiddenText 2s infinite;
    -ms-animation: hiddenText 2s infinite;
-   animation: hiddenText 2s infinite; /* Standard syntax */
+   animation: hiddenText 2s infinite;
 }
 
 .loader p span {
@@ -160,42 +194,147 @@
    100% { left: 0px; }
 }
 
-@-webkit-keyframes textCenter {
-   0% { left: 0px; }
-   20% { left: -1px }
-   40% { left: +1px }
-   45% { left: -1px }
-   60% { left: +1px }
-   80% { left: -1px }
-   100% { left: +1px }
+/* ANIMATION CENTRALE */
+
+.animation{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  width: 400px;
+  height: 600px;
+  margin: 10% 35%;
+  pointer-events: none;
 }
 
-@keyframes textCenter {
-   0% { left: 0px; }
-   20% { left: -1px }
-   40% { left: +1px }
-   45% { left: -1px }
-   60% { left: +1px }
-   80% { left: -1px }
-   100% { left: +1px }
+.square{
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(189, 151, 41, 0.37);
 }
 
-@-webkit-keyframes outerPulse {
-   0% { transform: scale(0.01); opacity: 0.7; }
-   100% { transform: scale(1.0); opacity: 0.7; }
+.centerCircle{
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px dashed #ff003c;
+  border-radius: 20px;
+  animation: turnOverAndOverLeft 30s infinite linear;
 }
 
-@keyframes outerPulse {
-   0% { transform: scale(0.01); opacity: 0.7; }
-   100% { transform: scale(1.0); opacity: 0.7; }
+/*** Cross ***/
+.cross1{
+   position: absolute;
+   width: 80px;
+   height: 2px;
+   background-color: #ff003c;
+   transform: rotate(45deg);
+ }
+ 
+ .cross2{
+   position: absolute;
+   width: 80px;
+   height: 2px;
+   background-color: #ff003c;
+   transform: rotate(-45deg);
+ }
+
+/*** Satellites circles ***/
+
+.satelliteCircle{
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  border-radius: 120px;
+  border: 2px solid #ff003c;
+  animation: satellite 5s infinite linear;
+}
+  .satelliteCircle:before{
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background-color: #ff003c;
+    position: absolute;
+    left: 10px;
+    top: -18px;
+  }
+
+.circle1{
+  width: 145px;
+  height: 145px;
+  position: absolute;
+  border-radius: 120px;
+  border: 2px solid #222;
+  animation: turnOverAndOverRight 2s infinite linear;
 }
 
-@-webkit-keyframes innerPulse {
+.circle2 {
+  position: absolute;
+  border: 4px solid #ff003c;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-radius: 150px;
+  width: 143px;
+  height: 143px;
+  animation: turnOverAndOverRight 2s infinite linear;
+}
+
+.bigCircle{
+  width: 180px;
+  height: 180px;
+  position: absolute;
+  border-radius: 50%;
+  border: 20px solid rgba(189, 151, 41, 0.37);
+}
+
+/*** dashed circles ***/
+
+.thinCircle{
+  width: 230px;
+  height: 230px;
+  position: absolute;
+  border-radius: 190px;
+  border: 2px solid #ff003c;
+}
+
+@keyframes turnOverAndOverRight {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes turnOverAndOverLeft {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes satellite {
+    from {-webkit-transform: rotateZ(0deg) translateX(160px) rotate(0deg)}
+    to {-webkit-transform: rotateZ(-360deg) translateX(160px) rotate(-360deg)}
+}
+
+.ring {
+   display: flex;
+   width: 200px;
+   height: 200px;
+   border: 70px dashed #ff003c;
+   position: absolute;
+   border-radius: 100%;
+   /* left: 44.7%; */
+   animation: outerPulse 1s infinite;
+   /* top: 39.4%; */
+ }
+
+ @keyframes outerPulse {
    0% { transform: scale(1.0); opacity: 0.7; }
-   100% { transform: scale(0.01); opacity: 0.7; }
-}
-
-@keyframes innerPulse {
-   0% { transform: scale(1.0); opacity: 0.7; }
-   100% { transform: scale(0.01); opacity: 0.7; }
-}
+   100% { transform: scale(1.3); opacity: 0; }
+ }

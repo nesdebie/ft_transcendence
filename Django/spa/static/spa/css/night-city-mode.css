@@ -93,66 +93,6 @@ body.cyberpunk #textElement {
   cursor: url('images/arrow.cur'), text;
 }
 
-/* Add this new class for the red corners */
-.red-corners {
-  position: absolute;
-  width: 10px; /* Width of the corners */
-  height: 10px; /* Height of the corners */
-  background-color: red;
-  transition: transform 0.3s; /* Smooth transition */
-  pointer-events: none; /* Prevent interaction */
-}
-
-/* Positioning for each corner */
-.red-corner-top-left {
-  top: 0;
-  left: 0;
-  transform: scale(0); /* Initially hidden */
-}
-
-.red-corner-top-right {
-  top: 0;
-  right: 0;
-  transform: scale(0); /* Initially hidden */
-}
-
-.red-corner-bottom-left {
-  bottom: 0;
-  left: 0;
-  transform: scale(0); /* Initially hidden */
-}
-
-.red-corner-bottom-right {
-  bottom: 0;
-  right: 0;
-  transform: scale(0); /* Initially hidden */
-}
-
-/* Show corners on hover */
-.loader_ascii:hover .red-corner-top-left,
-.loader_ascii:hover .red-corner-top-right,
-.loader_ascii:hover .red-corner-bottom-left,
-.loader_ascii:hover .red-corner-bottom-right {
-  transform: scale(1); /* Expand corners */
-}
-
-/* Tooltip for "danger" text */
-.tooltip {
-  position: absolute;
-  background-color: red;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  font-size: 12px;
-  display: none; /* Initially hidden */
-  pointer-events: none; /* Prevent interaction */
-}
-
-/* Show tooltip on hover */
-.loader_ascii:hover .tooltip {
-  display: block; /* Show tooltip */
-}
-
 .cyberpunk #audioButton {
   position: absolute;
   bottom: 10px;
