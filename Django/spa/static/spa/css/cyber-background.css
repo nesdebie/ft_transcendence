@@ -70,19 +70,21 @@
    position: absolute;
    top: 25%;
    left: 25%;
-   font-size: 12px;
+   font-size: 6px;
+   font-weight: bolder;
    white-space: pre; /* Ensures the text wraps and maintains whitespace */
    overflow: hidden; /* Hides the text as it "types" */
    background: transparent; /* Ensures the background is transparent */
    border: none; /* Removes the border */
-   animation: typewriter 4s steps(40, end) infinite normal both,
-              hideText 4s forwards infinite; /* Looping hide effect */
+   animation: typewriter 500ms steps(40, end) infinite normal both,
+              hideText 2s forwards infinite; /* Looping hide effect */
 }
 
 .loader_credit p {
    position: absolute;
+   overflow: hidden;
    bottom: 90%;
-   animation: typewriter 20s steps(40, end) infinite normal both, /* Adjust duration */
+   animation: typewriter 2s steps(40, end) infinite normal both, /* Adjust duration */
               hideText 4s forwards infinite; /* Looping hide effect */
 }
 
@@ -97,11 +99,15 @@
    70% { width: 77%; }
    80% { width: 88%; }
    90% { width: 100%; }
-   100% { width: 0; }
+   100% { width: 100%; }
 }
 
 @keyframes hideText {
-   0%, 90% { opacity: 1; }
+   0% { opacity: 1; }
+   20% { opacity: 0; }
+   40% { opacity: 1; }
+   60% { opacity: 0; }
+   80% { opacity: 1; }
    100% { opacity: 0; }
 }
 
@@ -169,11 +175,11 @@
 
 @keyframes chinese {
    0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
+   20% { left: -10px; }
+   40% { left: -20px; }
+   45% { left: 0px; }
+   60% { left: -30px; }
+   80% { left: -12px; }
    100% { left: 0px; }
 }
 
