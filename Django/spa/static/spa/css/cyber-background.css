@@ -1,6 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Play:400,700);
 
-.loader {
+.cp_animations {
    display: none;
    justify-content: center;
    align-items: center;
@@ -12,81 +12,22 @@
    pointer-events: none;
 }
 
-.loader_ring, .loader_inner__data {
-   position: absolute;
-   left: 50%;
-   transform: translateX(-50%);
-}
-
 /* JOHNNY SILVERHAND */
 
-.loader_border_ascii {
-   position: absolute;
-   top: 40%;
-   left: 87.5%;
-   width: 200px;
-   height: 240px;
-   /* Remove the solid border */
-}
-
-.loader_border_ascii:before, .loader_border_ascii:after,
-.loader_border_ascii div:before, .loader_border_ascii div:after {
-   content: '';
-   position: absolute;
-   border: 1px solid black; /* Border color and width */
-}
-
-.loader_border_ascii:before, .loader_border_ascii:after {
-   width: 20px; /* Width of the corner lines */
-   height: 20px; /* Height of the corner lines */
-}
-
-.loader_border_ascii:before {
-   top: 0;
-   left: 0;
-   border-right: none;
-   border-bottom: none;
-}
-
-.loader_border_ascii:after {
-   top: 0;
-   right: 0;
-   border-left: none;
-   border-bottom: none;
-}
-
-.loader_border_ascii div {
-   position: absolute;
-   width: 100%;
-   height: 100%;
-}
-
-.loader_border_ascii div:before {
-   bottom: 0;
-   left: 0;
-   border-top: none;
-   border-right: none;
-}
-
-.loader_border_ascii div:after {
-   bottom: 0;
-   right: 0;
-   border-top: none;
-   border-left: none;
-}
-
-.loader_ascii pre {
-   position: absolute;
-   top: 40%;
-   left: 85%;
-   font-size: 6px;
+.johnny_silverhand_ascii pre {
+   position: fixed; /* Use fixed to position relative to the viewport */
+   left: 25px; /* Align to the left edge of the viewport */
+   bottom: 10px; /* Position 40px up from the bottom */
+   right: 0; /* Extend to the right edge of the viewport */
+   color: #ff003c;
+   font-size: 8px;
    font-weight: bolder;
    white-space: pre;
    overflow: hidden;
    background: transparent;
    border: none;
    animation: typewriter 500ms steps(40, end) infinite normal both,
-              hideText 2s forwards infinite;
+              hideText 4s forwards infinite;
 }
 
 @keyframes typewriter {
@@ -115,7 +56,7 @@
 
 /* INFO CONTINUE */
 
-.loader_credit {
+.breaking_news {
   position: absolute;
   left: 100px; /* Start 100px from the left edge of the viewport */
   right: 0; /* Extend to the right edge of the viewport */
@@ -126,7 +67,7 @@
   white-space: nowrap;
 }
 
-.loader_credit p {
+.breaking_news p {
   position: absolute;
   display: inline-block;
   font-size: 40px;
@@ -143,60 +84,66 @@
   100% { transform: translateX(-25%); }
 }
 
-/* CENSURE */
-
-.loader_inner__text {
-   position: absolute;
-   left: calc(130px + 5px);
-   top: 60%;
-   transform: translateY(-50%);
-   width: 150px;
-   height: 600px;
-   overflow: hidden;
-   color: black;
-   font-size: 12px;
-   display: flex;
-   align-items: center;
-   justify-content: center;
+/* Japanimation paragraphs animation */
+.japanimation p {
+  position: absolute;
+  font-size: 14px;
+  font-style: bolder;
+  color: #ff003c; /* Ensuring text color is visible */
+  white-space: nowrap;
+  animation: kanji_ticker 5s linear infinite !important;
+  overflow: hidden;
 }
 
-.loader_inner__text p {
-   position: absolute;
-   -webkit-animation: hiddenText 2s infinite;
-   -moz-animation: hiddenText 2s infinite;
-   -o-animation: hiddenText 2s infinite;
-   -ms-animation: hiddenText 2s infinite;
-   animation: hiddenText 2s infinite;
+.antijapanimation p {
+  position: absolute;
+  font-size: 12px;
+  font-style: bolder;
+  color: #ff003c; /* Ensuring text color is visible */
+  white-space: nowrap;
+  animation: kanji_antiTicker 7s linear infinite !important;
+  overflow: hidden;
 }
 
-.loader p span {
-   /* background-color: #efc02b; */
-   background-color: black;
+/* Specific top positions for each paragraph */
+.japanimation .p0 { top: 44%; right: 25% }
+.japanimation .p1 { top: 78%; right: 68% }
+.japanimation .p2 { top: 32%; right: 14% }
+.japanimation .p3 { top: 57%; right: 53% }
+.japanimation .p4 { top: 19%; right: 87% }
+.japanimation .p5 { top: 37%; right: 18% }
+.japanimation .p6 { top: 64%; right: 76% }
+.japanimation .p7 { top: 22%; right: 33% }
+.japanimation .p8 { top: 85%; right: 91% }
+.japanimation .p9 { top: 49%; right: 57% }
+
+.antijapanimation .p0 { top: 50%; right: 13% }
+.antijapanimation .p1 { top: 65%; right: 82% }
+.antijapanimation .p2 { top: 38%; right: 46% }
+.antijapanimation .p3 { top: 74%; right: 28% }
+.antijapanimation .p4 { top: 21%; right: 90% }
+.antijapanimation .p5 { top: 63%; right: 39% }
+.antijapanimation .p6 { top: 85%; right: 75% }
+.antijapanimation .p7 { top: 21%; right: 20% }
+.antijapanimation .p8 { top: 49%; right: 47% }
+.antijapanimation .p9 { top: 71%; right: 82% }
+
+@keyframes kanji_ticker {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-200%); } /* Increased translation for visibility */
 }
 
-@-webkit-keyframes hiddenText {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
+@keyframes kanji_antiTicker {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(200%); } /* Increased translation for visibility */
 }
 
-@keyframes hiddenText {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
-}
+/* Random vertical positioning using inline styles for demonstration */
+/* Actual implementation might use JavaScript to assign random top values */
 
 /* ANIMATION CENTRALE */
 
-.animation{
+.animation_crosshair{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -228,7 +175,7 @@
    width: 80px;
    height: 2px;
    background-color: #ff003c;
-   transform: rotate(45deg);
+   transform: rotate(90deg);
  }
  
  .cross2{
@@ -236,7 +183,6 @@
    width: 80px;
    height: 2px;
    background-color: #ff003c;
-   transform: rotate(-45deg);
  }
 
 /*** Satellites circles ***/

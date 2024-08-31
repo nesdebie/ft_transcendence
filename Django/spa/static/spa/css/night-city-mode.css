@@ -20,6 +20,7 @@ body.cyberpunk {
   font-family: 'Glitch';
   /* font-size: 18px; */
   margin: 0;
+  padding:0;
 }
 
 .cyberpunk #root{
@@ -104,3 +105,7 @@ body.cyberpunk #textElement {
   display: flex;
   align-items: center;
 }
+
+/* New styles for canvas */
+* { margin: 0; padding: 0; }
+canvas { display: none; } /* Initially hidden */
