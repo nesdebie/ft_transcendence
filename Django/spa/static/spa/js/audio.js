@@ -1,7 +1,7 @@
 // Function to apply night city mode
 function applyNightCityMode() {
     document.body.classList.add("cyberpunk");
-    document.querySelector('.loader').style.display = 'flex';
+    document.querySelector('.cp_animations').style.display = 'flex';
 
     // Handle btn btn-dark
     document.querySelectorAll(".btn.btn-dark").forEach(function(element) {
@@ -25,7 +25,7 @@ function applyNightCityMode() {
 // Function to remove night city mode
 function removeNightCityMode() {
     document.body.classList.remove("cyberpunk");
-    document.querySelector('.loader').style.display = 'none';
+    document.querySelector('.cp_animations').style.display = 'none';
 
     // Restore original class for .cyberpunk elements
     document.querySelectorAll(".cyberpunk").forEach(function(element) {
@@ -85,15 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleAudio();
     });
 
-    // Apply night city mode if it is enabled in local storage
-    function applyNightCityModeOnLoad() {
-        if (localStorage.getItem('cyberpunk') === 'true') {
-            applyNightCityMode();
-        }
-    }
-
-    // Apply mode on page load
-    //applyNightCityModeOnLoad();
 
     document.querySelector("#nightCityModeBtn").addEventListener('click', function() {
         if (document.body.classList.contains("cyberpunk")) {

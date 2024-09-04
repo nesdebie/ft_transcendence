@@ -1,89 +1,33 @@
 @import url(https://fonts.googleapis.com/css?family=Play:400,700);
 
-.loader {
-   display: none; /* Use flexbox for centering */
-   justify-content: center; /* Center horizontally */
-   align-items: center; /* Center vertically */
-   position: absolute; /* Positioning for absolute centering */
+.cp_animations {
+   display: none;
+   justify-content: center;
+   align-items: center;
+   position: absolute;
    top: 0;
    left: 0;
    right: 0;
    bottom: 0;
+   pointer-events: none;
 }
 
-.loader_ring, .loader_ascii, .loader_credit, .loader_inner__data {
-   position: absolute; /* Keep absolute positioning for centering */
-   /* Centering styles */
-   left: 50%; /* Center horizontally */
-   transform: translateX(-50%); /* Adjust for width */
-}
+/* JOHNNY SILVERHAND */
 
-.loader_ring {
-   width: 200px;
-   height: 200px;
-   border: 1px solid #ff003c;
-   border-radius: 100%;
-   -webkit-animation: outerPulse 1s infinite;
-   -moz-animation: outerPulse 1s infinite;
-   -o-animation: outerPulse 1s infinite;
-   -ms-animation: outerPulse 1s infinite;
-   animation: outerPulse 1s infinite; /* Standard syntax */
-}
-
-.loader_ascii {
-   width: 800px;
-   height: 900px;
+.johnny_silverhand_ascii pre {
+   position: fixed; /* Use fixed to position relative to the viewport */
+   left: 25px; /* Align to the left edge of the viewport */
+   bottom: 10px; /* Position 40px up from the bottom */
+   right: 0; /* Extend to the right edge of the viewport */
+   color: #ff003c;
+   font-size: 8px;
+   font-weight: bolder;
+   white-space: pre;
    overflow: hidden;
-}
-
-.loader_credit {
-   position: absolute; /* Keep absolute positioning */
-   left: 200px; /* Adjust to avoid overlap with the sidebar */
-   bottom: 10px; /* Position it at the bottom */
-   /* Other existing styles can remain */
-   color: black; /* Ensure text color is visible */
-   font-size: 12px; /* Match the font size of loader_inner__text */
-   /* Add any additional styles if necessary */
-}
-
-.loader_inner__data {
-   left: 50%; /* Center horizontally */
-   transform: translateX(-50%); /* Adjust for width */
-}
-
-.loader_inner__text {
-   position: absolute; /* Position it relative to the loader */
-   left: calc(130px + 5px); /* Adjust to the right of the sidebar */
-   top: 60%; /* Center vertically */
-   transform: translateY(-50%); /* Adjust for height */
-   width: 150px; /* Set a visible width */
-   height: 600px; /* Allow height to adjust responsively */
-   overflow: hidden; /* Hide overflow if necessary */
-   color: black; /* Ensure text color is visible */
-   font-size: 12px; /* Match the font size of loader_credit */
-   display: flex; /* Use flexbox for inner content alignment */
-   align-items: center; /* Center content vertically */
-   justify-content: center; /* Center content horizontally */
-}
-
-.loader_ascii pre {
-   position: absolute;
-   top: 25%;
-   left: 25%;
-   font-size: 12px;
-   white-space: pre; /* Ensures the text wraps and maintains whitespace */
-   overflow: hidden; /* Hides the text as it "types" */
-   background: transparent; /* Ensures the background is transparent */
-   border: none; /* Removes the border */
-   animation: typewriter 4s steps(40, end) infinite normal both,
-              hideText 4s forwards infinite; /* Looping hide effect */
-}
-
-.loader_credit p {
-   position: absolute;
-   bottom: 90%;
-   animation: typewriter 20s steps(40, end) infinite normal both, /* Adjust duration */
-              hideText 4s forwards infinite; /* Looping hide effect */
+   background: transparent;
+   border: none;
+   animation: typewriter 500ms steps(40, end) infinite normal both,
+              hideText 4s forwards infinite;
 }
 
 @keyframes typewriter {
@@ -97,116 +41,246 @@
    70% { width: 77%; }
    80% { width: 88%; }
    90% { width: 100%; }
-   100% { width: 0; }
+   100% { width: 100%; }
 }
 
 @keyframes hideText {
-   0%, 90% { opacity: 1; }
+   0% { opacity: 1; }
+   20% { opacity: 0; }
+   40% { opacity: 1; }
+   60% { opacity: 0; }
+   80% { opacity: 1; }
    100% { opacity: 0; }
 }
 
-.loader_inner__text p {
+
+/* INFO CONTINUE */
+
+.breaking_news {
+  position: absolute;
+  left: 100px; /* Start 100px from the left edge of the viewport */
+  right: 0; /* Extend to the right edge of the viewport */
+  bottom: 0;
+  height: 40px; /* Height of the black band */
+  background-color: black; /* Black background */
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.breaking_news p {
+  position: absolute;
+  display: inline-block;
+  font-size: 40px;
+  animation: ticker 20s linear infinite;
+  color: #fdf800; /* Ensuring text color is visible on black */
+  text-shadow: 2px 2px 1px #ff003c;
+  display: inline-block;
+  margin: 0; /* Remove default margin */
+  line-height: 40px; /* Align text vertically in the middle */
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+/* Japanimation paragraphs animation */
+.japanimation p {
+  position: absolute;
+  font-size: 14px;
+  font-style: bolder;
+  color: #ff003c; /* Ensuring text color is visible */
+  white-space: nowrap;
+  animation: kanji_ticker 5s linear infinite !important;
+  overflow: hidden;
+}
+
+.antijapanimation p {
+  position: absolute;
+  font-size: 12px;
+  font-style: bolder;
+  color: #ff003c; /* Ensuring text color is visible */
+  white-space: nowrap;
+  animation: kanji_antiTicker 7s linear infinite !important;
+  overflow: hidden;
+}
+
+/* Specific top positions for each paragraph */
+.japanimation .p0 { top: 44%; right: 25% }
+.japanimation .p1 { top: 78%; right: 68% }
+.japanimation .p2 { top: 32%; right: 14% }
+.japanimation .p3 { top: 57%; right: 53% }
+.japanimation .p4 { top: 19%; right: 87% }
+.japanimation .p5 { top: 37%; right: 18% }
+.japanimation .p6 { top: 64%; right: 76% }
+.japanimation .p7 { top: 22%; right: 33% }
+.japanimation .p8 { top: 85%; right: 91% }
+.japanimation .p9 { top: 49%; right: 57% }
+
+.antijapanimation .p0 { top: 50%; right: 13% }
+.antijapanimation .p1 { top: 65%; right: 82% }
+.antijapanimation .p2 { top: 38%; right: 46% }
+.antijapanimation .p3 { top: 74%; right: 28% }
+.antijapanimation .p4 { top: 21%; right: 90% }
+.antijapanimation .p5 { top: 63%; right: 39% }
+.antijapanimation .p6 { top: 85%; right: 75% }
+.antijapanimation .p7 { top: 21%; right: 20% }
+.antijapanimation .p8 { top: 49%; right: 47% }
+.antijapanimation .p9 { top: 71%; right: 82% }
+
+@keyframes kanji_ticker {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-200%); } /* Increased translation for visibility */
+}
+
+@keyframes kanji_antiTicker {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(200%); } /* Increased translation for visibility */
+}
+
+/* Random vertical positioning using inline styles for demonstration */
+/* Actual implementation might use JavaScript to assign random top values */
+
+/* ANIMATION CENTRALE */
+
+.animation_crosshair{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  width: 400px;
+  height: 600px;
+  margin: 10% 35%;
+  pointer-events: none;
+}
+
+.square{
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(189, 151, 41, 0.37);
+}
+
+.centerCircle{
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px dashed #ff003c;
+  border-radius: 20px;
+  animation: turnOverAndOverLeft 30s infinite linear;
+}
+
+/*** Cross ***/
+.cross1{
    position: absolute;
-   -webkit-animation: hiddenText 2s infinite;
-   -moz-animation: hiddenText 2s infinite;
-   -o-animation: hiddenText 2s infinite;
-   -ms-animation: hiddenText 2s infinite;
-   animation: hiddenText 2s infinite; /* Standard syntax */
-}
-
-.loader_inner__data p {
+   width: 80px;
+   height: 2px;
+   background-color: #ff003c;
+   transform: rotate(90deg);
+ }
+ 
+ .cross2{
    position: absolute;
-   top: -20px;
-   width : 200px;
-   -webkit-animation: chinese 2s infinite;
-   -moz-animation: chinese 2s infinite;
-   -o-animation: chinese 2s infinite;
-   -ms-animation: chinese 2s infinite;
-   animation: chinese 2s infinite; /* Standard syntax */
+   width: 80px;
+   height: 2px;
+   background-color: #ff003c;
+ }
+
+/*** Satellites circles ***/
+
+.satelliteCircle{
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  border-radius: 120px;
+  border: 2px solid #ff003c;
+  animation: satellite 5s infinite linear;
+}
+  .satelliteCircle:before{
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background-color: #ff003c;
+    position: absolute;
+    left: 10px;
+    top: -18px;
+  }
+
+.circle1{
+  width: 145px;
+  height: 145px;
+  position: absolute;
+  border-radius: 120px;
+  border: 2px solid #222;
+  animation: turnOverAndOverRight 2s infinite linear;
 }
 
-.loader_ascii p {
-   /* color: #efc02b; */
-   color: black;
-   font-size: 8px;
-   width: 50px;
+.circle2 {
+  position: absolute;
+  border: 4px solid #ff003c;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-radius: 150px;
+  width: 143px;
+  height: 143px;
+  animation: turnOverAndOverRight 2s infinite linear;
 }
 
-.loader p span {
-   /* background-color: #efc02b; */
-   background-color: black;
+.bigCircle{
+  width: 180px;
+  height: 180px;
+  position: absolute;
+  border-radius: 50%;
+  border: 20px solid rgba(189, 151, 41, 0.37);
 }
 
-@-webkit-keyframes hiddenText {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
+/*** dashed circles ***/
+
+.thinCircle{
+  width: 230px;
+  height: 230px;
+  position: absolute;
+  border-radius: 190px;
+  border: 2px solid #ff003c;
 }
 
-@keyframes hiddenText {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
+@keyframes turnOverAndOverRight {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(-360deg);
+  }
 }
 
-@-webkit-keyframes chinese {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
+@keyframes turnOverAndOverLeft {
+  from{
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(360deg);
+  }
 }
 
-@keyframes chinese {
-   0% { left: 0; }
-   20% { left: -1px; }
-   40% { left: 0px; }
-   45% { left: +1px; }
-   60% { left:  0px; }
-   80% { left: -1px; }
-   100% { left: 0px; }
+@keyframes satellite {
+    from {-webkit-transform: rotateZ(0deg) translateX(160px) rotate(0deg)}
+    to {-webkit-transform: rotateZ(-360deg) translateX(160px) rotate(-360deg)}
 }
 
-@-webkit-keyframes textCenter {
-   0% { left: 0px; }
-   20% { left: -1px }
-   40% { left: +1px }
-   45% { left: -1px }
-   60% { left: +1px }
-   80% { left: -1px }
-   100% { left: +1px }
-}
+.ring {
+   display: flex;
+   width: 200px;
+   height: 200px;
+   border: 70px dashed #ff003c;
+   position: absolute;
+   border-radius: 100%;
+   /* left: 44.7%; */
+   animation: outerPulse 1s infinite;
+   /* top: 39.4%; */
+ }
 
-@keyframes textCenter {
-   0% { left: 0px; }
-   20% { left: -1px }
-   40% { left: +1px }
-   45% { left: -1px }
-   60% { left: +1px }
-   80% { left: -1px }
-   100% { left: +1px }
-}
-
-@-webkit-keyframes outerPulse {
-   0% { transform: scale(7.5); opacity: 0.7; }
-   100% { transform: scale(1.0); opacity: 0.7; }
-}
-
-@keyframes outerPulse {
-   0% { transform: scale(1.5); opacity: 0.7; }
-   20% { transform: scale(1.4); opacity: 0.7; }
-   40% { transform: scale(1.5); opacity: 0.7; }
-   60% { transform: scale(1.4); opacity: 0.7; }
-   80% { transform: scale(1.5); opacity: 0.7; }
-   100% { transform: scale(1.4); opacity: 0.7; }
-}
+ @keyframes outerPulse {
+   0% { transform: scale(1.0); opacity: 0.7; }
+   100% { transform: scale(1.3); opacity: 0; }
+ }

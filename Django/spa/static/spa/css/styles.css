@@ -244,3 +244,7 @@ body:not(.cyberpunk) #message-area::-webkit-scrollbar-thumb {
     background: black; /* Thumb color */
     border-radius: 10px; /* Rounded corners for the thumb */
 }
+
+.main-content {
+    z-index: 1;
+}

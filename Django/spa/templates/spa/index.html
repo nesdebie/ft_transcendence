@@ -5,13 +5,14 @@
   <title>Transcendence</title>
   <meta charset="utf-8">
   <link rel="shortcut icon" href="{% static 'spa/css/images/favicon.ico'%}">
+  <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
+  <link rel="stylesheet" href="{% static 'spa/css/cyber-background.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/parallax.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/styles.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/night-city-mode.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/pong.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/shifumi.css' %}" />
   <link rel="stylesheet" href="{% static 'spa/css/cyberpunk.css' %}" />
-  <link rel="stylesheet" href="{% static 'spa/css/cyber-background.css' %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet" />
@@ -20,18 +21,48 @@
         <div id='stars'></div>
         <div id='stars2'></div>
         <div id='stars3'></div>
-        <div class='loader'>
-          <div class='loader_ring'></div>
-          <div class='loader_inner__text'>
-            <p>Wake the fuck up, <span>Samurai</span> !<br/><br/> We have a city to burn.</p>
+        <div class='cp_animations'>
+          <div class="animation_crosshair">
+            <div class="ring"></div>
+            <div class="square"></div>
+            <div class="cross1"></div>
+            <div class="cross2"></div>
+            <div class="satelliteCircle"></div>
+            <div class="centerCircle"></div>
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="bigCircle"></div>
+            <div class="dashCircle"></div>
+            <div class="thinCircle"></div>
           </div>
-          <div class='loader_inner__data'>
-            <p>这意味着绝对没有，但是很酷期待。<span>佳发蛋糕</span>，我喜欢佳发蛋糕和咖啡</p>
+          <div class='breaking_news'>
+            <p>[BREAKING NEWS] 捧げよ  ||  4m1nj4uw+chl3r0y+n35d3b13=ft_tr4n5c3nd4nc3  ||  [4-4-4-7-1-9]  ||  こんにちは、お母さん  ||  19 != 42 || お前はもう死んでいる ||  [BREAKING NEWS] 捧げよ  ||  4m1nj4uw+chl3r0y+n35d3b13=ft_tr4n5c3nd4nc3  ||  [4-4-4-7-1-9]  ||  こんにちは、お母さん  ||  19 != 42 || お前はもう死んでいる ||  </p>
           </div>
-          <div class='loader_credit'>
-            <p>4m1nj4uw+chl3r0y+n35d3b13=tr4n5c3nd4nc3</p>
+          <div class='japanimation'>
+            <p class="p0">こちらの文章は、特に意味はありませんが、日本語の文章として無作為に生成されました。読んでいただけると幸いです。</p>
+            <p class="p1">猫は静かに窓辺に座り、外の景色をじっと見つめていた。風が少し吹いて、カーテンがゆらゆらと揺れていた</p>
+            <p class="p2">友達と一緒に山に登り、頂上から見る景色は本当に素晴らしかった。青い空と緑の木々が広がっていた。</p>
+            <p class="p3">毎朝、コーヒーを淹れて新聞を読むのが私の日課だ。静かな時間が一日の始まりを心地よくしてくれる。</p>
+            <p class="p4">昨夜は星がとてもきれいに見えたので、ベランダに出てしばらく夜空を見上げていた。流れ星も見えたよ。</p>
+            <p class="p5">夜の街を歩いていると、店の明かりが温かく感じられた。人々の笑顔が溢れていた。</p>
+            <p class="p6">電車に乗っている間、窓の外を眺めていると、次々と風景が流れていった。</p>
+            <p class="p7">書店で立ち読みをしていると、時間が経つのを忘れてしまうことがよくある。</p>
+            <p class="p8">久しぶりにピアノを弾いてみた。指が思うように動かなくても、音楽が楽しかった。</p>
+            <p class="p9">夏祭りで花火が上がり、夜空を彩る光のショーが感動的だった。</p>
           </div>
-          <div class='loader_ascii'>
+          <div class="antijapanimation">
+            <p class="p0">秋の風が涼しく、空が澄み渡っていた。紅葉が色鮮やかで、心が落ち着いた。</p>
+            <p class="p1">Wake the fuck up, Samurai ! We have a city to burn.</p>
+            <p class="p2">初めての料理に挑戦して、思ったより美味しくできた。家族も喜んでくれた。</p>
+            <p class="p3">朝の散歩は気持ちが良い。新鮮な空気を吸って、心がリフレッシュされた。</p>
+            <p class="p4">古い写真を整理していたら、懐かしい思い出がたくさん蘇ってきた。</p>
+            <p class="p5">雨がしとしと降る中、傘をさして静かな公園を歩いた。足元の水たまりに映る空がぼんやりと揺れていた</p>
+            <p class="p6">新しい本を買って、夜遅くまで読んでしまった。物語の世界に引き込まれて、時間を忘れてしまった。</p>
+            <p class="p7">駅前のカフェで友人と久しぶりに会い、おいしいケーキを食べながら楽しい時間を過ごした。また行きたいな。</p>
+            <p class="p8">家の庭で小さな花が咲いているのを見つけて、春が近づいていることを実感した。暖かい日差しが心地よい。。</p>
+            <p class="p9">昨日見た映画は本当に感動的だった。涙が止まらなくて、エンドロールが終わるまで席を立てなかった。</p>
+          </div>
+          <div class='johnny_silverhand_ascii'>
             <pre>
               ⢀⢀⠄⡀⡀⡀⡀⡀⠀⠀⠀⣠⢴⣲⣵⣳⣳⣳⣽⣵⣻⣽⣦⣀⣄⢄⣄⡤⣄⣀⡀⠀⠀⠀⠀⡀⡀⡀⡀⠄
               ⠨⢂⢑⢈⠂⠅⠂⠀⠁⣠⣷⣻⣻⢿⡾⣽⡧⣷⢷⢟⣾⣻⡿⣧⣻⣻⣷⣻⣻⣻⣷⣷⣌⣄⠐⠀⠂⠡⠊⢌
@@ -42,23 +73,22 @@
               ⣴⠿⠊⠀⠂⢸⡼⡧⣣⣺⣷⣻⣻⡿⡫⠀⠀⠀⠀⠀⢀⠂⡁⡀⠌⡈⡀⢐⠈⠀⢳⣻⣻⣗⣻⣻⣻⣻⠄⠀
               ⣻⠀⠀⢠⠁⣸⡟⣘⣾⣻⣻⢿⣻⠏⠀⠀⠐⢰⠐⡀⡂⢆⠰⡀⢅⢎⡮⣂⢆⢅⠣⡻⣺⣻⣷⢿⣻⣻⡇⠀
               ⠁⠄⡌⠢⢐⡞⡆⠸⣻⣯⣻⣻⡟⠅⠀⠀⠀⡁⠀⡂⢊⠂⢅⠢⡱⡱⡉⡪⡳⡒⡜⡮⣻⣻⣻⣷⣻⣻⡇⠀
-              ⠀⣘⡼⢌⣶⢷⡑⣼⣻⣻⣸⣻⠫⠀⠀⠀⠁⠀⠐⠐⡀⡃⢕⢱⢐⢢⡊⠬⡎⡎⢎⢕⢽⣻⣻⣻⣷⣻⣻⣻⡇
-              ⢀⡞⡕⣻⡏⣗⠀⣾⡷⠇⣻⣻⡀⡀⠄⡀⠂⠀⠀⠀⠀⠄⠑⡑⠐⠁⢊⠕⢕⢎⠆⠕⢽⣻⣻⣗⣻⣻⣻⣻⡄
-              ⠷⢩⢺⣻⡕⡋⡵⣾⡯⡇⣻⣻⢗⢝⢷⣷⣶⣄⡠⠈⢀⠠⡨⠂⢈⠀⡐⠡⠪⠘⠈⢌⣺⣻⣺⡯⣻⣻⣻⣻⡇
-              ⢜⢠⣣⣇⢾⠈⣾⣻⡺⡇⢿⣻⣻⣷⢿⣚⣻⢿⣻⣻⣷⣯⠈⢌⣦⣪⣖⣧⣾⣼⣾⣻⣻⣻⢽⡹⣻⣻⣻⣻⠇
-              ⠄⣲⣻⡜⠜⣰⣟⣯⣳⠕⣼⢯⡫⡳⢤⢱⢝⣻⡿⡻⡟⠌⠀⢱⣻⣻⡿⣛⣻⢷⣳⣵⣻⡿⣧⣗⣻⣻⣻⣻⡇
-              ⣮⣟⡽⡑⢌⣟⣽⣾⢺⢐⣯⡗⢅⢳⢐⢕⠡⠃⠊⢘⠠⠀⠀⠨⣻⣻⣯⢝⠭⡹⡯⡟⣾⣻⣻⣷⣻⣻⣻⣻⡄
-              ⡺⡝⣔⢔⣦⣗⣻⠼⡱⢨⡷⣏⣇⢇⢇⠢⠀⠀⢨⢂⠂⠀⠀⠀⣻⡯⡊⡄⠌⠠⡱⣕⣻⣻⣻⣻⣻⣻⣻⣻⣻⡁
-              ⢊⠏⣰⢯⣎⢮⡗⢓⡄⢪⣯⣷⢕⢜⢌⢎⢌⣎⡲⠌⡌⠀⠀⠀⣻⡯⡂⡄⠌⠠⡱⣕⣻⣻⣯⣻⣻⣻⣻⣻⠀
+              ⠀⣘⡼⢌⣶⢷⡑⣼⣻⣻⣸⣻⠫⠀⠀⠀⠁⠀⠐⠐⡀⡃⢕⢱⢐⢢⡊⠬⡎⡎⢎⢕⢽⣻⣯⣻⣽⣻⣏⠀
+              ⢀⡞⡕⣻⡏⣗⠀⣾⡷⠇⣻⣻⡀⡀⠄⡀⠂⠀⠀⠀⠀⠄⠑⡑⠐⠁⢊⠕⢕⢎⠆⠕⢽⣻⣻⡷⣻⣻⣻⠀
+              ⠷⢩⢺⣻⡕⡋⡵⣾⡯⡇⣻⣻⢗⢝⢷⣷⣶⣄⡠⠈⢀⠠⡨⠂⢈⠀⡐⠡⠪⠘⠈⢌⣺⣻⣺⡯⣻⣻⣻⠀
+              ⢜⢠⣣⣇⢾⠈⣾⣻⡺⡇⢿⣻⣻⣷⢿⣚⣻⢿⣻⣻⣷⣯⠈⢌⣦⣪⣖⣧⣾⣼⣾⣻⣻⣻⢽⡹⣻⣻⣻⠇
+              ⠄⣲⣻⡜⠜⣰⣟⣯⣳⠕⣼⢯⡫⡳⢤⢱⢝⣻⡿⡻⡟⠌⠀⢱⣻⣻⡿⣛⣻⢷⣳⣵⣻⡿⣧⣗⣻⣻⣻⡇
+              ⣮⣟⡽⡑⢌⣟⣽⣾⢺⢐⣯⡗⢅⢳⢐⢕⠡⠃⠊⢘⠠⠀⠀⠨⣻⣻⣯⢝⠭⡹⡯⡟⣾⣻⣻⣷⣻⣻⣻⡄
+              ⡺⡝⣔⢔⣦⣗⣻⠼⡱⢨⡷⣏⣇⢇⢇⠢⠀⠀⢨⢂⠂⠀⠀⠀⣻⡯⠫⡂⠃⠨⠈⡎⣾⣻⣺⣾⣯⣻⣻⡁
+              ⢊⠏⣰⢯⣎⢮⡗⢓⡄⢪⣯⣷⢕⢜⢌⢎⢌⣎⡲⠌⡌⠀⠀⠀⣻⡯⡊⡄⠌⠠⡱⣕⣻⣻⣯⣻⣻⣻⣻⠀
               ⢈⣾⢿⣻⣗⡽⠇⡶⣹⡮⣳⡟⡜⡰⡣⣣⢿⢛⠀⠀⠀⠀⠀⠠⣟⣻⣗⢨⢘⢌⢮⣻⣻⣻⣻⣻⣻⣻⣻⠀
-              ⡩⣟⣻⡏⣾⡋⠼⣡⣻⣪⠷⠅⠊⢔⢝⠪⠈⠈⢿⣻⢷⡠⣢⣷⡶⢝⢪⢒⠸⣜⣻⣻⣻⣻⣻⣻⣻⣻⠀
-              ⡄⢯⡫⡟⣕⢳⡳⣹⣯⡯⡗⠁⠸⣼⣮⣻⣭⣾⡽⣮⢫⣻⣳⢯⣻⣽⣟⡏⢮⣻⣻⣻⣻⣻⣻⢑⢿⣻⠀
+              ⡩⣟⣻⡏⣾⡋⠼⣡⣻⣪⠷⠅⠊⢔⢝⠪⠈⠈⢿⣻⢷⡠⣢⣷⡶⢝⢪⢒⠸⣜⣻⣻⣻⣻⣻⣻⣻⣻⣻⠀
+              ⡄⢯⡫⡟⣕⢳⡳⣹⣯⡯⡗⠁⠈⢦⣳⣵⣪⣾⣻⣵⢿⣻⣟⣻⣞⣾⣬⢢⢣⢷⣻⣻⣻⣻⣻⣻⢑⢿⣻⠀
               ⣧⡗⡕⣃⣧⣺⣻⣽⣻⢿⡄⠀⠸⣼⣮⣻⣭⣾⡽⣮⢫⣻⣳⢯⣻⣽⣟⡏⢮⣻⣻⣻⣻⣻⣻⡟⠞⡎⠉⠀
               ⡝⡽⣔⢕⠵⣻⣜⢽⣽⢿⣗⣆⢯⠣⢁⢐⢐⡈⡉⡉⣉⠩⡙⡝⡕⣝⢽⢸⣺⣻⣻⣷⣻⡏⣞⠈⠀⠀⠀⠀
               ⡮⣻⣘⠠⢱⡹⢼⢵⣫⡿⣻⣷⠑⡠⢂⠀⠢⢹⣺⣯⢾⣯⣫⠿⡜⡮⣯⣾⢯⣷⢿⡯⣾⣻⣷⣼⡄⠀⠀⠀
               ⡮⣾⡑⠁⢱⡏⡯⣷⡳⡽⣯⢿⣽⢢⢂⠠⠀⠂⢕⡝⣽⢗⡕⣇⣗⡿⣽⢾⡿⣽⣻⡽⡵⣩⡻⣻⡿⡗⣶⣤
               ⢏⡅⠁⢨⣻⢣⡫⣞⡵⣝⡺⡿⣮⣗⢕⣖⣜⣼⣣⢷⢯⢷⢵⢷⢯⡻⣜⡿⣽⢽⢾⡽⣻⡎⡗⣢⣻⣻⣻⣻
-              --[[[WANTED]]]-[[[WANTED]]]-[[[WANTED]]]-[[[WANTED]]]--
             </pre>
           </div>
         </div>
@@ -76,7 +106,7 @@
                 <i class="mdi mdi-logout"></i>
               </button>
             </nav>
-            <div id="main-page"><!-- DYNAMIC CONTENT --></div>
+              <div id="main-page"><!-- DYNAMIC CONTENT --></div>
         </div>
         <!-- NIGHT CITY MODE BUTTON -->
         <div class="buttons-container">
