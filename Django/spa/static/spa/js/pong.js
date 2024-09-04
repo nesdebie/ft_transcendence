@@ -11,7 +11,20 @@ function initPong() {
         canvas = document.getElementById('pong-game');
         if (canvas) {
             context = canvas.getContext('2d');
-            document.addEventListener('keydown', handleKeyPress);
+            let isKeyPressed = false;
+            document.addEventListener('keydown', (event) => {
+                if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && !isKeyPressed) {
+                    isKeyPressed = true; // Set the flag to true
+                    handleKeyPress(event);
+                }
+            });
+            
+            document.addEventListener('keyup', (event) => {
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                    isKeyPressed = false; // Reset the flag on key release
+                    stopMovement();
+                }
+            });
         }
         room_name = canvas.getAttribute('data-room_name');
         console.log(`room_name: ${room_name}`);
@@ -31,6 +44,7 @@ function initPong() {
                 gameState = data.game_state;
                 game_over(data);
             } else if (data.type === 'game_start') {
+                console.log('game start: ', data)
                 game_data = data.game;
                 drawBoard();
             } else {
@@ -49,24 +63,30 @@ function initPong() {
         };
     }
     
+    const moveIntervalDuration = 30; // ms
+    
+    let moveInterval = null; 
 
-    let lastMoveTime = 0;
-    const moveInterval = 50; // ms
-    
     function handleKeyPress(event) {
-        const currentTime = Date.now();
-        if (currentTime - lastMoveTime < moveInterval) {
-            return;
-        }
-        lastMoveTime = currentTime;
+        const action = { action: 'move_paddle', direction: event.key === 'ArrowUp' ? 'up' : 'down' };
     
-        let action;
-        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            action = {action: 'move_paddle', direction: event.key === 'ArrowUp' ? 'up' : 'down'};
-        }
-        if (action && getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
+        if (getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
             getWebSocket().send(JSON.stringify(action));
         }
+    
+        // Start sending commands at a regular interval
+        if (!moveInterval) {
+            moveInterval = setInterval(() => {
+                if (getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
+                    getWebSocket().send(JSON.stringify(action));
+                }
+            }, moveIntervalDuration); // Set your desired interval duration
+        }
+    }
+    
+    function stopMovement() {
+        clearInterval(moveInterval);
+        moveInterval = null; // Reset the interval
     }
 
     function drawBoard() {

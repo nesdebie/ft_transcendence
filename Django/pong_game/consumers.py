@@ -27,7 +27,6 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            print(f' received: {data}') 
             action = data['action']
             
         except json.JSONDecodeError:
