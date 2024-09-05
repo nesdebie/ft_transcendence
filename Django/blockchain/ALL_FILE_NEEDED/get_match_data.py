@@ -1,11 +1,12 @@
-
+from pathlib import Path
 import json
 import re
 from web3 import Web3
 import os
 
 
-BLOCKCHAIN_DIR = '/app/blockchain/ALL_FILE_NEEDED'
+BASE_DIR = Path(__file__).resolve().parent.parent
+BLOCKCHAIN_DIR = os.path.join(BASE_DIR, 'ALL_FILE_NEEDED')
 
 if not os.path.exists(BLOCKCHAIN_DIR):
     raise Exception(f"Le répertoire blockchain n'existe pas : {BLOCKCHAIN_DIR}")

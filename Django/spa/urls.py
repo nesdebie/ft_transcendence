@@ -14,4 +14,5 @@ urlpatterns = [
     path('shifumi/<str:room_name>/', views.shifumi_game_PVP, name='shifumi_game_PVP'),
     path('profile_editor/', views.profile_editor, name='profile_editor'),
 	path('pong/<str:room_name>/', views.pong_game, name='pong_game'),
+	path('tournament/<int:tournament_id>/', views.tournament_page, name='tournament_page'),
 ]

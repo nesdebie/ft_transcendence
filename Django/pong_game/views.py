@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Matchmaking, PongGame, Tournament
 from users.models import Player
+from blockchain.ALL_FILE_NEEDED.blockchain_acces import Add_game_history, Player_stat, Match_history
 import json
 
 @csrf_exempt
@@ -108,5 +109,11 @@ def create_tournament(request):
         data = json.loads(request.body)
         number_of_players = data.get('number_of_players')
         tournament = Tournament.objects.create(number_of_players=number_of_players)
+        tournament.players.add(request.user)
         return JsonResponse({'id': tournament.id})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def join_tournament(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    tournament.players.add(request.user)
+    return JsonResponse({'success': True})

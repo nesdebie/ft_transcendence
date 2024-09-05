@@ -1,11 +1,11 @@
 import unittest
-from set_match_data import set_match_data, initialize_web3_and_contract
-from get_match_data import get_match_data
+from .set_match_data import set_match_data, initialize_web3_and_contract
+from .get_match_data import get_match_data
 from web3 import Web3
 import hashlib
 import random
 
-def Add_game_history(scores, game, timestmp):
+def Add_game_history(scores, game):
 	
 	players = list(scores.keys())
 
@@ -75,6 +75,37 @@ def Player_stat(player, game):
     except Exception as e:
         print(f"Erreur générale dans Player_stat pour le joueur {player} dans le jeu {game} : {e}")
         return None
+    
+def Game_history(game):
+    try:
+        # Initialiser la connexion au contrat
+        web3, contract = initialize_web3_and_contract()
+        if not web3.is_connected():  # Utilisation correcte de is_connected()
+            print("Erreur : Impossible de se connecter à la blockchain.")
+            return None
+        
+        # Appeler la fonction getAllMatches pour récupérer tous les matchs
+        try:
+            all_matches = contract.functions.getAllMatches().call()
+        except Exception as e:
+            print(f"Erreur lors de l'appel de getAllMatches : {e}")
+            return None
+        
+        # Filtrer les matchs dans lesquels le joueur a participé et qui correspondent au jeu spécifié
+        matches = []
+        for match in all_matches:
+            try:
+                if game in match[0]:  # On vérifie si le jeu fait partie de l'ID du match
+                    matches.append(match)
+            except Exception as e:
+                print(f"Erreur lors du filtrage des matchs pour le jeu {game} : {e}")
+                return None
+        return matches
+    
+    except Exception as e:
+        print(f"Erreur générale dans Game_history pour le jeu {game} : {e}")
+        return None
+
     
 def Match_history(self_player, other_player, game):
     try:

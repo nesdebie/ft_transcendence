@@ -128,3 +128,19 @@ def profile_editor(request):
 
 def pong_game(request, room_name):
     return render(request, 'spa/pages/pong.html', {'room_name': room_name})
+
+def tournament_page(request, tournament_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+
+    # Initialize scores if not already done
+    if not tournament.scores:
+        tournament.initialize_scores()
+
+    context = {
+        'tournament': tournament,
+        'scores': tournament.scores,
+        'upcoming_games': tournament.get_upcoming_games(),
+        'game_history': tournament.get_game_history(),
+    }
+    return render(request, 'spa/pages/tournament.html', context=context)

@@ -4,7 +4,7 @@ import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode fu
 import { initShifumi } from "./shifumi.js";
 import { closeWebSocket } from "./websocketManager.js";
 import { initPong } from "./pong.js";
-import { loadTournaments } from "./tournament.js";
+import { loadTournaments, checkTournamentStatus } from "./tournament.js";
 
 
 const route = (event, url = null) => {
@@ -24,7 +24,7 @@ const route = (event, url = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
-    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor'], suffix: '' }
+    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -77,8 +77,14 @@ function call_page_functions(path) {
     }
     else if (path.startsWith('/pong/') && path !== '/pong/') {
         initPong();
+    } 
+    else if (path.startsWith('/pong') && path == '/pong') {
+        loadTournaments();
     }
-    else if (path.startsWith('/pong') && path == '/pong')
+    else if (path.startsWith('/waiting')) {
+        checkTournamentStatus();
+    }
+
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
     //if ...

@@ -8731,10 +8731,22 @@
       "links": {},
       "address": "0x5f976De12DbD7D85C0Df4Bfa56bE75a995bA5DB7",
       "transactionHash": "0xc530e3cfe96c3602f0f6d0fdd41b7b8b5391f91c1be5859d6f9b19853c4a1942"
+    },
+    "1725543704085": {
+      "events": {},
+      "links": {},
+      "address": "0xb06D18C54Ccd986083B7B70E772F3175F01BE3a9",
+      "transactionHash": "0xd852b7e7c603945fd9833acc10cdc4e2708f604ab2c9c1977b4d77f871be1b91"
+    },
+    "1725546426399": {
+      "events": {},
+      "links": {},
+      "address": "0xE6638FeF9B1d8f291FE3732Bf8bfCcc157993296",
+      "transactionHash": "0xf11a61b5dc8b474dc83cf79c663437ff4706426005efaea51654139d1d3dfb19"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-09-05T07:52:18.865Z",
+  "updatedAt": "2024-09-05T14:27:22.975Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
