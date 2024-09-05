@@ -21,3 +21,12 @@ class Matchmaking(models.Model):
 
     def __str__(self):
         return f"Matchmaking for {self.player.username}"
+
+class Tournament(models.Model):
+    number_of_players = models.IntegerField(default=2)
+    players = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournaments')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Tournament: {self.number_of_players} players"

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Matchmaking, PongGame
+from .models import Matchmaking, PongGame, Tournament
 from users.models import Player
 import json
 
@@ -98,3 +98,15 @@ def get_game_state(request, room_name):
     }
     
     return JsonResponse(game_state)
+
+def list_tournaments(request):
+    tournaments = Tournament.objects.all()
+    return JsonResponse(tournaments, safe=False)
+
+def create_tournament(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        number_of_players = data.get('number_of_players')
+        tournament = Tournament.objects.create(number_of_players=number_of_players)
+        return JsonResponse({'id': tournament.id})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

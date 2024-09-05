@@ -4,6 +4,7 @@ import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode fu
 import { initShifumi } from "./shifumi.js";
 import { closeWebSocket } from "./websocketManager.js";
 import { initPong } from "./pong.js";
+import { loadTournaments } from "./tournament.js";
 
 
 const route = (event, url = null) => {
@@ -64,19 +65,20 @@ const handleLocation = async () => {
 function call_page_functions(path) {
     if (document.getElementById('user-profile-picture'))
         fetchUserProfilePicture();
-    if (path.startsWith('/chat/') && path !== '/chat/') {
+    else if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
     }
-    if (document.body.classList.contains("cyberpunk")) {
+    else if (document.body.classList.contains("cyberpunk")) {
         applyNightCityMode();
     }
-    if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
+    else if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
         const roomName = path.split('/')[2];
         initShifumi(roomName);
     }
-    if (path.startsWith('/pong/') && path !== '/pong/') {
+    else if (path.startsWith('/pong/') && path !== '/pong/') {
         initPong();
     }
+    else if (path.startsWith('/pong') && path == '/pong')
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
     //if ...
