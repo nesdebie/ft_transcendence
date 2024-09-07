@@ -6,18 +6,24 @@ function initPong() {
     let game_data;
     let room_name;
 
-    
     function init() {
+        console.log("Initializing Pong..."); // Debug log
         canvas = document.getElementById('pong-game');
-        if (canvas) {
-            context = canvas.getContext('2d');
-            document.addEventListener('keydown', handleKeyPress);
+        console.log("Canvas found:", canvas); // Log the canvas element
+
+        if (!canvas) {
+            console.error("Canvas element with ID 'pong-game' not found.");
+            return; // Exit if the canvas is not found
         }
+        
+        context = canvas.getContext('2d');
+        document.addEventListener('keydown', handleKeyPress);
+        
         room_name = canvas.getAttribute('data-room_name');
         console.log(`room_name: ${room_name}`);
         connectWebSocket(room_name);
     }
-    
+
     function connectWebSocket(room_name) {
         const socket = new WebSocket(`wss://${window.location.host}/ws/pong/${room_name}/`);
 
@@ -49,7 +55,6 @@ function initPong() {
         };
     }
     
-
     let lastMoveTime = 0;
     const moveInterval = 50; // ms
     
@@ -94,7 +99,6 @@ function initPong() {
         // Clear the canvas
         context.fillStyle = 'black';
         context.fillRect(0, 0, canvas.width, canvas.height);
-
 
         // Draw paddles
         context.fillStyle = 'white';
@@ -146,7 +150,8 @@ function initPong() {
         });
     }
 
-    init();
+    // Call init after DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', init);
 }
 
 export { initPong };

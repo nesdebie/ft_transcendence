@@ -145,6 +145,11 @@
             const observer = new MutationObserver(function(mutationsList, observer) {
               for (let mutation of mutationsList) {
                 if (mutation.type === 'childList') {
+                  if (document.getElementById('pong-solo-game')) {
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/pong_solo.js' %}";
+                    document.head.appendChild(script);
+                  }
                   if (document.getElementById('shifumi-pve-game')) {
                     const script = document.createElement('script');
                     script.src = "{% static 'spa/js/shifumi_pve.js' %}";
