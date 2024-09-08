@@ -46,6 +46,9 @@ class Player(AbstractUser):
 	friend_requests 	= models.ManyToManyField('self', through='FriendRequest', symmetrical=False, related_name='related_friend_requests')
 	blocked_players 	= models.ManyToManyField('self', through='Block', symmetrical=False, related_name='related_blocked_players')
 
+	# 42 AUTH 
+	auth_42				= models.BooleanField(default=False)
+
 	object = MyAccountManager()
 	
 	def save(self, *args, **kwargs):

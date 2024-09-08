@@ -1,6 +1,8 @@
 <div class="page-container align-center">
     <h2>Edit Profile</h2>
-    
+
+    <p><strong>42 Auth status:</strong> {{ user.auth_42 }}</p> <!-- Affiche la valeur auth_42 -->
+
     <!-- Update Profile Picture -->
     <h4>Update Profile Picture</h4>
     <form id="updateProfilePictureForm" enctype="multipart/form-data">
@@ -9,24 +11,25 @@
         </div>
         <button type="submit" class="btn btn-dark">Update Profile Picture</button>
     </form>
-    
+
     <hr />
-    
+
     <!-- Change Password -->
+    {% if user.auth_42 == False %}
     <h4>Change Password</h4>
     <form id="changePasswordForm">
         <div class="form-group">
-            <!-- <label for="oldPassword">Old Password:</label> -->
             <input type="password" id="oldPassword" name="old_password" placeholder="old password" class="form-control" required>
         </div>
         <div class="form-group">
-            <!-- <label for="newPassword">New Password:</label> -->
             <input type="password" id="newPassword" name="new_password" placeholder="new password" class="form-control" required>
         </div>
         <div class="form-group">
-            <!-- <label for="confirmNewPassword">Confirm New Password:</label> -->
             <input type="password" id="confirmNewPassword" name="new_password2" placeholder="confirm new password" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-dark">Change Password</button>
     </form>
+    {% else %}
+    <p>You cannot change your password because you are connected with 42 AUTH.</p>
+    {% endif %}
 </div>

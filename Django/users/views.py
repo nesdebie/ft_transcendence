@@ -139,14 +139,13 @@ def callback(request):
         user_info = user_info_response.json()
 		
         # Debug: Print the full JSON response to the console
-        print(user_info)
+        # print(user_info)
 		
         # Générer un mot de passe robuste
         generated_password = generate_strong_password()
 		
         # Récupérer l'URL de la photo de profil
         profile_image_url = user_info.get('image', {}).get('versions', {}).get('medium', '')
-        #profile_image_url = user_info.get('image_url', '')
 
         # Utilisation uniquement de localStorage pour transmettre les informations
         response_script = f"""
@@ -159,6 +158,9 @@ def callback(request):
                 profile_image: '{profile_image_url}'
 
             }}));
+
+            localStorage.setItem('is_connected_with_42', 'true');
+
             window.close();
         </script>
         """
@@ -250,6 +252,8 @@ def register_view(request):
 		############### test local storage 
         secret = request.POST.get('2fa_secret')  # Récupérer le secret depuis le POST
 		##################
+        # Récupérer l'état 42 AUTH à partir du formulaire ou POST
+        auth_42 = request.POST.get('auth_42') == 'true'
 
         errors = {}
 
@@ -275,7 +279,8 @@ def register_view(request):
             password=password,
             email=email,
             nickname=nickname,
-            profile_picture=image
+            profile_picture=image,
+            auth_42=auth_42 
         )
 
         if two_factor_auth:

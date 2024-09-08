@@ -135,6 +135,16 @@ async function register(event) {
     formData.append('image', image);
     formData.append('two_factor_auth', two_factor_auth ? 'on' : '');
 
+    /*********** Vérifier si l'utilisateur est connecté via 42 AUTH ***********/
+    const isConnectedWith42 = localStorage.getItem('is_connected_with_42');
+    console.log("is connected with 42 == " + isConnectedWith42);
+    if (isConnectedWith42 == 'true') {
+        formData.append('auth_42', 'true');
+        // Supprimer l'indicateur de connexion via 42 AUTH après utilisation
+        localStorage.removeItem('is_connected_with_42');
+    }
+    /*************************************************************************/
+
 	/*********** test local storage 2FA secret  */
     // Récupérer le secret 2FA depuis localStorage
     if (two_factor_auth) {
