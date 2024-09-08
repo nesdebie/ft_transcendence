@@ -22,7 +22,7 @@ const route = (event, url = null) => {
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve'], suffix: '.html' },
+    { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
     { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor'], suffix: '' }
 ];
 
@@ -75,7 +75,11 @@ function call_page_functions(path) {
         initShifumi(roomName);
     }
     if (path.startsWith('/pong/') && path !== '/pong/') {
-        initPong();
+        if (document.getElementById('pong-game')) {
+            initPong();
+        } else {
+            console.error('Pong game canvas not found');
+        }
     }
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
