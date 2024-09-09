@@ -19,16 +19,16 @@
                 <div class="contact-table-scroll">
                     <table class="table table-hover">
                         <tbody>
-                            {% for friend in friends %}
+                            {% for user in users %}
                                 <tr>
                                     <td>
-                                        <a href="/chat/{{ friend.username }}" onclick="route()" class="btn btn-link" style="display: block; text-align: left;">
-                                            <img src="{{ friend.profile_picture.url }}" alt="" width="40" height="45" class="profile-image rounded-circle">
+                                        <a href="/chat/{{ user.username }}" onclick="route()" class="btn btn-link" style="display: block; text-align: left;">
+                                            <img src="{{ user.profile_picture.url }}" alt="" width="40" height="45" class="profile-image rounded-circle">
                                         </a>
                                     </td>
                                     <td>
-                                        <a {% if friend.online_status %} style="color: green" {% else %} style="color: grey" {% endif %} href="/chat/{{ friend.username }}"  onclick="route()">
-                                            {{ friend.username }}
+                                        <a {% if user.online_status %} style="color: green" {% else %} style="color: grey" {% endif %} href="/chat/{{ user.username }}"  onclick="route()">
+                                            {{ user.username }}
                                         </a>
                                     </td>
                                 </tr>

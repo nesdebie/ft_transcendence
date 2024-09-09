@@ -73,6 +73,7 @@ def view_friend_requests(request):
     }
     return render(request, 'spa/pages/friend_requests.html', context)
 
+@login_required
 def view_chat(request, username=None):
     user: Player = request.user
     if username:
@@ -80,28 +81,24 @@ def view_chat(request, username=None):
     else:
         user_to_chat = None
 
-
+    messages = []
+    are_friends = False  # Default to not friends
     if user_to_chat:
         messages = Message.objects.filter(
             (Q(sender=user) & Q(receiver=user_to_chat)) |
             (Q(sender=user_to_chat) & Q(receiver=user))
         ).order_by('timestamp')
-    else:
-        messages = []
+        are_friends = user.is_friend(user_to_chat)  # Assuming is_friend is a method to check friendship
 
-    if user_to_chat:
-        template = 'spa/pages/chat_interface.html'
-    else:
-        template = 'spa/pages/chat_friends_list.html'
+    template = 'spa/pages/chat_interface.html' if user_to_chat else 'spa/pages/chat_friends_list.html'
 
     context = {
-        'friends': user.friends.all(),
+        'users': Player.objects.exclude(id=user.id),
         'user_to_chat': user_to_chat,
         'messages': messages,
+        'are_friends': are_friends,  # Pass friendship status to the template
     }
 
-    for m in messages:
-        print(f'{m.sender.username} -> {m.receiver.username}: {m.message}\n')
     return render(request, template, context)
 
 def shifumi_lobby(request):

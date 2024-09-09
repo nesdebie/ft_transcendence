@@ -24,12 +24,14 @@
                         Offline
                     {% endif %}
                 </small>
-                <button class="btn btn-primary" id="send-pong-game-invite">
-                    <i class="mdi mdi-table-tennis"></i>
-                </button>
-                <button class="btn btn-primary" id="send-shifumi-game-invite">
-                    <i class="mdi mdi-content-cut"></i>
-                </button>
+                {% if are_friends %}
+                    <button class="btn btn-primary" id="send-pong-game-invite">
+                        <i class="mdi mdi-table-tennis"></i>
+                    </button>
+                    <button class="btn btn-primary" id="send-shifumi-game-invite">
+                        <i class="mdi mdi-content-cut"></i>
+                    </button>
+                {% endif %}
             </div>
         </div>
         <div class="row">
