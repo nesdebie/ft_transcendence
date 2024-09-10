@@ -16,7 +16,8 @@
             <!-- Chat partner's info -->
             <div class="col-sm-8">
                 <img src="{{ user_to_chat.profile_picture.url }}" alt="" width="40" height="45" class="profile-image rounded-circle">
-                <span class="ml-2">{{ user_to_chat.username }}</span>
+                <!-- Make username clickable to view profile using JavaScript -->
+                <span class="ml-2" onclick="find_user_on_click('{{ user_to_chat.username }}');" style="cursor: pointer;">{{ user_to_chat.username }}</span>
                 <small id="{{ user_to_chat.username }}_small" {% if user_to_chat.online_status %} class="online" {% else %} class="offline" {% endif %}>
                     {% if user_to_chat.online_status %}
                         Online

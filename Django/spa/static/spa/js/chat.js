@@ -155,3 +155,9 @@ function appendMessage(data, current_username) {
     const messageArea = document.getElementById('message-area');
     messageArea.scrollTop = messageArea.scrollHeight; // Ensure new messages are visible
 }
+
+function find_user_on_click(username) {
+    redirectToRoute('/profile/' + username);
+}
+
+window.find_user_on_click = find_user_on_click;  // Make it accessible globally if necessary
