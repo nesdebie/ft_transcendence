@@ -137,7 +137,7 @@ class Block(models.Model):
 	created_on = models.DateTimeField(auto_now_add=True)
 	
 	def __str__(self):
-		return f"{self.blocker.username} blocked {self.blocked.username}"
+		return f"{self.from_user.username} blocked {self.to_user.username}"
 
 class OnlineStatus(models.Model):
 	user = models.OneToOneField(Player, on_delete=models.CASCADE)
