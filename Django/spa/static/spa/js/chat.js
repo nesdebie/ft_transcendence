@@ -114,14 +114,29 @@ export function initChat() {
     }
 
     // Event listeners
-    document.querySelector('#send-message').addEventListener('click', sendMessage);
-    document.querySelector('#send-shifumi-game-invite').addEventListener('click', sendGameInvite);
-    document.querySelector('#message_input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
+    const sendMessageButton = document.querySelector('#send-message');
+    if (sendMessageButton) {
+        sendMessageButton.addEventListener('click', sendMessage);
+    } else {
+        console.error('Send message button not found');
+    }
+
+    const sendGameInviteButton = document.querySelector('#send-shifumi-game-invite');
+    if (sendGameInviteButton) {
+        sendGameInviteButton.addEventListener('click', sendGameInvite);
+    }
+
+    const messageInput = document.querySelector('#message_input');
+    if (messageInput) {
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    } else {
+        console.error('Message input not found');
+    }
 
     // Initialize the WebSocket connection
     connectWebSocket();
