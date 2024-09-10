@@ -49,12 +49,25 @@ function removeNightCityMode() {
 document.addEventListener('DOMContentLoaded', function() {
     const audio_night = document.getElementById('nightCityModeMusic');
     const audio_day = document.getElementById('dayModeMusic');
+    const hoverDayAudio = document.getElementById('hover_day');
+    const clickDayAudio = document.getElementById('click_day');
+    const hoverNightAudio = document.getElementById('hover_night');
+    const clickNightAudio = document.getElementById('click_night');
     const audioButton = document.getElementById('audioButton');
+    let audioEnabled = false; // Flag to track if audio is enabled
     let audioPlaying = false; // Flag to track audio state
     let currentAudio = null; // Track the currently playing audio
 
+    // Function to enable audio after user interaction
+    function enableAudio() {
+        audioEnabled = true;
+        playAudioBasedOnMode();
+    }
+
     // Function to play the correct audio based on the mode
     function playAudioBasedOnMode() {
+        if (!audioEnabled) return; // Do not play if audio is not enabled
+
         if (document.body.classList.contains("cyberpunk")) {
             audio_day.pause();
             audio_day.currentTime = 0;
@@ -64,10 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
             audio_night.currentTime = 0;
             currentAudio = audio_day;
         }
-        currentAudio.play().catch(error => {
-            console.error('Error playing audio:', error);
-        });
-        audioPlaying = true;
+        if (currentAudio) {
+            currentAudio.play().catch(error => {
+                console.error('Error playing audio:', error);
+            });
+            audioPlaying = true;
+        }
     }
 
     // Function to toggle audio playback
@@ -82,9 +97,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listener for control button click
     audioButton.addEventListener('click', function() {
-        toggleAudio();
+        if (!audioEnabled) {
+            enableAudio();
+        } else {
+            toggleAudio();
+        }
     });
-
 
     document.querySelector("#nightCityModeBtn").addEventListener('click', function() {
         if (document.body.classList.contains("cyberpunk")) {
@@ -100,30 +118,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Get the audio elements for day and night
-    const hoverDayAudio = document.getElementById('hover_day');
-    const clickDayAudio = document.getElementById('click_day');
-    const hoverNightAudio = document.getElementById('hover_night');
-    const clickNightAudio = document.getElementById('click_night');
-
-    // Get all <a> elements
-    const elements = document.querySelectorAll('a');
-
-    // Add event listeners to each element
-    elements.forEach(function(element) {
-        element.addEventListener('mouseover', function() {
-            if (document.body.classList.contains("cyberpunk")) {
-                hoverNightAudio.play();
-            } else {
-                hoverDayAudio.play();
-            }
-        });
-
+    // Modify hover and click events to require user interaction
+    document.querySelectorAll('a').forEach(function(element) {
         element.addEventListener('click', function() {
             if (document.body.classList.contains("cyberpunk")) {
-                clickNightAudio.play();
+                hoverNightAudio.play().catch(error => console.error('Error playing hover audio:', error));
+                clickNightAudio.play().catch(error => console.error('Error playing click audio:', error));
             } else {
-                clickDayAudio.play();
+                hoverDayAudio.play().catch(error => console.error('Error playing hover audio:', error));
+                clickDayAudio.play().catch(error => console.error('Error playing click audio:', error));
             }
         });
     });
