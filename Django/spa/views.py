@@ -90,10 +90,15 @@ def view_chat(request, username=None):
         ).order_by('timestamp')
         are_friends = user.is_friend(user_to_chat)  # Assuming is_friend is a method to check friendship
 
+    # Exclude blocked users and users who have blocked the current user
+    blocked_users = Block.objects.filter(Q(from_user=user) | Q(to_user=user)).values_list('to_user', flat=True)
+    blocking_users = Block.objects.filter(Q(to_user=user)).values_list('from_user', flat=True)
+    users = Player.objects.exclude(id__in=blocked_users).exclude(id__in=blocking_users).exclude(id=user.id)
+
     template = 'spa/pages/chat_interface.html' if user_to_chat else 'spa/pages/chat_friends_list.html'
 
     context = {
-        'users': Player.objects.exclude(id=user.id),
+        'users': users,
         'user_to_chat': user_to_chat,
         'messages': messages,
         'are_friends': are_friends,  # Pass friendship status to the template

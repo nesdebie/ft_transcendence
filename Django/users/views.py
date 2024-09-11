@@ -421,20 +421,20 @@ def block_user(request):
 	return JsonResponse({'status': 'invalid method'}, status=405)
 
 def unblock_user(request):
-	if request.method == 'POST':
-		username = request.POST.get('username')
-		from_user = request.user
-		try :
-			to_user = Player.object.get(username=username)
-			if Block.objects.filter(from_user=from_user, to_user=to_user).exists():
-				Block.objects.get(from_user=request.user, to_user=to_user).delete()
-				return JsonResponse({'status': 'succes'})
-			else:
-				return JsonResponse ({'errors': {'unblock': f'You haven\'t block {to_user.username} yet, so you can not unblock him'}}, status=400)
-		except Player.DoesNotExist:
-			return JsonResponse({'errors': {'unblock': 'User does not exist'}}, status=400)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        from_user = request.user
+        try:
+            to_user = Player.object.get(username=username)
+            if Block.objects.filter(from_user=from_user, to_user=to_user).exists():
+                Block.objects.filter(from_user=from_user, to_user=to_user).delete()  # Use filter() instead of get()
+                return JsonResponse({'status': 'success'})
+            else:
+                return JsonResponse({'errors': {'unblock': f'You haven\'t blocked {to_user.username} yet, so you cannot unblock them'}}, status=400)
+        except Player.DoesNotExist:
+            return JsonResponse({'errors': {'unblock': 'User does not exist'}}, status=400)
 
-	return JsonResponse({'status': 'invalid method'}, status=405)
+    return JsonResponse({'status': 'invalid method'}, status=405)
 
 def user_data(request, username):
 	user = get_object_or_404(Player, username=username)
