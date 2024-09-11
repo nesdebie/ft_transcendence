@@ -5,9 +5,10 @@ export function initChat() {
     const chatDataElement = document.getElementById('chat-data');
     const current_username = chatDataElement.getAttribute('data-current-username');
     const username_to_chat = chatDataElement.getAttribute('data-username_to_chat');
+    const is_blocked = chatDataElement.getAttribute('data-is-blocked') === 'true';  // Assume this data attribute is set based on backend logic
 
-    if (username_to_chat == null) {
-        console.log('username_to_chat = null');
+    if (username_to_chat == null || is_blocked) {
+        console.log('Cannot initiate chat due to block or missing username');
         return;
     }
 

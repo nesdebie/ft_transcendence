@@ -167,9 +167,8 @@ async function         unblock_user(username) {
 		});
 
 		const data = await response.json()
-		if (response.ok && data.status == 'succes') {
+		if (response.ok && data.status == 'success') {
 			alert('User unblocked !');
-			//redirectToRoute(window.location.pathname);
 			redirectToRoute('/profile');
 		}
 		else {
