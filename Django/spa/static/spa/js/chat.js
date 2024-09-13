@@ -28,7 +28,9 @@ export function initChat() {
 
         websocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            console.log("Received message with data:", data);  // Log the entire data object
             if (data.type === 'game_invite') {
+                console.log("Handling game invite with game type:", data.game_type);  // Detailed log for game type
                 handleGameInvite(data);
             } else if (data.type === 'game_invite_accepted') {
                 handleGameInviteAccepted(data);
@@ -55,27 +57,32 @@ export function initChat() {
         }
     }
 
-    function sendGameInvite() {
+    function sendGameInvite(gameType) {
+        console.log("Sending game invite for:", gameType);  // This will show which game type is being sent
         if (getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
             getWebSocket().send(JSON.stringify({
                 'type': 'game_invite',
                 'sender': current_username,
-                'receiver': username_to_chat
+                'receiver': username_to_chat,
+                'game_type': gameType
             }));
         }
     }
 
     function handleGameInvite(data) {
+        const gameTypeMessage = data.game_type === 'shifumi' ? 'Shifumi' : 'Pong';
+        console.log("Handle game invite for:", gameTypeMessage);
         if (data.sender === current_username) {
-            const inviteMessage = `You have invited ${data.receiver} to play Shifumi.`;
+            const inviteMessage = `You have invited ${data.receiver} to play ${gameTypeMessage}.`;
             appendMessage({ message: inviteMessage, sender: current_username }, current_username);
         } else {
             const acceptButton = document.createElement('button');
             acceptButton.textContent = 'Accept';
             acceptButton.className = 'accept-invite';
             acceptButton.setAttribute('data-sender', data.sender);
+            acceptButton.setAttribute('data-game-type', data.game_type);  // Store game type in button
 
-            const receivedInviteMessage = `${data.sender} has invited you to play Shifumi. `;
+            const receivedInviteMessage = `${data.sender} has invited you to play ${gameTypeMessage}. `;
             appendMessage({ 
                 message: receivedInviteMessage, 
                 sender: 'System',
@@ -88,23 +95,23 @@ export function initChat() {
     function handleGameInviteAccepted(data) {
         console.log('Game invite accepted:', data);
         const gameRoomName = generateGameRoomName(data.sender, data.receiver);
-        console.log('Redirecting to game room:', gameRoomName);
-        redirectToRoute(`/shifumi/${gameRoomName}`);
+        const route = data.game_type === 'shifumi' ? `/shifumi/${gameRoomName}` : `/pong/${gameRoomName}`;
+        console.log('Redirecting to game room:', route);
+        redirectToRoute(route);
     }
 
     function addAcceptButtonListeners() {
         document.querySelectorAll('.accept-invite').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-                console.log('Accept button clicked');
                 const sender = this.getAttribute('data-sender');
-                console.log('Sender:', sender);
+                const gameType = this.getAttribute('data-game-type');  // Retrieve game type
                 if (getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
-                    console.log('Sending game invite accepted message');
                     getWebSocket().send(JSON.stringify({
                         'type': 'game_invite_accepted',
                         'sender': current_username,
-                        'receiver': sender
+                        'receiver': sender,
+                        'game_type': gameType  // Include game type in the message
                     }));
                 } else {
                     console.error('WebSocket is not open');
@@ -124,7 +131,12 @@ export function initChat() {
 
     const sendGameInviteButton = document.querySelector('#send-shifumi-game-invite');
     if (sendGameInviteButton) {
-        sendGameInviteButton.addEventListener('click', sendGameInvite);
+        sendGameInviteButton.addEventListener('click', () => sendGameInvite('shifumi'));
+    }
+
+    const sendPongGameInviteButton = document.querySelector('#send-pong-game-invite');
+    if (sendPongGameInviteButton) {
+        sendPongGameInviteButton.addEventListener('click', () => sendGameInvite('pong'));
     }
 
     const messageInput = document.querySelector('#message_input');

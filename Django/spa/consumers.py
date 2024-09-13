@@ -54,6 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message_type = text_data_json.get('type', 'chat_message')
         sender = text_data_json['sender']
         receiver = text_data_json['receiver']
+        game_type = text_data_json.get('game_type', 'default_game')  # Extract game_type here
 
         if message_type in ['game_invite', 'game_invite_accepted']:
             message = f"{message_type.replace('_', ' ').title()}"
@@ -61,7 +62,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message = text_data_json['message']
 
         # Save message to database
-        await self.save_message(sender, receiver, message, message_type)
+        await self.save_message(sender, receiver, message, message_type, game_type=game_type)  # Pass game_type to save_message
         current_time = timezone.now()
         formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -73,14 +74,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': message,
                     'sender': sender,
                     'receiver': receiver,
-                    'timestamp': formatted_time
+                    'timestamp': formatted_time,
+                    'game_type': game_type  # Include game_type in the message sent to the group
                 }
             )
         except Exception as e:
             print(f"Error sending message to group: {e}")
 
     @database_sync_to_async
-    def save_message(self, sender, receiver, message, message_type='chat_message', is_game_invite=False):
+    def save_message(self, sender, receiver, message, message_type='chat_message', is_game_invite=False, game_type='default_game'):
         from users.models import Player, Message
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
@@ -89,7 +91,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver=receiver_user,
             message=message,
             message_type=message_type,
-            is_game_invite=is_game_invite
+            is_game_invite=is_game_invite,
+            game_type=game_type  # Save the game type
         )
 
     async def chat_message(self, event):
@@ -105,16 +108,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     async def game_invite(self, event):
-        await self.save_message(event['sender'], event['receiver'], "Game invite", message_type='game_invite', is_game_invite=True)
+        game_type = event.get('game_type', 'default_game')  # Default to 'default_game' if not specified
+        await self.save_message(event['sender'], event['receiver'], "Game invite", message_type='game_invite', is_game_invite=True, game_type=game_type)
         await self.send(text_data=json.dumps({
             'type': 'game_invite',
             'sender': event['sender'],
-            'receiver': event['receiver']
+            'receiver': event['receiver'],
+            'game_type': game_type
         }))
 
     async def game_invite_accepted(self, event):
+        game_type = event.get('game_type', 'default_game')
         await self.send(text_data=json.dumps({
             'type': 'game_invite_accepted',
             'sender': event['sender'],
-            'receiver': event['receiver']
+            'receiver': event['receiver'],
+            'game_type': game_type
         }))
