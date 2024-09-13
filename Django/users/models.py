@@ -153,6 +153,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     is_game_invite = models.BooleanField(default=False)
+    game_type = models.CharField(max_length=30, default='default_game')  # New field to store the type of game
 
     def __str__(self):
         return f'{self.sender} to {self.receiver} at {self.timestamp}'
