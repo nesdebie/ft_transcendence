@@ -5,7 +5,7 @@
     <div id="match-status" style="display: none;"></div>
 
     <h2>Available Tournaments</h2>
-    <ul id="tournament-list">
+    <ul id="tournament-list", data-currentUser="{{ request.user }}">
         <!-- Tournament list will be populated here -->
     </ul>
     <button id="create-tournament-btn" class="btn btn-secondary">Create Tournament</button>

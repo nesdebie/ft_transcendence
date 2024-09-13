@@ -46,6 +46,9 @@ class Tournament(models.Model):
         else:
             return []
 
+    def get_upcoming_game(self, game_id):
+        return next((game for game in self.upcoming_games if game['game_id'] == game_id), None)
+    
     def get_game_history(self):
         if self.is_active:
             return Game_history(f'Tournament Match: {self.id}')
@@ -61,9 +64,16 @@ class Tournament(models.Model):
         # Create upcoming games
         self.upcoming_games = []
         player_list = list(self.players.all())
+        id = 0
         for i in range(len(player_list)):
             for j in range(i + 1, len(player_list)):
-                self.upcoming_games.append((player_list[i], player_list[j]))
+                id += 1;
+                self.upcoming_games.append({
+                    'players': (player_list[i].username, player_list[j].username),
+                    'Players_joined': [],
+                    'tournament_id': self.id,
+                    'game_id': id
+                })
         
         self.save()
 

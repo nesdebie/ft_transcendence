@@ -1,14 +1,14 @@
-<div class="page-container align-center" data-tournament="{{ tournament }}">
+<div class="page-container align-center"">
     <h1>Tournament Overview</h1>
     <h2>Participants</h2>
-    <table id="participants-table">
+    <table id="participants-table" data-tournament="{{ tournament_data }}">
         <thead>
             <tr>
                 <th>Player</th>
                 <th>Score</th>
             </tr>
         </thead>
-        <tbody id="participants-list">
+        <tbody id="Players_score-list" data-currentUser="{{ request.user.username }}" >
             <!-- Participants will be populated here -->
         </tbody>
     </table>

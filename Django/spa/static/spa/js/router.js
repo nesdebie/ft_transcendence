@@ -4,7 +4,7 @@ import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode fu
 import { initShifumi } from "./shifumi.js";
 import { closeWebSocket } from "./websocketManager.js";
 import { initPong } from "./pong.js";
-import { loadTournaments, checkTournamentStatus } from "./tournament.js";
+import { loadTournaments, checkTournamentStatus, populateTournamentPage, checkTournamentGameStatus} from "./tournament.js";
 
 
 const route = (event, url = null) => {
@@ -24,7 +24,7 @@ const route = (event, url = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
-    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting'], suffix: '' }
+    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting_joining_tournament', '/tournament', '/waiting_joining_game'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -78,11 +78,17 @@ function call_page_functions(path) {
     else if (path.startsWith('/pong/') && path !== '/pong/') {
         initPong();
     } 
-    else if (path.startsWith('/pong') && path == '/pong') {
+    else if (path.startsWith('/pong_lobby')) {
         loadTournaments();
     }
-    else if (path.startsWith('/waiting')) {
+    else if (path.startsWith('/waiting_joining_tournament')) {
         checkTournamentStatus();
+    }
+    else if (path.startsWith('/waiting_tournament_game')) {
+        checkTournamentGameStatus();
+    }
+    else if (path.startsWith('/tournament')) {
+        populateTournamentPage();
     }
 
     // if (document.getElementById('user-username'))

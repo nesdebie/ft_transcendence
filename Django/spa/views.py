@@ -2,20 +2,11 @@ import logging
 from django.shortcuts import render, get_object_or_404
 from users.models import Player, FriendRequest, Block, Message
 from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from users.models import Player, FriendRequest, Block
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.urls import reverse
-from django.http import JsonResponse
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-import os
-from PIL import Image
-import logging
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import update_session_auth_hash
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -129,18 +120,28 @@ def profile_editor(request):
 def pong_game(request, room_name):
     return render(request, 'spa/pages/pong.html', {'room_name': room_name})
 
+def waiting_tournament_page(request, tournament_id):
+    return render(request, 'spa/pages/waiting_joining_tournament.html', {'tournament_id': tournament_id})
+
+def waiting_joining_game(request, tournament_id, game_id):
+    context = {
+        'tournament_id' : tournament_id,
+        'game_id'       : game_id,
+    }
+    return render(request, 'spa/pages/waiting_tournament_game.html', context)
+
 def tournament_page(request, tournament_id):
     from pong_game.models import Tournament
     tournament = get_object_or_404(Tournament, id=tournament_id)
-
-    # Initialize scores if not already done
-    if not tournament.scores:
-        tournament.initialize_scores()
+    
+    players_availability = {
+        player.username: player.is_available() for player in tournament.players.all()
+        }
 
     context = {
-        'tournament': tournament,
-        'scores': tournament.scores,
+        'scores'        : tournament.scores,
         'upcoming_games': tournament.get_upcoming_games(),
-        'game_history': tournament.get_game_history(),
+        'game_history'  : tournament.get_game_history(),
+        'playerStatus'  : players_availability
     }
-    return render(request, 'spa/pages/tournament.html', context=context)
+    return render(request, 'spa/pages/tournament.html',context={'tournament_data': json.dumps(context)});
