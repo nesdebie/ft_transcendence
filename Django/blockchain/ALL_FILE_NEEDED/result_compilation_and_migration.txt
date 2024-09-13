@@ -12,7 +12,7 @@ Compiling your contracts...
 Starting migrations...
 ======================
 > Network name:    'development'
-> Network id:      1726246581669
+> Network id:      1726253505506
 > Block gas limit: 30000000 (0x1c9c380)
 
 
@@ -21,12 +21,12 @@ Starting migrations...
 
    Deploying 'PongMatches'
    -----------------------
-   > transaction hash:    0x6e9f2b1de7b38fb426bb2984d08281c64b65e47b3e192208eb3d24e9899fe2b0
+   > transaction hash:    0xe62bfb00be323371138d459f59eb5e07ad3fa670299a6270f96c6c8aa0dc82b7
    > Blocks: 0            Seconds: 0
-   > contract address:    0xa0bd0a4abA9f9e2b8B1bd159db247D54E48bA490
+   > contract address:    0xacA2B01E902dc619088ef6e34f6a9515E661d302
    > block number:        1
-   > block timestamp:     1726246592
-   > account:             0x158498a471395B80Ee2E7C2093881dc73874B1EB
+   > block timestamp:     1726253516
+   > account:             0xB38AC4F380A4Ce7DD37fd2C0A6c90F3a0C21019f
    > balance:             999.99641933425
    > gas used:            1060938 (0x10304a)
    > gas price:           3.375 gwei

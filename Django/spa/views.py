@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from users.models import Player, FriendRequest, Block
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import HttpRequest
 import json
 
 logger = logging.getLogger(__name__)
@@ -123,11 +124,19 @@ def pong_game(request, room_name):
 def waiting_tournament_page(request, tournament_id):
     return render(request, 'spa/pages/waiting_joining_tournament.html', {'tournament_id': tournament_id})
 
-def waiting_joining_game(request, tournament_id, game_id):
+def waiting_joining_game(request: HttpRequest, tournament_id, game_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    game = next(game for game in tournament.upcoming_games if game['game_id'] == game_id);
+    currentUser :Player = request.user
+    otherUser : Player = get_object_or_404(Player, username=next(player for player in game['players'] if player != request.user.username))
+
     context = {
-        'tournament_id' : tournament_id,
-        'game_id'       : game_id,
+        'tournamentGameData' : json.dumps(game),
+        'currentUser' : currentUser.username,
+        'otherUser' : otherUser.username
     }
+
     return render(request, 'spa/pages/waiting_tournament_game.html', context)
 
 def tournament_page(request, tournament_id):

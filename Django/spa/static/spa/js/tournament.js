@@ -143,7 +143,7 @@ export function join_tournament_game(username, tournamentGameData) {
 }
 
 export function checkTournamentGameStatus() {
-    const tournamentGameData    = document.getElementById().getAttribute('data-tournament-game');;
+    const tournamentGameData    = document.getElementById('waiting-status').getAttribute('data-tournament-game');;
     const currentUser           = document.getElementById().getAttribute('data-currentUser');
 
     const tournamentId          = tournamentGameData.tournament_id;

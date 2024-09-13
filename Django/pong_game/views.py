@@ -163,5 +163,6 @@ def tournament_game_switch_player_status(request, tournament_id, game_id):
         
         upcoming_game['PlayerStatus'] = player_status
         tournament.save()
+        return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Game not found'}, status=404)
