@@ -30,6 +30,8 @@ def view_self_profile(request):
 	user: Player = request.user
 	received_requests = FriendRequest.objects.filter(to_user=user)
 	friends = user.friends.all()
+	blocked_users = Block.objects.filter(from_user=user)  # Get all users blocked by the current user
+
 	context = {
 		'user_profile':			request.user,
 		'is_own_profile':		True,
@@ -37,7 +39,8 @@ def view_self_profile(request):
 		'request_pending':  	None,
 		'blocked':				None,
 		'received_requests':	received_requests,
-		'friends':				friends
+		'friends':				friends,
+		'blocked_users':		blocked_users  # Add blocked users to the context
 	}
 	
 	return render(request, 'spa/pages/profile.html', context)
@@ -47,7 +50,7 @@ def view_self_profile(request):
 def view_profile(request, username):
     user: Player = request.user
     user_profile: Player = get_object_or_404(Player, username=username)
-
+    blocked_users = Block.objects.filter(from_user=user)  # Get all users blocked by the current user
 
     context = {
         'user_profile': user_profile,
@@ -57,6 +60,7 @@ def view_profile(request, username):
         'blocked': Block.objects.filter(from_user=user, to_user=user_profile).first(),
         'received_requests': None,
         'friends': None,
+        'blocked_users': blocked_users  # Add blocked users to the context
     }
     print(context)
     return render(request, 'spa/pages/profile.html', context)

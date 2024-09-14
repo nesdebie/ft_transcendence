@@ -86,6 +86,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         from users.models import Player, Message
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
+        if game_type != 'default_game':  # Check if game_type is not 'default_game'
+            return  # Do not save the message
         Message.objects.create(
             sender=sender_user,
             receiver=receiver_user,

@@ -1,4 +1,4 @@
-<div class="page-container align-center">
+<div id="profile-page" class="page-container align-center">
 	<h1> Profile </h1>
 	<!-- Display the user's profile picture -->
 	<img id="profile-picture" src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.username }}'s Profile Picture" width="200" height="200">
@@ -67,32 +67,49 @@
 			<button type="submit" class="btn btn-dark">Search</button>
 		</form>
 		
-		<h3>Friendlist</h3>
-		<div class="friends-grid">
-			{% for friend in friends %}
-			<div class="friend-card">
-				<button id='friend-profile-button' class="socials-card" data-username="{{ friend.username }}" target="_blank">
-					<img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}'s profile picture" width="40" height="45">
-					<p>{{ friend.username }}</p>
-				</button>
+		{% if friends %}
+			<h3>Friendlist</h3>
+			<div class="friends-grid">
+				{% for friend in friends %}
+				<div class="friend-card">
+					<button id='friend-profile-button' class="socials-card" data-username="{{ friend.username }}" target="_blank" style="background-color: transparent;">
+						<img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}'s profile picture" width="40" height="45">
+						<p>{{ friend.username }}</p>
+					</button>
+				</div>
+				{% endfor %}
 			</div>
-			{% endfor %}
-		</div>
+		{% endif %}
 	
 		
-		<h3>Friend Requests</h3>
-		<ul>
-			{% for request in received_requests %}
-			<li>
-				{{ request.from_user.username }}
-					<button id="accept-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Accept</button>
-					<span id="accept-friend-request-error" class="error-message text-danger"></span>
-					<button id="deny-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Deny</button>
-					<span id="deny-friend-request-error" class="error-message text-danger"></span>
-					<button id="block-user-button" class="btn btn-dark" type="button" data-username="{{ request.from_user.username }}">Block</button>
-					<span id="block-user-error" class="error-message text-danger"></span>
-			</li>
-			{% endfor %}
-		</ul>
+		{% if received_requests %}
+			<h3>Friend Requests</h3>
+			<ul>
+				{% for request in received_requests %}
+				<li>
+					{{ request.from_user.username }}
+						<button id="accept-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Accept</button>
+						<span id="accept-friend-request-error" class="error-message text-danger"></span>
+						<button id="deny-friend-request-button" class="btn btn-dark" type="button" data-id="{{ request.id }}">Deny</button>
+						<span id="deny-friend-request-error" class="error-message text-danger"></span>
+						<button id="block-user-button" class="btn btn-dark" type="button" data-username="{{ request.from_user.username }}">Block</button>
+						<span id="block-user-error" class="error-message text-danger"></span>
+				</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+
+		{% if blocked_users %}
+			<h3>Blockedex</h3>
+			<ul>
+				{% for blocked in blocked_users %}
+				<button id='friend-profile-button' class="socials-card" data-username="{{ blocked.to_user.username }}" target="_blank" style="background-color: transparent;">
+					<img src="{{ blocked.to_user.profile_picture.url }}" alt="{{ blocked.to_user.username }}'s profile picture" width="40" height="45">
+					<p>{{ blocked.to_user.username }}</p>
+				</button>
+				{% endfor %}
+			</ul>
+		{% endif %}
 	{% endif %}
-</div>  
+</div>
+
