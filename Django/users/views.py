@@ -456,14 +456,14 @@ def find_user(request):
 	if request.method == 'POST':
 		username	= request.POST.get('username')
 		if username == request.user.username:
-			return JsonResponse({'errors': {'find-user': 'are you trying to break me by looking for yourself ?'}}, status=400)
+			return JsonResponse({'status': 'success'})
 		try:
 			user = Player.object.get(username=username)
 			if (user.has_blocked(player=request.user)):
-				return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
+				return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=404)
 			return JsonResponse({'status': 'success'})
 		except Player.DoesNotExist:
-			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=400)
+			return JsonResponse({'errors': {'find-user': 'User does not exist'}}, status=404)
 	else:
 		return JsonResponse({'status': 'invalid method'}, status=405)
 	

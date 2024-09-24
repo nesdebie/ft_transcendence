@@ -51,7 +51,7 @@ networks:
     backend:
 
 volumes:
-  postgres_data:
-    name: database
-  postgres_channels_data:
-    name: database_channels
+    postgres_data:
+        name: database
+    postgres_channels_data:
+        name: database_channels
