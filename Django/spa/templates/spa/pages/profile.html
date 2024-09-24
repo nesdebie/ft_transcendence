@@ -13,7 +13,7 @@
 	<a href="/profile_editor" onclick="route(event)">Edit</a>
 	<!--<a href="/friend_requests" onclick="route(event)">Add friends</a>-->
 	{% endif %}
-	{% if friends %}
+	{% if friends and not is_own_profile %}
 		<div id="friend">Your friend since {{ friends.created_on }}</div>
 	{% endif %}
 	

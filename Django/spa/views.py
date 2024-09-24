@@ -16,6 +16,7 @@ import logging
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -49,12 +50,16 @@ def view_self_profile(request):
 @login_required
 def view_profile(request, username):
     user: Player = request.user
-    user_profile: Player = get_object_or_404(Player, username=username)
+    try:
+        user_profile: Player = Player.objects.get(username=username)
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
     blocked_users = Block.objects.filter(from_user=user)  # Get all users blocked by the current user
 
     context = {
         'user_profile': user_profile,
-        'is_own_profile': False,
+        'is_own_profile': user == user_profile,
         'friendship': user.get_friendship(player=user_profile) if user.is_friend(user_profile) else None,
         'request_pending': FriendRequest.objects.filter(from_user=user, to_user=user_profile).first(),
         'blocked': Block.objects.filter(from_user=user, to_user=user_profile).first(),
@@ -62,7 +67,6 @@ def view_profile(request, username):
         'friends': None,
         'blocked_users': blocked_users  # Add blocked users to the context
     }
-    print(context)
     return render(request, 'spa/pages/profile.html', context)
 
 @login_required

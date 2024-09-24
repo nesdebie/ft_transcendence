@@ -22,7 +22,7 @@ const route = (event, url = null) => {
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
+    { paths: ['/404', '/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
     { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor'], suffix: '' }
 ];
 

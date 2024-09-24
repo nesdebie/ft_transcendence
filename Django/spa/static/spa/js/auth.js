@@ -287,14 +287,18 @@ async function checkAuthentication() {
 function handleErrors(data) {
     console.log("going to print errors:");
     console.log(data);
-    for (const key in data.errors) {
-        const errorElement = document.getElementById(`${key}-error`);
-        if (errorElement) {
-            const errorMessages = Array.isArray(data.errors[key]) 
-                ? data.errors[key].join('\n') 
-                : data.errors[key];
-            errorElement.textContent = errorMessages;
+    if (data.errors) {
+        for (const key in data.errors) {
+            const errorElement = document.getElementById(`${key}-error`);
+            if (errorElement) {
+                const errorMessages = Array.isArray(data.errors[key]) 
+                    ? data.errors[key].join('\n') 
+                    : data.errors[key];
+                errorElement.textContent = errorMessages;
+            }
         }
+    } else if (data.error) {
+        alert(data.error);
     }
 }
 
@@ -359,8 +363,8 @@ async function find_user(event) {
         if (response.ok) {
             redirectToRoute('/profile/' + username);
         } else {
-            console.log("find_user gave back not 200");
-            await redirectToRoute('/profile/')
+            //console.log("find_user gave back not 200");
+            await redirectToRoute('/404')
             handleErrors(data);
         }
     } catch (error) {
