@@ -2,6 +2,7 @@ import json
 import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from blockchain.ALL_FILE_NEEDED.asked_functions import Add_game_history
 
 class ShifumiConsumer(AsyncWebsocketConsumer):
     rooms = {}
@@ -164,9 +165,13 @@ class ShifumiConsumer(AsyncWebsocketConsumer):
         players = room['players_usernames']
         winner = max(scores, key=scores.get) if scores[players[0]] != scores[players[1]] else None
 
-            # Send the message directly to the player's channel
+        # Call Add_game_history
+        game = 'Shifumi'  # Example game name
+        Add_game_history(scores, game, None)  # Timestamp is None for simplicity
+
+        # Send the game over message
         await self.channel_layer.group_send(
-            self.room_group_name,  # Send to the specific player's channel
+            self.room_group_name,
             {
                 'type': 'game_over',
                 'winner': winner,

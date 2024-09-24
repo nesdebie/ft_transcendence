@@ -1,6 +1,6 @@
 import unittest
-from set_match_data import set_match_data, initialize_web3_and_contract
-from get_match_data import get_match_data
+from .set_match_data import set_match_data, initialize_web3_and_contract
+from .get_match_data import get_match_data
 from web3 import Web3
 import hashlib
 import random
@@ -116,7 +116,7 @@ def Match_history(self_player, other_player, game):
         return None
 #    
 # fonction test en desous pour que tu puisse voir comment ça fonctionne , 1 lancer le docker , puis aller dans le docker 
-# avec la commande docker exec -it modif_blockchain-web-1  /bin/bash  et faire  python3 blockchain/ALL_FILE_NEEDED/3_ASKED_FUNCTIONS.py 
+# avec la commande docker exec -it modif_blockchain-web-1  /bin/bash  et faire  python3 blockchain/ALL_FILE_NEEDED/asked_functions.py 
 # et tu verra plein de logs et tu verra aussi ce que renvoi chaque fonction 
 
 # dans l'ID il y à le nom du winner, le nom du loser, le jeux et puis un ID (rand)
