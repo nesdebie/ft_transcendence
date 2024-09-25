@@ -379,7 +379,6 @@ async function updateSidebar() {
     document.getElementById('nav-home').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-pong').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
-    document.getElementById('nav-about').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-chat').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nightCityModeBtn').style.display = isAuthenticated ? 'block' : 'none';

@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import ObjectDoesNotExist
+from blockchain.ALL_FILE_NEEDED.asked_functions import Player_stat
 
 logger = logging.getLogger(__name__)
 
@@ -28,23 +29,30 @@ def pages(request, page):
 
 @login_required
 def view_self_profile(request):
-	user: Player = request.user
-	received_requests = FriendRequest.objects.filter(to_user=user)
-	friends = user.friends.all()
-	blocked_users = Block.objects.filter(from_user=user)  # Get all users blocked by the current user
+    user: Player = request.user
+    received_requests = FriendRequest.objects.filter(to_user=user)
+    friends = user.friends.all()
+    blocked_users = Block.objects.filter(from_user=user)
 
-	context = {
-		'user_profile':			request.user,
-		'is_own_profile':		True,
-		'friendship':			None,
-		'request_pending':  	None,
-		'blocked':				None,
-		'received_requests':	received_requests,
-		'friends':				friends,
-		'blocked_users':		blocked_users  # Add blocked users to the context
-	}
-	
-	return render(request, 'spa/pages/profile.html', context)
+    # Fetch Pong game statistics for the logged-in user
+    pong_stats = Player_stat(user.username, 'pong')
+    wins = len([match for match in pong_stats if match[4] == user.username])
+    losses = len([match for match in pong_stats if (match[1] == user.username or match[2] == user.username) and match[4] != user.username])
+
+    context = {
+        'user_profile': user,
+        'is_own_profile': True,
+        'friendship': None,
+        'request_pending': None,
+        'blocked': None,
+        'received_requests': received_requests,
+        'friends': friends,
+        'blocked_users': blocked_users,
+        'pong_wins': wins,
+        'pong_losses': losses
+    }
+    
+    return render(request, 'spa/pages/profile.html', context)
 
 
 @login_required
@@ -55,7 +63,12 @@ def view_profile(request, username):
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-    blocked_users = Block.objects.filter(from_user=user)  # Get all users blocked by the current user
+    blocked_users = Block.objects.filter(from_user=user)
+
+    # Fetch Pong game statistics for the user profile
+    pong_stats = Player_stat(username, 'pong')
+    wins = len([match for match in pong_stats if match[3] == username])
+    losses = len(pong_stats) - wins
 
     context = {
         'user_profile': user_profile,
@@ -65,7 +78,9 @@ def view_profile(request, username):
         'blocked': Block.objects.filter(from_user=user, to_user=user_profile).first(),
         'received_requests': None,
         'friends': None,
-        'blocked_users': blocked_users  # Add blocked users to the context
+        'blocked_users': blocked_users,  # Add blocked users to the context
+        'pong_wins': wins,
+        'pong_losses': losses
     }
     return render(request, 'spa/pages/profile.html', context)
 

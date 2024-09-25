@@ -166,7 +166,7 @@ class ShifumiConsumer(AsyncWebsocketConsumer):
         winner = max(scores, key=scores.get) if scores[players[0]] != scores[players[1]] else None
 
         # Call Add_game_history
-        game = 'Shifumi'  # Example game name
+        game = 'shifumi'  # Example game name
         Add_game_history(scores, game, None)  # Timestamp is None for simplicity
 
         # Send the game over message

@@ -18,7 +18,7 @@ function applyNightCityMode() {
             element.setAttribute("data-original-class", element.getAttribute("class")); // Save the original class as a custom attribute
         }
         element.classList.remove("btn", "btn-light");
-        element.classList.add("cyberpunk", "blue"); // Change to cyberpunk blue
+        element.classList.add("cyberpunk", "purple"); // Change to cyberpunk blue
     });
 }
 
@@ -37,7 +37,7 @@ function removeNightCityMode() {
     });
 
     // Restore original class for .cyberpunk.blue elements
-    document.querySelectorAll(".cyberpunk.blue").forEach(function(element) {
+    document.querySelectorAll(".cyberpunk.purple").forEach(function(element) {
         var originalClass = element.getAttribute("data-original-class"); // Retrieve the original class
         if (originalClass) {
             element.setAttribute("class", originalClass); // Restore the original class
