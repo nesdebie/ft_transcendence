@@ -116,7 +116,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             room = self.rooms[self.room_name]
             scores = room['scores']
             # Assuming the game object holds the necessary game identifier or name
-            game = 'Pong'  # Example game name
+            game = 'pong'  # Example game name
             Add_game_history(scores, game, None)  # Timestamp is None for simplicity
             self.rooms.pop(self.room_name)
 
