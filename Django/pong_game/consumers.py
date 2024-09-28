@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .game_logic import PongGameLogic
-from blockchain.ALL_FILE_NEEDED.asked_functions import Add_game_history
+from blockchain.ALL_FILE_NEEDED.blockchain_access import Add_game_history
 import datetime
 
 class PongConsumer(AsyncWebsocketConsumer):

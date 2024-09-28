@@ -2,7 +2,7 @@ import json
 import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from blockchain.ALL_FILE_NEEDED.asked_functions import Add_game_history
+from blockchain.ALL_FILE_NEEDED.blockchain_access import Add_game_history
 import datetime
 
 class ShifumiConsumer(AsyncWebsocketConsumer):
