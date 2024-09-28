@@ -1,10 +1,17 @@
 <div class="page-container align-center" ">
   <h1>PONG</h1>
   <div class="row">
-      <canvas id="pong-game" width="500" height="500" data-room_name="{{ room_name }}" data-player-username="{{ request.user.username }}"></canvas>
+      <canvas id="pong-game" width="500" height="500" data-room_name="{{ room_name }}" data-player-username="{{ request.user.username }}" data-tournament="{{ tournament }}"></canvas>
   </div>
-  <div id="game-over" style="display: none;">
+  {% if tournament %}
+  <div id="game-over" style="display: none;", data-game_info="{{ game }}">
     <h1 id="game-over-message" style="font-size: 3rem; text-align: center;"></h1>
-    <button id="go-back-button" style="font-size: 1.5rem; margin-top: 20px;">Go Back</button>
-  </div>
-</div>
+    <button id="go-back-button" style="font-size: 1.5rem; margin-top: 20px;">Go Back to Tournament View</button>
+    </div>
+    {% else %}
+    <div id="game-over" style="display: none;">
+      <h1 id="game-over-message" style="font-size: 3rem; text-align: center;"></h1>
+      <button id="go-back-button" style="font-size: 1.5rem; margin-top: 20px;">Go Back</button>
+    </div>
+  {% endif %}
+</div> 

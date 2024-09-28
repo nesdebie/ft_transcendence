@@ -1,6 +1,8 @@
 import random
 import math
 import asyncio
+from blockchain.ALL_FILE_NEEDED.blockchain_acces import Add_game_history
+from channels.db import database_sync_to_async
 
 class PongGameLogic: 
     def __init__(self):
@@ -10,15 +12,18 @@ class PongGameLogic:
         self.paddle_height = 200
         self.ball_size = 10
         self.paddle_speed = 10
-        self.ball_speed = 5
+        self.init_ball_speed = 10
+        self.ball_speed = self.init_ball_speed
         self.ball_speed_increase = 1
-        self.max_score = 5
+        self.max_score = 1
 
         self.players_usernames = [] #gives order of users
         self.paddles = {} # Player_username : {y : position }
         self.ball = self.__initialize_ball()
         self.scores = {}
-        self.game_running = False
+        self.game_running :bool = False
+        self.is_tournament :bool = False
+        self.tournament_id = -1
 
     def __initialize_ball(self):
         # Choose a random angle, excluding ±π/2
@@ -57,6 +62,7 @@ class PongGameLogic:
 
             await asyncio.sleep(0.03)
         
+        print('thread finishing game')
         await self.__finish_game(consumer)
 
     async def __send_game_state(self, consumer):
@@ -71,8 +77,19 @@ class PongGameLogic:
                 }
             }
         )
+    @database_sync_to_async
+    def __add_tournament_game(self):
+        from .models import Tournament
+        tournament = Tournament.objects.get(id=self.tournament_id)
+        tournament.add_game(self.scores)
 
     async def __finish_game(self, consumer):
+        if (self.is_tournament):
+            await self.__add_tournament_game()
+        else:
+            Add_game_history(self.scores, 'Pong')
+            
+        print('before sending message through websocket');
         await consumer.channel_layer.group_send(
             consumer.room_group_name,
             {
@@ -124,6 +141,7 @@ class PongGameLogic:
 
         # End game
         if self.scores[player1] >= self.max_score or self.scores[player2] >= self.max_score:
+            print('Game finished');
             self.game_running = False
 
     def __handle_paddle_collision(self, player):
@@ -146,7 +164,7 @@ class PongGameLogic:
 
     def __reset_ball(self):
         self.ball = self.__initialize_ball()
-        self.ball_speed = 5
+        self.ball_speed = self.init_ball_speed
 
     def get_game_state(self):
         return {

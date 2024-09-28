@@ -119,24 +119,34 @@ def profile_editor(request):
     })
 
 def pong_game(request, room_name):
-    return render(request, 'spa/pages/pong.html', {'room_name': room_name})
+    return render(request, 'spa/pages/pong.html', {'room_name': room_name, 'tournament': False})
+
+def touranement_pong_game(request, tournament_id, game_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    game = next(game for game in tournament.upcoming_games if game['game_id'] == game_id);
+    context = {
+        'room_name': f'{tournament_id}_{game_id}',
+        'tournament': True,
+        'game': json.dumps(game),
+    }
+    
+    return render(request, 'spa/pages/pong.html', context)
 
 def waiting_tournament_page(request, tournament_id):
     return render(request, 'spa/pages/waiting_joining_tournament.html', {'tournament_id': tournament_id})
 
-def waiting_joining_game(request: HttpRequest, tournament_id, game_id):
+def waiting_tournament_game(request: HttpRequest, tournament_id, game_id):
     from pong_game.models import Tournament
     tournament = get_object_or_404(Tournament, id=tournament_id)
     game = next(game for game in tournament.upcoming_games if game['game_id'] == game_id);
-    currentUser :Player = request.user
     otherUser : Player = get_object_or_404(Player, username=next(player for player in game['players'] if player != request.user.username))
 
     context = {
         'tournamentGameData' : json.dumps(game),
-        'currentUser' : currentUser.username,
+        'tournament_id' : tournament_id,
         'otherUser' : otherUser.username
     }
-
     return render(request, 'spa/pages/waiting_tournament_game.html', context)
 
 def tournament_page(request, tournament_id):

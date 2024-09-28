@@ -1,3 +1,4 @@
+import { redirectToRoute } from "./router.js";
 import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.js";
 
 function initPong() {
@@ -5,6 +6,7 @@ function initPong() {
     let gameState;
     let game_data;
     let room_name;
+    let tournament;
 
     
     function init() {
@@ -27,6 +29,7 @@ function initPong() {
             });
         }
         room_name = canvas.getAttribute('data-room_name');
+        tournament = canvas.getAttribute('data-tournament');
         console.log(`room_name: ${room_name}`);
         connectWebSocket(room_name);
     }
@@ -55,7 +58,13 @@ function initPong() {
         socket.onopen = function(e) {
             console.log('Pong websocket connection made, Sending join');
             setWebSocket(socket);
-            socket.send(JSON.stringify({action: 'join'}));
+            socket.send(JSON.stringify({'action': 'join'}));
+            
+            let init_message = {"action": "init", "tournament": tournament}
+            if (tournament) {
+                init_message["game_info"] =  JSON.parse(document.getElementById('game-over').getAttribute('data-game_info'))
+            }
+            socket.send(JSON.stringify(init_message))
         };
         
         socket.onclose = function(e) {
@@ -68,7 +77,7 @@ function initPong() {
     let moveInterval = null; 
 
     function handleKeyPress(event) {
-        const action = { action: 'move_paddle', direction: event.key === 'ArrowUp' ? 'up' : 'down' };
+        const action = { 'action': 'move_paddle', 'direction': event.key === 'ArrowUp' ? 'up' : 'down' };
     
         if (getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
             getWebSocket().send(JSON.stringify(action));
@@ -141,6 +150,7 @@ function initPong() {
         // Show game over message
         const gameOverDiv = document.getElementById('game-over');
         const gameOverMessage = document.getElementById('game-over-message');
+        const gameInfo = JSON.parse(gameOverDiv.getAttribute('data-game_info'))
         gameOverDiv.style.display = 'block';
 
         const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
@@ -160,10 +170,18 @@ function initPong() {
             gameOverMessage.style.color = 'red';
         }
         // Add event listener to go back button
-        document.getElementById('go-back-button').addEventListener('click', () => {
-            closeWebSocket();
-            window.history.back();
-        });
+        if (!tournament) {
+            document.getElementById('go-back-button').addEventListener('click', () => {
+                closeWebSocket();
+                window.history.back(); 
+            });
+        } else {
+            document.getElementById('go-back-button').addEventListener('click', () => {
+                closeWebSocket();
+                redirectToRoute(`/tournament/${gameInfo.tournament_id}`)
+            });            
+        }
+        
     }
 
     init();

@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import F, Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Matchmaking, PongGame, Tournament
 from users.models import Player
-from blockchain.ALL_FILE_NEEDED.blockchain_acces import Add_game_history, Player_stat, Match_history
+from django.contrib.postgres.aggregates import ArrayAgg
 import json
 
 @csrf_exempt
@@ -103,23 +104,38 @@ def get_game_state(request, room_name):
 
 @csrf_exempt
 def list_tournaments(request):
-    tournaments = Tournament.objects.all()
-    
-    # Serialize the tournaments to a list of dictionaries
-    tournaments_data = [
-        {
+    available_tournament_list = []
+    your_tournament_list = []
+    your_finished_tournament_list = []
+    user = request.user.username
+
+    for tournament in Tournament.objects.all():
+        tournament_info = {
             'id': tournament.id,
             'number_of_players': tournament.number_of_players,
-            'created_at': tournament.created_at,
             'is_active': tournament.is_active,
+            'is_finished': tournament.is_finished,
             'scores': tournament.scores,
             'upcoming_games': tournament.upcoming_games,
-            'players': [player.username for player in tournament.players.all()]  # Adjust fields as necessary
+            'final_position': tournament.final_position,
+            'players': tournament.players,  # This will be a list of usernames
         }
-        for tournament in tournaments
-    ]
-    
-    return JsonResponse(tournaments_data, safe=False)
+
+        if user in tournament.players:
+            if tournament.is_finished:
+                your_finished_tournament_list.append(tournament_info)
+            else:
+                your_tournament_list.append(tournament_info)
+        elif len(tournament.players) < tournament.number_of_players:
+            available_tournament_list.append(tournament_info)
+
+    response_data = {
+        'available': available_tournament_list,
+        'your': your_tournament_list,
+        'your_finished': your_finished_tournament_list,
+    }
+
+    return JsonResponse(response_data)
 
 @csrf_exempt
 def create_tournament(request):
@@ -127,18 +143,23 @@ def create_tournament(request):
         data = json.loads(request.body)
         number_of_players = data.get('number_of_players')
         tournament = Tournament.objects.create(number_of_players=number_of_players)
-        tournament.players.add(request.user)
+        tournament.players.append(request.user.username)
+        tournament.save()
         return JsonResponse({'id': tournament.id})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @csrf_exempt
 def join_tournament(request, tournament_id):
     tournament = get_object_or_404(Tournament, id=tournament_id)
-    if (tournament.players.count() >= tournament.number_of_players):
-        return JsonResponse({'error': 'Too many players have aleady joined the game'})
-    tournament.players.add(request.user)
-    print(f'Added {request.user.username} to tounament')
-    if (tournament.players.count() == tournament.number_of_players):
+    if len(tournament.players) >= tournament.number_of_players:
+        return JsonResponse({'error': 'Too many players have already joined the game'})
+    
+    # Add the username to the players list
+    tournament.players.append(request.user.username)
+    tournament.save()  # Save the tournament after adding the player
+
+    print(f'Added {request.user.username} to tournament')
+    if len(tournament.players) == tournament.number_of_players:
         tournament.start()
     return JsonResponse({'success': True})
 
@@ -155,14 +176,30 @@ def tournament_game_switch_player_status(request, tournament_id, game_id):
     upcoming_game = tournament.get_upcoming_game(game_id)
 
     if upcoming_game:
-        player_status = upcoming_game.get('PlayerStatus', [])
+        player_status = upcoming_game.get('Players_joined', [])
         if request.user.username in player_status:
             player_status.remove(request.user.username)
         else:
             player_status.append(request.user.username)
         
-        upcoming_game['PlayerStatus'] = player_status
+        upcoming_game['Players_joined'] = player_status
         tournament.save()
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'error': 'Game not found'}, status=404)
+    
+@csrf_exempt
+def tournament_game_status(request, tournament_id, game_id):
+    tournament: Tournament = get_object_or_404(Tournament, id=tournament_id)
+    upcoming_game = tournament.get_upcoming_game(game_id)
+    
+    if not upcoming_game:
+        return JsonResponse({'error': 'Game not found'}, status=404)
+    
+    print(f'Player joined len = {len(upcoming_game["Players_joined"])}')
+    if len(upcoming_game['Players_joined']) == 2:
+        return JsonResponse({'ready': True})
+    else:
+        return JsonResponse({'ready': False})
+
+

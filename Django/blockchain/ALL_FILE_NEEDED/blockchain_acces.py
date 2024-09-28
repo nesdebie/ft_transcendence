@@ -92,6 +92,7 @@ def Game_history(game):
             return None
         
         # Filtrer les matchs dans lesquels le joueur a participé et qui correspondent au jeu spécifié
+        print('All Matches: ', all_matches)
         matches = []
         for match in all_matches:
             try:
@@ -100,6 +101,7 @@ def Game_history(game):
             except Exception as e:
                 print(f"Erreur lors du filtrage des matchs pour le jeu {game} : {e}")
                 return None
+        print('found matches');
         return matches
     
     except Exception as e:

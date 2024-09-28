@@ -25,39 +25,77 @@ export function createTournament() {
 }
 
 export function loadTournaments() {
-    fetch('/api/pong/tournaments/')
+    fetch('/api/pong/tournaments_lists/')
     .then(response => response.json())
     .then(data => {
-        const tournamentList = document.getElementById('tournament-list');
-        const currentUser = tournamentList.getAttribute('data-currentUser');
-        tournamentList.innerHTML = ''; // Clear existing list
-        if (data.length == 0) {
-            console.log('No Tournaments; data = ', data);
-            tournamentList.innerHTML = 'No available Tournaments';
+        console.log('tournament list: ', data);  
+        const yourTournamentList = document.getElementById('your-tournament-list');
+        const availableTournamentList = document.getElementById('available-tournament-list');
+        const finishedTournamentList = document.getElementById('finished-tournament-list');
+
+        const yourTournamentsTitle = document.getElementById('your-tournaments-title');
+        const availableTournamentsTitle = document.getElementById('available-tournaments-title');
+        const finishedTournamentsTitle = document.getElementById('finished-tournaments-title');
+
+        // Clear existing lists
+        yourTournamentList.innerHTML = '';
+        availableTournamentList.innerHTML = '';
+        finishedTournamentList.innerHTML = '';
+
+        // Populate Your Tournaments
+        if (data.your.length === 0) {
+            yourTournamentsTitle.style.display = 'none';
         } else {
-            data.forEach(tournament => {
+            yourTournamentsTitle.style.display = 'block';
+            data.your.forEach(tournament => {
                 const listItem = document.createElement('li');
                 listItem.textContent = `Tournament ID: ${tournament.id}, Players: ${tournament.players.length}/${tournament.number_of_players}`;
+                
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View Tournament';
+                viewButton.onclick = () => redirectToRoute(`/waiting_joining_tournament/${tournament.id}/`);
+                listItem.appendChild(viewButton);
+                
+                yourTournamentList.appendChild(listItem);
+            });
+        }
 
-                // Check if the player has joined the tournament
-                console.log('Tournament: ', tournament);
-                console.log('currentUser: ', currentUser);
-                if (tournament.players.includes(currentUser)) {
-                    const viewButton = document.createElement('button');
-                    viewButton.textContent = 'View Tournament';
-                    viewButton.onclick = () => redirectToRoute(`/waiting_joining_tournament/${tournament.id}/`);
-                    listItem.appendChild(viewButton);
-                } else if (tournament.players.length < tournament.number_of_players) {
-                    const joinButton = document.createElement('button');
-                    joinButton.textContent = 'Join Tournament';
-                    joinButton.onclick = () => {
-                        // Logic to join the tournament
-                        joinTournament(tournament.id);
-                    };
-                    listItem.appendChild(joinButton);
-                }
+        // Populate Available Tournaments
+        if (data.available.length === 0) {
+            availableTournamentsTitle.style.display = 'none';
+        } else {
+            availableTournamentsTitle.style.display = 'block';
+            data.available.forEach(tournament => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Tournament ID: ${tournament.id}, Players: ${tournament.players.length}/${tournament.number_of_players}`;
+                
+                const joinButton = document.createElement('button');
+                joinButton.textContent = 'Join Tournament';
+                joinButton.onclick = () => {
+                    // Logic to join the tournament
+                    joinTournament(tournament.id);
+                };
+                listItem.appendChild(joinButton);
+                
+                availableTournamentList.appendChild(listItem);
+            });
+        }
 
-                tournamentList.appendChild(listItem);
+        // Populate Finished Tournaments
+        if (data.your_finished.length === 0) {
+            finishedTournamentsTitle.style.display = 'none';
+        } else {
+            finishedTournamentsTitle.style.display = 'block';
+            data.your_finished.forEach(tournament => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Tournament ID: ${tournament.id}, Players: ${tournament.players.length}/${tournament.number_of_players}`;
+                
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View Tournament';
+                viewButton.onclick = () => redirectToRoute(`/waiting_joining_tournament/${tournament.id}/`);
+                listItem.appendChild(viewButton);
+                
+                finishedTournamentList.appendChild(listItem);
             });
         }
     });
@@ -89,6 +127,7 @@ export function populateTournamentPage() {
     
     // Parse the data-tournament attribute
     const data = JSON.parse(document.getElementById('participants-table').getAttribute('data-tournament'));
+    console.log('Tournament data received: ', data);
 
     // Clear existing content
     Players_score_List.innerHTML = '';
@@ -105,7 +144,45 @@ export function populateTournamentPage() {
     // Populate game history
     data.game_history.forEach(game => {
         const listItem = document.createElement('li');
-        listItem.textContent = game;
+    
+        // Extract values from the game array
+        const player1 = game[1]; // game[1]
+        const player2 = game[2]; // game[2]
+        const score = game[3]; // game[3]
+        const winner = game[4]; // game[4]
+    
+        // Create a span for player1
+        const player1Span = document.createElement('span');
+        player1Span.textContent = player1;
+    
+        // Create a span for player2
+        const player2Span = document.createElement('span');
+        player2Span.textContent = player2;
+    
+        // Apply color based on currentUser and whether they won
+        if (player1 === currentUser) {
+            if (winner === currentUser) {
+                player1Span.style.color = 'green'; // Player1 won
+            } else {
+                player1Span.style.color = 'red'; // Player1 lost
+            }
+        } else if (player2 === currentUser) {
+            if (winner === currentUser) {
+                player2Span.style.color = 'green'; // Player2 won
+            } else {
+                player2Span.style.color = 'red'; // Player2 lost
+            }
+        }
+    
+        // Create a text node for the score
+        const scoreText = document.createTextNode(` ${score} `);
+    
+        // Append player1Span, scoreText, and player2Span to the list item
+        listItem.appendChild(player1Span);
+        listItem.appendChild(scoreText);
+        listItem.appendChild(player2Span);
+        
+        // Append the list item to the game history
         gameHistory.appendChild(listItem);
     });
 
@@ -138,23 +215,24 @@ export function join_tournament_game(username, tournamentGameData) {
     fetch(`/api/pong/tournament/${tournamentId}/game_info/${gameId}/switch_player_status`) //add player to join list of the game
         .catch(error => console.error('Error in changing player status in game:', error));
 
-    redirectToRoute(`/waiting_joining_game/${tournamentId}/${gameId}`);
+    redirectToRoute(`/waiting_tournament_game/${tournamentId}/${gameId}`);
     // Add the user to the player_joined list
 }
 
 export function checkTournamentGameStatus() {
-    const tournamentGameData    = document.getElementById('waiting-status').getAttribute('data-tournament-game');;
-    const currentUser           = document.getElementById().getAttribute('data-currentUser');
+    const tournamentGameData    = JSON.parse(document.getElementById('waiting-status').getAttribute('data-tournament-game'));
+    console.log('tournamentGameData: ', tournamentGameData);
 
     const tournamentId          = tournamentGameData.tournament_id;
     const gameId                = tournamentGameData.game_id; // Assuming game_id is part of tournamentGameData
 
-    fetch(`/api/pong/tournament/${tournamentId}/${gameId}/`)
+
+    fetch(`/api/pong/tournament/${tournamentId}/${gameId}/status/`)
         .then(response => response.json())
         .then(data => {
             console.log('waiting for other player: ',data);
             if (data.ready) {
-                redirectToRoute(`/pong/${tournamentId}_${gameId}/`)
+                redirectToRoute(`/pong/tournament/${tournamentId}/game/${gameId}/`)
             } else {
                 setTimeout(() => {
                     if (window.location.pathname.startsWith('/waiting_tournament_game')) {
@@ -192,5 +270,4 @@ export function checkTournamentStatus() {
             console.error('Error checking tournament status:', error);
         });
 }
-
 
