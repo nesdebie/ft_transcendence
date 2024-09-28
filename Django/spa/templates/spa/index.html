@@ -147,6 +147,11 @@
                     script.src = "{% static 'spa/js/shifumi_pve.js' %}";
                     document.head.appendChild(script);
                   }
+                  else if (document.getElementById('pong-local-game')) {
+                    const script = document.createElement('script');
+                    script.src = "{% static 'spa/js/pong_local.js' %}";
+                    document.head.appendChild(script);                  
+                  }
                 }
               }
             });              

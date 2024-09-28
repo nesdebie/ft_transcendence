@@ -1,6 +1,11 @@
 <div class="page-container align-center">
     <h1>Pong Lobby</h1>
-    <div id="lobby-status">Waiting for players...</div>
-    <button id="matchmaking-btn" class="btn btn-dark">Find a Match</button>
-    <div id="match-status" style="display: none;"></div>
+    <div class="pong-options">
+        <a href="/pong_local" onclick="route(event)">Play local</a>
+    </div>
+    <div class="pong-options">
+        <div id="lobby-status">Waiting for players...</div>
+        <button id="matchmaking-btn" class="btn btn-dark">Find a Match</button>
+        <div id="match-status" style="display: none;"></div>
+    </div>
 </div>
