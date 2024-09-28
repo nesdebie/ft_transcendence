@@ -23,6 +23,10 @@
 
 	<!-- If not already blocked, block user -->
 	{% if not is_own_profile %}
+	<div id="game-stats">
+		<h4>[PONG] Wins: {{ pong_wins }} - Losses: {{ pong_losses }}</h4>
+		<h4>[SHIFUMI] Wins: {{ shifumi_wins }} - Losses: {{ shifumi_losses }} - Draws : {{ shifumi_draws }}</h4>
+	</div>
 		<!-- Display friend request buttons if viewing another user's profile -->
 		{% if not friendship and not request_pending and not blocked %}
 			{% csrf_token %}
@@ -54,6 +58,10 @@
 		{% endif %}
 	<!-- If own_profile -->
 	{% else %}
+		<div id="game-stats">
+			<h4>[PONG] Wins: {{ pong_wins }} - Losses: {{ pong_losses }}</h4>
+			<h4>[SHIFUMI] Wins: {{ shifumi_wins }} - Losses: {{ shifumi_losses }} - Draws : {{ shifumi_draws }}</h4>
+		</div>
 		<!-- <h3>Find a User</h3> -->
 		<form id="find-user-form">
 			{% csrf_token %}
@@ -111,11 +119,6 @@
 			</ul>
 		{% endif %}
 	{% endif %}
-	<div id="pong-stats">
-		<h3>Pong Game Statistics</h3>
-		<p>Wins: {{ pong_wins }}</p>
-		<p>Losses: {{ pong_losses }}</p>
-	</div>
 </div>
 
 

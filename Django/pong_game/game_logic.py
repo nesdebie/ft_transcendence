@@ -73,6 +73,7 @@ class PongGameLogic:
         )
 
     async def __finish_game(self, consumer):
+        print(f"Scores at the end of the game: {self.scores}")  # Debug print to check scores
         await consumer.channel_layer.group_send(
             consumer.room_group_name,
             {

@@ -5,41 +5,41 @@ from web3 import Web3
 import hashlib
 import random
 
-def Add_game_history(scores, game, timestmp):
-	
-	players = list(scores.keys())
+def Add_game_history(scores, game, timestamp):
+    players = list(scores.keys())
 
-	if (len(players) != 2):
-		return "Error"
-	player_1, player_2 = players[0], players[1]
-	score_1, score_2 = scores[player_1], scores[player_2]
+    if len(players) != 2:
+        return "Error: There must be exactly two players."
 
-	# gen match id 
+    player_1, player_2 = players[0], players[1]
+    score_1, score_2 = scores[player_1], scores[player_2]
 
-    # Déterminer le gagnant et le perdant
-	if score_1 > score_2:
-		winner = player_1
-		loser = player_2
-	elif score_2 > score_1:
-		winner = player_2
-		loser = player_1
-	else:
-		winner = "Draw"
-		loser = "Draw"
-	
-	random_id = random.randint(1000, 99999)
-	match_id = f"winner_{winner}_loser_{loser}_game_{game}_id_{random_id}"
+    # Determine the winner and loser
+    if score_1 > score_2:
+        winner = player_1
+        loser = player_2
+    elif score_2 > score_1:
+        winner = player_2
+        loser = player_1
+    else:
+        winner = "Draw"
+        loser = "Draw"
+
+    # Generate a match ID
+    random_id = random.randint(1000, 99999)
+    match_id = f"winner_{winner}_loser_{loser}_game_{game}_id_{random_id}"
 
     # Debug: Print the generated match ID
-	print(f"Generated Match ID: {match_id}")
+    print(f"Generated Match ID: {match_id}")
 
-	# match id, gen match id 
-	set_match_data(match_id, player_1, player_2, f"{score_1}-{score_2}", winner)
+    # Store match data
+    set_match_data(match_id, player_1, player_2, f"{score_1}-{score_2}", winner)
 
-	return "succes"
+    return "success"
 
 def Player_stat(player, game):
     try:
+        print("Player_stat called")
         # Initialiser la connexion au contrat
         web3, contract = initialize_web3_and_contract()
         if not web3.is_connected():  # Utilisation correcte de is_connected()

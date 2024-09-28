@@ -312,7 +312,7 @@ document.body.addEventListener('click', async function(event) {
                     }
                 } else {
                     console.log("User does not exist.");
-                    await redirectToRoute('/404')
+                    await redirectToRoute('/login')
                 }
             } else {
                 //console.error('Error checking authentication:', response.statusText);

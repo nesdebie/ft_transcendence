@@ -36,8 +36,14 @@ def view_self_profile(request):
 
     # Fetch Pong game statistics for the logged-in user
     pong_stats = Player_stat(user.username, 'pong')
-    wins = len([match for match in pong_stats if match[4] == user.username])
-    losses = len([match for match in pong_stats if (match[1] == user.username or match[2] == user.username) and match[4] != user.username])
+    p_wins = len([match for match in pong_stats if match[4] == user.username])
+    p_losses = len([match for match in pong_stats if (match[1] == user.username or match[2] == user.username) and match[4] != user.username])
+
+    # Fetch Shifumi game statistics for the logged-in user
+    shifumi_stats = Player_stat(user.username, 'shifumi')
+    s_wins = len([match for match in shifumi_stats if match[4] == user.username])
+    s_losses = len([match for match in shifumi_stats if (match[1] == user.username or match[2] == user.username) and match[4] != user.username and match[4] != "Draw"])  # Exclude draws from losses
+    s_draws = len([match for match in shifumi_stats if match[4] == "Draw"])
 
     context = {
         'user_profile': user,
@@ -48,8 +54,11 @@ def view_self_profile(request):
         'received_requests': received_requests,
         'friends': friends,
         'blocked_users': blocked_users,
-        'pong_wins': wins,
-        'pong_losses': losses
+        'pong_wins': p_wins,
+        'pong_losses': p_losses,
+        'shifumi_wins': s_wins,
+        'shifumi_losses': s_losses,
+        'shifumi_draws': s_draws
     }
     
     return render(request, 'spa/pages/profile.html', context)
@@ -70,6 +79,12 @@ def view_profile(request, username):
     wins = len([match for match in pong_stats if match[3] == username])
     losses = len(pong_stats) - wins
 
+    # Fetch Shifumi game statistics for the user profile
+    shifumi_stats = Player_stat(username, 'shifumi')
+    s_wins = len([match for match in shifumi_stats if match[4] == username])
+    s_losses = len([match for match in shifumi_stats if (match[1] == username or match[2] == username) and match[4] != username and match[4] != "Draw"])  # Exclude draws from losses
+    s_draws = len([match for match in shifumi_stats if match[4] == "Draw"])
+
     context = {
         'user_profile': user_profile,
         'is_own_profile': user == user_profile,
@@ -80,7 +95,10 @@ def view_profile(request, username):
         'friends': None,
         'blocked_users': blocked_users,  # Add blocked users to the context
         'pong_wins': wins,
-        'pong_losses': losses
+        'pong_losses': losses,
+        'shifumi_wins': s_wins,
+        'shifumi_losses': s_losses,
+        'shifumi_draws': s_draws
     }
     return render(request, 'spa/pages/profile.html', context)
 
