@@ -151,16 +151,19 @@ def waiting_tournament_game(request: HttpRequest, tournament_id, game_id):
 
 def tournament_page(request, tournament_id):
     from pong_game.models import Tournament
+    from users.models import Player
     tournament = get_object_or_404(Tournament, id=tournament_id)
     
     players_availability = {
-        player.username: player.is_available() for player in tournament.players.all()
+        player: Player.object.get(username=player).is_available() for player in tournament.players
         }
 
     context = {
-        'scores'        : tournament.scores,
-        'upcoming_games': tournament.get_upcoming_games(),
-        'game_history'  : tournament.get_game_history(),
-        'playerStatus'  : players_availability
+        'scores'            :   tournament.scores,
+        'upcoming_games'    :   tournament.get_upcoming_games(),
+        'game_history'      :   tournament.get_game_history(),
+        'final_position'    :   tournament.final_position,
+        'is_finished'       :   tournament.is_finished,
+        'playerStatus'      :   players_availability
     }
     return render(request, 'spa/pages/tournament.html',context={'tournament_data': json.dumps(context)});

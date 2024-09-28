@@ -76,6 +76,8 @@ class Tournament(models.Model):
                     'game_id': id
                 })
 
+        self.final_position = [[]] * self.number_of_players
+
         self.save()
         print('Tournament upcoming games initialized: ', self.upcoming_games)
 
@@ -124,5 +126,16 @@ class Tournament(models.Model):
             for j in range(i + 1, len(sorted_players)):
                 if sorted_players[i][1] > sorted_players[j][1]:
                     Add_game_history({sorted_players[i][0]: self.number_of_players - 1 - i, sorted_players[j][0]: self.number_of_players - 1 - j}, f'Tournament Result: {self.id}')
+        self.__calculate_finish_positions(sorted_players)
         self.save()
+    
+    def __calculate_finish_positions(self, sorted_players):
+
+        for i in range(self.number_of_players):
+            if i < self.number_of_players - 2 and sorted_players[i][1] == sorted_players[i + 1][1] == sorted_players[i + 2][1]: #more than 2 player with the same score
+                self.final_position[i + 2] = list(sorted_players[i + j][0] for j in range(3))
+                i += 2
+            else:
+                self.final_position[i] = list(sorted_players[i][0])
+
 

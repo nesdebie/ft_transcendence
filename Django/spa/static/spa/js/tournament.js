@@ -123,6 +123,7 @@ export function populateTournamentPage() {
     const Players_score_List = document.getElementById('Players_score-list');
     const gameHistory = document.getElementById('game-history');
     const upcomingGames = document.getElementById('upcoming-games');
+    const final_positions = document.getElementById('final_positions');
     const currentUser = Players_score_List.getAttribute('data-currentUser');
     
     // Parse the data-tournament attribute
@@ -142,67 +143,116 @@ export function populateTournamentPage() {
     });
 
     // Populate game history
-    data.game_history.forEach(game => {
-        const listItem = document.createElement('li');
-    
-        // Extract values from the game array
-        const player1 = game[1]; // game[1]
-        const player2 = game[2]; // game[2]
-        const score = game[3]; // game[3]
-        const winner = game[4]; // game[4]
-    
-        // Create a span for player1
-        const player1Span = document.createElement('span');
-        player1Span.textContent = player1;
-    
-        // Create a span for player2
-        const player2Span = document.createElement('span');
-        player2Span.textContent = player2;
-    
-        // Apply color based on currentUser and whether they won
-        if (player1 === currentUser) {
-            if (winner === currentUser) {
-                player1Span.style.color = 'green'; // Player1 won
-            } else {
-                player1Span.style.color = 'red'; // Player1 lost
-            }
-        } else if (player2 === currentUser) {
-            if (winner === currentUser) {
-                player2Span.style.color = 'green'; // Player2 won
-            } else {
-                player2Span.style.color = 'red'; // Player2 lost
-            }
-        }
-    
-        // Create a text node for the score
-        const scoreText = document.createTextNode(` ${score} `);
-    
-        // Append player1Span, scoreText, and player2Span to the list item
-        listItem.appendChild(player1Span);
-        listItem.appendChild(scoreText);
-        listItem.appendChild(player2Span);
-        
-        // Append the list item to the game history
-        gameHistory.appendChild(listItem);
-    });
+    if (data.game_history.length > 0) {
+        const gameHistoryTitle = document.createElement('h2');
+        gameHistoryTitle.textContent = 'Game History';
+        gameHistory.appendChild(gameHistoryTitle);
 
-    // Populate upcoming games with dynamic button text
-    data.upcoming_games.forEach(game => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `Game: ${game.players[0]} VS ${game.players[1]} `;
-        console.log('Game: ',game);
+        data.game_history.forEach(game => {
+            const listItem = document.createElement('li');
+            const player1 = game[1]; // game[1]
+            const player2 = game[2]; // game[2]
+            const score = game[3]; // game[3]
+            const winner = game[4]; // game[4]
 
-        if (game.players.includes(currentUser)) {
-            if (game.Players_joined.length > 0) {
-                listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Join Game !</button>`;
-            } else if (data.playerStatus[game.players.find(player => player !== currentUser)] == false) {
-                listItem.innerHTML += `<span>Waiting for other player to be available...</span>`;
-            } else {
-                listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Create Game</button>`;
+            const player1Span = document.createElement('span');
+            player1Span.textContent = player1;
+
+            const player2Span = document.createElement('span');
+            player2Span.textContent = player2;
+
+            if (player1 === currentUser) {
+                player1Span.style.color = winner === currentUser ? 'green' : 'red';
+            } else if (player2 === currentUser) {
+                player2Span.style.color = winner === currentUser ? 'green' : 'red';
             }
-        }
-        upcomingGames.appendChild(listItem);
-    });
+
+            const scoreText = document.createTextNode(` ${score} `);
+            listItem.appendChild(player1Span);
+            listItem.appendChild(scoreText);
+            listItem.appendChild(player2Span);
+            gameHistory.appendChild(listItem);
+        });
+    }
+
+    // Populate upcoming games
+    if (data.upcoming_games.length > 0) {
+        const upcomingGamesTitle = document.createElement('h2');
+        upcomingGamesTitle.textContent = 'Upcoming Games';
+        upcomingGames.appendChild(upcomingGamesTitle);
+
+        data.upcoming_games.forEach(game => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `Game: ${game.players[0]} VS ${game.players[1]} `;
+            console.log('Game: ', game);
+
+            if (game.players.includes(currentUser)) {
+                if (game.Players_joined.length > 0) {
+                    listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Join Game!</button>`;
+                } else if (data.playerStatus[game.players.find(player => player !== currentUser)] == false) {
+                    listItem.innerHTML += `<span>Waiting for other player to be available...</span>`;
+                } else {
+                    listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Create Game</button>`;
+                }
+            }
+            upcomingGames.appendChild(listItem);
+        });
+    }
+    
+    if (data.is_finished) {
+        const final_positionsTitle = document.createElement('h2');
+        final_positionsTitle.textContent = 'Final Positions!';
+        final_positions.appendChild(final_positionsTitle);
+    
+        data.final_positions.forEach((position, index) => {
+            if (position.length > 0) {
+                let rank;
+                if (index === 0) {
+                    rank = '1st';
+                } else if (index === 1) {
+                    rank = '2nd';
+                } else if (index === 2) {
+                    rank = '3rd';
+                } else {
+                    rank = `${index + 1}th`;
+                }
+    
+                const rankSpan = document.createElement('span');
+                rankSpan.textContent = rank;
+                if (index === 0) {
+                    rankSpan.style.color = 'gold';
+                } else if (index === 1) {
+                    rankSpan.style.color = 'silver';
+                } else {
+                    rankSpan.style.color = 'bronze';
+                }
+    
+                const listItem = document.createElement('li');
+                listItem.appendChild(rankSpan);
+    
+                // Create a span for the names
+                position.forEach((name, idx) => {
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = name;
+    
+                    // Check if the current user is in this position
+                    const currentUser = Players_score_List.getAttribute('data-currentUser');
+                    if (name === currentUser) {
+                        // Color the current user's name
+                        nameSpan.style.color = index < Math.ceil(data.final_positions.length / 2) ? 'green' : 'red';
+                    }
+    
+                    // Append the name span to the list item
+                    listItem.appendChild(nameSpan);
+                    if (idx < position.length - 1) {
+                        listItem.appendChild(document.createTextNode(', ')); // Add a comma between names
+                    }
+                });
+    
+                final_positions.appendChild(listItem);
+            }
+        });
+    }
 }
 
 export function join_tournament_game(username, tournamentGameData) {
