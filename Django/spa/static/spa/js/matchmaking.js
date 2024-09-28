@@ -32,10 +32,16 @@ function startMatchmaking() {
 		const lobbyStatus = document.getElementById('lobby-status');
 		const matchStatus = document.getElementById('match-status');
 		const matchmakingBtn = document.getElementById('matchmaking-btn');
-		lobbyStatus.style.display = 'none';
-		matchmakingBtn.style.display = 'none';
-		matchStatus.textContent = 'Match found! Starting game...';
-		matchStatus.style.display = 'block';
+		if (lobbyStatus) {
+			lobbyStatus.style.display = 'none';
+		}
+		if (matchmakingBtn) {
+			matchmakingBtn.style.display = 'none';
+		}
+		if (matchStatus) {
+			matchStatus.textContent = 'Match found! Starting game...';
+			matchStatus.style.display = 'block';
+		}
 		redirectToRoute(`/pong/${room_name}`);
 }
 

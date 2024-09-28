@@ -22,7 +22,7 @@ const route = (event, url = null) => {
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/404', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby'], suffix: '.html' },
+    { paths: ['/404', '/logout', '/register', '/login', '/shifumi_pve', '/pong_local', '/pong_lobby'], suffix: '.html' },
     { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor'], suffix: '' }
 ];
 
@@ -70,7 +70,7 @@ function call_page_functions(path) {
     if (document.body.classList.contains("cyberpunk")) {
         applyNightCityMode();
     }
-    if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
+    if (path.startsWith('/shifumi/') && path !== '/shifumi/') {
         const roomName = path.split('/')[2];
         initShifumi(roomName);
     }
