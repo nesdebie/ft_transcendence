@@ -456,7 +456,7 @@ def find_user(request):
 	if request.method == 'POST':
 		username	= request.POST.get('username')
 		if username == request.user.username:
-			return JsonResponse({'status': 'success'})
+			return JsonResponse({'errors': {'find-user': 'User try to find himself/herself'}}, status=404)
 		try:
 			user = Player.object.get(username=username)
 			if (user.has_blocked(player=request.user)):

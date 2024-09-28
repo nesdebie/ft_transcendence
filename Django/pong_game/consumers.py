@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .game_logic import PongGameLogic
 from blockchain.ALL_FILE_NEEDED.asked_functions import Add_game_history
+import datetime
 
 class PongConsumer(AsyncWebsocketConsumer):
     rooms = {}
@@ -112,12 +113,17 @@ class PongConsumer(AsyncWebsocketConsumer):
             'type': 'game_over',
             'game_state': game_state
         }))
+        
         if self.room_name in self.rooms:
             room = self.rooms[self.room_name]
-            scores = room['scores']
-            # Assuming the game object holds the necessary game identifier or name
-            game = 'pong'  # Example game name
-            Add_game_history(scores, game, None)  # Timestamp is None for simplicity
+            game = room['game']
+            scores = game.scores
+            print(f"Final scores before saving: {scores}")
+            
+            if scores:
+                game_name = 'pong'
+                timestamp = datetime.datetime.now().isoformat()
+                result = Add_game_history(scores, game_name, timestamp)
             self.rooms.pop(self.room_name)
 
 
