@@ -15,7 +15,7 @@ class PongGameLogic:
         self.init_ball_speed = 10
         self.ball_speed = self.init_ball_speed
         self.ball_speed_increase = 1
-        self.max_score = 1
+        self.max_score = 11
 
         self.players_usernames = [] #gives order of users
         self.paddles = {} # Player_username : {y : position }
@@ -87,7 +87,7 @@ class PongGameLogic:
         if (self.is_tournament):
             await self.__add_tournament_game()
         else:
-            Add_game_history(self.scores, 'Pong')
+            Add_game_history(self.scores, 'pong')
             
         print('before sending message through websocket');
         await consumer.channel_layer.group_send(
