@@ -219,6 +219,7 @@ export function populateTournamentPage() {
     
                 const rankSpan = document.createElement('span');
                 rankSpan.textContent = rank;
+                rankSpan.style.fontSize = '1.5em'; // Make the rank text larger
                 if (index === 0) {
                     rankSpan.style.color = 'gold';
                 } else if (index === 1) {
@@ -229,6 +230,7 @@ export function populateTournamentPage() {
     
                 const listItem = document.createElement('li');
                 listItem.appendChild(rankSpan);
+                listItem.appendChild(document.createTextNode(' - ')); // Add " - " after the rank
     
                 // Create a span for the names
                 position.forEach((name, idx) => {

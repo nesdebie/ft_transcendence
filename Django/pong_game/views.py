@@ -26,7 +26,6 @@ def start_matchmaking(request):
             other_matchmaking.save()
             
             matchmaking.delete()
-            print(f'Matchmaking roomname {other_matchmaking.room_name}')
             return JsonResponse({'status': 'matched', 'room_name': other_matchmaking.room_name})
         
         return JsonResponse({'status': 'waiting', 'matchmaking_id': str(matchmaking.id)})
@@ -40,7 +39,6 @@ def check_matchmaking(request, matchmaking_id):
     if matchmaking.matched:
         room_name = matchmaking.room_name
         matchmaking.delete()
-        print(f'Matchmaking join room name: {room_name}')
         return JsonResponse({'status': 'matched', 'room_name': room_name})
     
     return JsonResponse({'status': 'waiting'})
@@ -158,7 +156,6 @@ def join_tournament(request, tournament_id):
     tournament.players.append(request.user.username)
     tournament.save()  # Save the tournament after adding the player
 
-    print(f'Added {request.user.username} to tournament')
     if len(tournament.players) == tournament.number_of_players:
         tournament.start()
     return JsonResponse({'success': True})
@@ -196,7 +193,6 @@ def tournament_game_status(request, tournament_id, game_id):
     if not upcoming_game:
         return JsonResponse({'error': 'Game not found'}, status=404)
     
-    print(f'Player joined len = {len(upcoming_game["Players_joined"])}')
     if len(upcoming_game['Players_joined']) == 2:
         return JsonResponse({'ready': True})
     else:

@@ -50,7 +50,6 @@ def view_profile(request, username):
         'received_requests': None,
         'friends': None,
     }
-    print(context)
     return render(request, 'spa/pages/profile.html', context)
 
 @login_required
@@ -162,7 +161,7 @@ def tournament_page(request, tournament_id):
         'scores'            :   tournament.scores,
         'upcoming_games'    :   tournament.get_upcoming_games(),
         'game_history'      :   tournament.get_game_history(),
-        'final_position'    :   tournament.final_position,
+        'final_positions'    :   tournament.final_position,
         'is_finished'       :   tournament.is_finished,
         'playerStatus'      :   players_availability
     }

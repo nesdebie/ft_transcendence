@@ -79,7 +79,6 @@ class Tournament(models.Model):
         self.final_position = [[]] * self.number_of_players
 
         self.save()
-        print('Tournament upcoming games initialized: ', self.upcoming_games)
 
     def add_game(self, scores:dict):
         Add_game_history(scores, f'Tournament Match: {self.id}'); # add the match to the blockchain
@@ -114,7 +113,7 @@ class Tournament(models.Model):
         for this tournament againt the other player with the same score so they will not lose nor win points 
         """
         self.is_finished = True
-        sorted_players = sorted(self.scores.items(), key=lambda item: item[1], reverse=True) 
+        sorted_players = sorted(self.scores.items(), key=lambda item: item[1], reverse=True)
         # Look up if players have the exact same score then put the one who won the game between the 2 at the top
         for i in range(len(sorted_players) - 1):
             if (sorted_players[i][1] == sorted_players[i + 1][1]): #if there is an equality
@@ -133,9 +132,9 @@ class Tournament(models.Model):
 
         for i in range(self.number_of_players):
             if i < self.number_of_players - 2 and sorted_players[i][1] == sorted_players[i + 1][1] == sorted_players[i + 2][1]: #more than 2 player with the same score
-                self.final_position[i + 2] = list(sorted_players[i + j][0] for j in range(3))
+                self.final_position[i + 2] = [sorted_players[i + j][0] for j in range(3)]
                 i += 2
             else:
-                self.final_position[i] = list(sorted_players[i][0])
-
+                self.final_position[i] = [sorted_players[i][0]]
+        
 
