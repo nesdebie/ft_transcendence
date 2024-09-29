@@ -5,7 +5,24 @@
     </div>
     <div class="pong-options">
         <div id="lobby-status">Waiting for players...</div>
-        <button id="matchmaking-btn" class="btn btn-dark">Find a Match</button>
+        <button id="matchmaking-btn" class="btn btn-primary">Find a Match</button>
         <div id="match-status" style="display: none;"></div>
+    
+        <h2 id="your-tournaments-title">Your tournaments</h2>
+        <ul id="your-tournament-list" data-currentUser="{{ request.user }}">
+            <!-- Tournament list will be populated here -->
+        </ul>
+        
+        <h2 id="available-tournaments-title">Available Tournaments</h2>
+        <ul id="available-tournament-list">
+            <!-- Tournament list will be populated here -->
+        </ul>
+        
+        <button id="create-tournament-btn" class="btn btn-secondary">Create Tournament</button>
+        
+        <h2 id="finished-tournaments-title">Your finished tournaments</h2>
+        <ul id="finished-tournament-list">
+            <!-- Tournament list will be populated here -->
+        </ul>
     </div>
 </div>

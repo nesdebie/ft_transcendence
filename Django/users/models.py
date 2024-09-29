@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
-from blockchain.ALL_FILE_NEEDED.get_match_data import get_match_data
-from blockchain.ALL_FILE_NEEDED.set_match_data import set_match_data
 
 
 class MyAccountManager(BaseUserManager):
@@ -41,6 +39,7 @@ class Player(AbstractUser):
 	two_factor_enabled 	= models.BooleanField(default=False)  # Ajout de l'attribut two_factor_enabled
 
 	active_shifumi_game = models.CharField(max_length=100, null=True, blank=True)
+	in_pong_game		= models.BooleanField(default=False)
 
 	friends 			= models.ManyToManyField('self', through='Friendship', symmetrical=False, related_name='related_friends')
 	friend_requests 	= models.ManyToManyField('self', through='FriendRequest', symmetrical=False, related_name='related_friend_requests')
@@ -104,6 +103,9 @@ class Player(AbstractUser):
 	def clear_active_shifumi_game(self):
 		self.active_shifumi_game = None
 		self.save()
+	
+	def is_available(self) -> bool:
+		return self.is_authenticated and not self.active_shifumi_game and not self.in_pong_game
 
 	def __str__(self):
 		return self.username
@@ -138,12 +140,6 @@ class Block(models.Model):
 	
 	def __str__(self):
 		return f"{self.from_user.username} blocked {self.to_user.username}"
-
-class OnlineStatus(models.Model):
-	user = models.OneToOneField(Player, on_delete=models.CASCADE)
-	is_online = models.BooleanField(default=False)
-	last_seen = models.DateTimeField(default=timezone.now)
-
 
 class Message(models.Model):
     sender = models.ForeignKey(Player, related_name='sent_messages', on_delete=models.CASCADE)

@@ -1,25 +1,15 @@
-import logging
 from django.shortcuts import render, get_object_or_404
 from users.models import Player, FriendRequest, Block, Message
 from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from users.models import Player, FriendRequest, Block
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.http import JsonResponse
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-import os
-from PIL import Image
-import logging
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import update_session_auth_hash
 from django.core.exceptions import ObjectDoesNotExist
 from blockchain.ALL_FILE_NEEDED.blockchain_access import Player_stat
-
-logger = logging.getLogger(__name__)
+from django.http import HttpRequest
+import json
 
 def index(request):
     return render(request, 'spa/index.html')
@@ -170,4 +160,51 @@ def profile_editor(request):
     })
 
 def pong_game(request, room_name):
-    return render(request, 'spa/pages/pong.html', {'room_name': room_name})
+    return render(request, 'spa/pages/pong.html', {'room_name': room_name, 'tournament': False})
+
+def touranement_pong_game(request, tournament_id, game_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    game = next(game for game in tournament.upcoming_games if game['game_id'] == game_id);
+    context = {
+        'room_name': f'{tournament_id}_{game_id}',
+        'tournament': True,
+        'game': json.dumps(game),
+    }
+    
+    return render(request, 'spa/pages/pong.html', context)
+
+def waiting_tournament_page(request, tournament_id):
+    return render(request, 'spa/pages/waiting_joining_tournament.html', {'tournament_id': tournament_id})
+
+def waiting_tournament_game(request: HttpRequest, tournament_id, game_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    game = next(game for game in tournament.upcoming_games if game['game_id'] == game_id);
+    otherUser : Player = get_object_or_404(Player, username=next(player for player in game['players'] if player != request.user.username))
+
+    context = {
+        'tournamentGameData' : json.dumps(game),
+        'tournament_id' : tournament_id,
+        'otherUser' : otherUser.username
+    }
+    return render(request, 'spa/pages/waiting_tournament_game.html', context)
+
+def tournament_page(request, tournament_id):
+    from pong_game.models import Tournament
+    from users.models import Player
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    
+    players_availability = {
+        player: Player.object.get(username=player).is_available() for player in tournament.players
+        }
+
+    context = {
+        'scores'            :   tournament.scores,
+        'upcoming_games'    :   tournament.get_upcoming_games(),
+        'game_history'      :   tournament.get_game_history(),
+        'final_positions'    :   tournament.final_position,
+        'is_finished'       :   tournament.is_finished,
+        'playerStatus'      :   players_availability
+    }
+    return render(request, 'spa/pages/tournament.html',context={'tournament_data': json.dumps(context)});

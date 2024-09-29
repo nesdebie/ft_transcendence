@@ -29,7 +29,6 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            print(f' received: {data}') 
             action = data['action']
             
         except json.JSONDecodeError:
@@ -47,6 +46,14 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.join_game()
         elif action == 'move_paddle':
             await self.handle_move(data['direction'])
+        elif action == 'init':
+            print('Received data:', data)
+            room = self.rooms[self.room_name]
+            game : PongGameLogic = room['game']
+            game.is_tournament = data['tournament'] == 'True'
+            if game.is_tournament:
+                game.tournament_id = data['game_info']['tournament_id']
+            
         else:
             await self.send(text_data=json.dumps({
                 'error': f"Unknown action: {action}"

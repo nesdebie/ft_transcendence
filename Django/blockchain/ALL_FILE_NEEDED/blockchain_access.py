@@ -5,115 +5,149 @@ from web3 import Web3
 import hashlib
 import random
 
-def Add_game_history(scores, game, timestamp):
-    players = list(scores.keys())
+def Add_game_history(scores, game):
+	
+	players = list(scores.keys())
 
-    if len(players) != 2:
-        return "Error: There must be exactly two players."
+	if (len(players) != 2):
+		return "Error"
+	player_1, player_2 = players[0], players[1]
+	score_1, score_2 = scores[player_1], scores[player_2]
 
-    player_1, player_2 = players[0], players[1]
-    score_1, score_2 = scores[player_1], scores[player_2]
+	# gen match id 
 
-    # Determine the winner and loser
-    if score_1 > score_2:
-        winner = player_1
-        loser = player_2
-    elif score_2 > score_1:
-        winner = player_2
-        loser = player_1
-    else:
-        winner = "Draw"
-        loser = "Draw"
+	# Déterminer le gagnant et le perdant
+	if score_1 > score_2:
+		winner = player_1
+		loser = player_2
+	elif score_2 > score_1:
+		winner = player_2
+		loser = player_1
+	else:
+		winner = "Draw"
+		loser = "Draw"
+	
+	random_id = random.randint(1000, 99999)
+	match_id = f"winner_{winner}_loser_{loser}_game_{game}_id_{random_id}"
 
-    # Generate a match ID
-    random_id = random.randint(1000, 99999)
-    match_id = f"winner_{winner}_loser_{loser}_game_{game}_id_{random_id}"
+	# Debug: Print the generated match ID
+	print(f"Generated Match ID: {match_id}")
 
-    # Debug: Print the generated match ID
-    print(f"Generated Match ID: {match_id}")
+	# Store match data
+	set_match_data(match_id, player_1, player_2, f"{score_1}-{score_2}", winner)
 
-    # Store match data
-    set_match_data(match_id, player_1, player_2, f"{score_1}-{score_2}", winner)
-
-    return "success"
+	return "success"
 
 def Player_stat(player, game):
-    try:
-        print("Player_stat called")
-        # Initialiser la connexion au contrat
-        web3, contract = initialize_web3_and_contract()
-        if not web3.is_connected():  # Utilisation correcte de is_connected()
-            print("Erreur : Impossible de se connecter à la blockchain.")
-            return None
-        # Appeler la fonction getAllMatches pour récupérer tous les matchs
-        try:
-            all_matches = contract.functions.getAllMatches().call()
-            print("------ ALL MATCHES ------")
-            print(all_matches)
-        except Exception as e:
-            print(f"Erreur lors de l'appel de getAllMatches : {e}")
-            return None
+	try:
+		print("Player_stat called")
+		# Initialiser la connexion au contrat
+		web3, contract = initialize_web3_and_contract()
+		if not web3.is_connected():  # Utilisation correcte de is_connected()
+			print("Erreur : Impossible de se connecter à la blockchain.")
+			return None
+		# Appeler la fonction getAllMatches pour récupérer tous les matchs
+		try:
+			all_matches = contract.functions.getAllMatches().call()
+			print("------ ALL MATCHES ------")
+			print(all_matches)
+		except Exception as e:
+			print(f"Erreur lors de l'appel de getAllMatches : {e}")
+			return None
 
-        # Filtrer les matchs dans lesquels le joueur a participé et qui correspondent au jeu spécifié
-        player_matches = []
-        for match in all_matches:
-            try:
-                if (match[1] == player or match[2] == player) and game in match[0]:  # On vérifie si le jeu fait partie de l'ID du match
-                    player_matches.append(match)
-            except Exception as e:
-                print(f"Erreur lors du filtrage des matchs pour le joueur {player} dans le jeu {game} : {e}")
-                return None
+		# Filtrer les matchs dans lesquels le joueur a participé et qui correspondent au jeu spécifié
+		player_matches = []
+		for match in all_matches:
+			try:
+				if (match[1] == player or match[2] == player) and game in match[0]:  # On vérifie si le jeu fait partie de l'ID du match
+					player_matches.append(match)
+			except Exception as e:
+				print(f"Erreur lors du filtrage des matchs pour le joueur {player} dans le jeu {game} : {e}")
+				return None
 
-        if not player_matches:
-            print(f"Aucun match trouvé pour le joueur {player} dans le jeu {game}.")
-        else:
-            print(f"{len(player_matches)} match(s) trouvé(s) pour le joueur {player} dans le jeu {game}.")
+		if not player_matches:
+			print(f"Aucun match trouvé pour le joueur {player} dans le jeu {game}.")
+		else:
+			print(f"{len(player_matches)} match(s) trouvé(s) pour le joueur {player} dans le jeu {game}.")
 
-        # Retourner la liste des matchs où le joueur a participé pour le jeu spécifié
-        return player_matches
+		# Retourner la liste des matchs où le joueur a participé pour le jeu spécifié
+		return player_matches
 
-    except Exception as e:
-        print(f"Erreur générale dans Player_stat pour le joueur {player} dans le jeu {game} : {e}")
-        return None
-    
+	except Exception as e:
+		print(f"Erreur générale dans Player_stat pour le joueur {player} dans le jeu {game} : {e}")
+		return None
+	
+def Game_history(game):
+	try:
+		# Initialiser la connexion au contrat
+		web3, contract = initialize_web3_and_contract()
+		if not web3.is_connected():  # Utilisation correcte de is_connected()
+			print("Erreur : Impossible de se connecter à la blockchain.")
+			return None
+		
+		# Appeler la fonction getAllMatches pour récupérer tous les matchs
+		try:
+			all_matches = contract.functions.getAllMatches().call()
+		except Exception as e:
+			print(f"Erreur lors de l'appel de getAllMatches : {e}")
+			return None
+		
+		# Filtrer les matchs dans lesquels le joueur a participé et qui correspondent au jeu spécifié
+		print('All Matches: ', all_matches)
+		matches = []
+		for match in all_matches:
+			try:
+				if game in match[0]:  # On vérifie si le jeu fait partie de l'ID du match
+					matches.append(match)
+			except Exception as e:
+				print(f"Erreur lors du filtrage des matchs pour le jeu {game} : {e}")
+				return None
+		print('found matches');
+		return matches
+	
+	except Exception as e:
+		print(f"Erreur générale dans Game_history pour le jeu {game} : {e}")
+		return None
+
+	
 def Match_history(self_player, other_player, game):
-    try:
-        # Initialiser la connexion au contrat
-        web3, contract = initialize_web3_and_contract()
-        if not web3.is_connected():  # Utilisation correcte de is_connected()
-            print("Erreur : Impossible de se connecter à la blockchain.")
-            return None
-        
-        # Appeler la fonction getAllMatches pour récupérer tous les matchs
-        try:
-            all_matches = contract.functions.getAllMatches().call()
-        except Exception as e:
-            print(f"Erreur lors de l'appel de getAllMatches : {e}")
-            return None
+	try:
+		# Initialiser la connexion au contrat
+		web3, contract = initialize_web3_and_contract()
+		if not web3.is_connected():  # Utilisation correcte de is_connected()
+			print("Erreur : Impossible de se connecter à la blockchain.")
+			return None
+		
+		# Appeler la fonction getAllMatches pour récupérer tous les matchs
+		try:
+			all_matches = contract.functions.getAllMatches().call()
+		except Exception as e:
+			print(f"Erreur lors de l'appel de getAllMatches : {e}")
+			return None
 
-        # Filtrer les matchs entre self_player et other_player pour le jeu spécifié
-        matches_between_players = []
-        for match in all_matches:
-            try:
-                # Vérifier si les deux joueurs sont dans le match et si le jeu correspond
-                if ((match[1] == self_player and match[2] == other_player) or 
-                    (match[1] == other_player and match[2] == self_player)) and game in match[0]:
-                    matches_between_players.append(match)
-            except Exception as e:
-                print(f"Erreur lors du filtrage des matchs entre {self_player} et {other_player} pour le jeu {game} : {e}")
-                return None
+		# Filtrer les matchs entre self_player et other_player pour le jeu spécifié
+		matches_between_players = []
+		for match in all_matches:
+			try:
+				# Vérifier si les deux joueurs sont dans le match et si le jeu correspond
+				if ((match[1] == self_player and match[2] == other_player) or 
+					(match[1] == other_player and match[2] == self_player)) and game in match[0]:
+					matches_between_players.append(match)
+			except Exception as e:
+				print(f"Erreur lors du filtrage des matchs entre {self_player} et {other_player} pour le jeu {game} : {e}")
+				return None
 
-        if not matches_between_players:
-            print(f"Aucun match trouvé entre {self_player} et {other_player} pour le jeu {game}.")
-        else:
-            print(f"{len(matches_between_players)} match(s) trouvé(s) entre {self_player} et {other_player} pour le jeu {game}.")
+		if not matches_between_players:
+			print(f"Aucun match trouvé entre {self_player} et {other_player} pour le jeu {game}.")
+		else:
+			print(f"{len(matches_between_players)} match(s) trouvé(s) entre {self_player} et {other_player} pour le jeu {game}.")
 
-        # Retourner la liste des matchs trouvés
-        return matches_between_players
+		# Retourner la liste des matchs trouvés
+		return matches_between_players
 
-    except Exception as e:
-        print(f"Erreur générale dans Match_history pour les joueurs {self_player} et {other_player} dans le jeu {game} : {e}")
-        return None
+	except Exception as e:
+		print(f"Erreur générale dans Match_history pour les joueurs {self_player} et {other_player} dans le jeu {game} : {e}")
+		return None
 #    
 # fonction test en desous pour que tu puisse voir comment ça fonctionne , 1 lancer le docker , puis aller dans le docker 
 # avec la commande docker exec -it modif_blockchain-web-1  /bin/bash  et faire  python3 blockchain/ALL_FILE_NEEDED/asked_functions.py 
@@ -188,6 +222,6 @@ def Match_history(self_player, other_player, game):
 #            print("Erreur lors de la récupération de l'historique des matchs entre Alice et Bob après match nul.")
 #    else:
 #        print("Erreur lors de la création du match nul.")
-    
+	
 # Appel de la fonction de test
 # test_functions()

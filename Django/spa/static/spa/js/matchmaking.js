@@ -23,7 +23,9 @@ function startMatchmaking() {
 			if (data.status === 'matched') {
 				startGame(data.room_name);
 			} else {
-				setTimeout(() => pollForMatch(matchmakingId), 2000);
+				setTimeout(() => {
+					if (window.location.pathname === '/pong_lobby')
+					pollForMatch(matchmakingId)}, 2000);
 			}
 		});
 	}

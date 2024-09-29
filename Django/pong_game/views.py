@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import F, Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Matchmaking, PongGame
+from .models import Matchmaking, PongGame, Tournament
 from users.models import Player
+from django.contrib.postgres.aggregates import ArrayAgg
 import json
 
 @csrf_exempt
@@ -24,20 +26,19 @@ def start_matchmaking(request):
             other_matchmaking.save()
             
             matchmaking.delete()
-            print(f'Matchmaking roomname {other_matchmaking.room_name}')
             return JsonResponse({'status': 'matched', 'room_name': other_matchmaking.room_name})
         
         return JsonResponse({'status': 'waiting', 'matchmaking_id': str(matchmaking.id)})
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@csrf_exempt
 def check_matchmaking(request, matchmaking_id):
     player = request.user
     matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).first()   
     if matchmaking.matched:
         room_name = matchmaking.room_name
         matchmaking.delete()
-        print(f'Matchmaking join room name: {room_name}')
         return JsonResponse({'status': 'matched', 'room_name': room_name})
     
     return JsonResponse({'status': 'waiting'})
@@ -77,7 +78,7 @@ def check_matchmaking(request, matchmaking_id):
 #             return JsonResponse({'error': 'Game not found'}, status=404)
 #     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-
+@csrf_exempt
 def get_game_state(request, room_name):
     game = get_object_or_404(PongGame, id=room_name)
     player :Player = request.user
@@ -98,3 +99,103 @@ def get_game_state(request, room_name):
     }
     
     return JsonResponse(game_state)
+
+@csrf_exempt
+def list_tournaments(request):
+    available_tournament_list = []
+    your_tournament_list = []
+    your_finished_tournament_list = []
+    user = request.user.username
+
+    for tournament in Tournament.objects.all():
+        tournament_info = {
+            'id': tournament.id,
+            'number_of_players': tournament.number_of_players,
+            'is_active': tournament.is_active,
+            'is_finished': tournament.is_finished,
+            'scores': tournament.scores,
+            'upcoming_games': tournament.upcoming_games,
+            'final_position': tournament.final_position,
+            'players': tournament.players,  # This will be a list of usernames
+        }
+
+        if user in tournament.players:
+            if tournament.is_finished:
+                your_finished_tournament_list.append(tournament_info)
+            else:
+                your_tournament_list.append(tournament_info)
+        elif len(tournament.players) < tournament.number_of_players:
+            available_tournament_list.append(tournament_info)
+
+    response_data = {
+        'available': available_tournament_list,
+        'your': your_tournament_list,
+        'your_finished': your_finished_tournament_list,
+    }
+
+    return JsonResponse(response_data)
+
+@csrf_exempt
+def create_tournament(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        number_of_players = data.get('number_of_players')
+        tournament = Tournament.objects.create(number_of_players=number_of_players)
+        tournament.players.append(request.user.username)
+        tournament.save()
+        return JsonResponse({'id': tournament.id})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def join_tournament(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    if len(tournament.players) >= tournament.number_of_players:
+        return JsonResponse({'error': 'Too many players have already joined the game'})
+    
+    # Add the username to the players list
+    tournament.players.append(request.user.username)
+    tournament.save()  # Save the tournament after adding the player
+
+    if len(tournament.players) == tournament.number_of_players:
+        tournament.start()
+    return JsonResponse({'success': True})
+
+@csrf_exempt
+def tournament_is_active(request, tournament_id):
+    from pong_game.models import Tournament
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    
+    return JsonResponse({'is_active': tournament.is_active});
+
+@csrf_exempt
+def tournament_game_switch_player_status(request, tournament_id, game_id):
+    tournament: Tournament = get_object_or_404(Tournament, id=tournament_id)
+    upcoming_game = tournament.get_upcoming_game(game_id)
+
+    if upcoming_game:
+        player_status = upcoming_game.get('Players_joined', [])
+        if request.user.username in player_status:
+            player_status.remove(request.user.username)
+        else:
+            player_status.append(request.user.username)
+        
+        upcoming_game['Players_joined'] = player_status
+        tournament.save()
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'error': 'Game not found'}, status=404)
+    
+@csrf_exempt
+def tournament_game_status(request, tournament_id, game_id):
+    tournament: Tournament = get_object_or_404(Tournament, id=tournament_id)
+    upcoming_game = tournament.get_upcoming_game(game_id)
+    
+    if not upcoming_game:
+        return JsonResponse({'error': 'Game not found'}, status=404)
+    
+    if len(upcoming_game['Players_joined']) == 2:
+        return JsonResponse({'ready': True})
+    else:
+        return JsonResponse({'ready': False})
+
+

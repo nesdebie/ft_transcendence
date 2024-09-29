@@ -4,6 +4,7 @@ import { applyNightCityMode } from './audio.js'; // Import applyNightCityMode fu
 import { initShifumi } from "./shifumi.js";
 import { closeWebSocket } from "./websocketManager.js";
 import { initPong } from "./pong.js";
+import { loadTournaments, checkTournamentStatus, populateTournamentPage, checkTournamentGameStatus} from "./tournament.js";
 
 
 const route = (event, url = null) => {
@@ -22,8 +23,8 @@ const route = (event, url = null) => {
 
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
-    { paths: ['/404', '/logout', '/register', '/login', '/shifumi_pve', '/pong_local', '/pong_lobby'], suffix: '.html' },
-    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor'], suffix: '' }
+    { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby', '/pong_local'], suffix: '.html' },
+    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting_joining_tournament', '/tournament', '/waiting_tournament_game'], suffix: '' }
 ];
 
 function update_path(path) {
@@ -64,23 +65,32 @@ const handleLocation = async () => {
 function call_page_functions(path) {
     if (document.getElementById('user-profile-picture'))
         fetchUserProfilePicture();
-    if (path.startsWith('/chat/') && path !== '/chat/') {
+    else if (path.startsWith('/chat/') && path !== '/chat/') {
         initChat();
     }
-    if (document.body.classList.contains("cyberpunk")) {
+    else if (document.body.classList.contains("cyberpunk")) {
         applyNightCityMode();
     }
-    if (path.startsWith('/shifumi/') && path !== '/shifumi/') {
+    else if (path.startsWith('/shifumi/') && path !== '/shifumi/') { // /shifumi/room_name need to add here a function for shifumi against AI on the /shifumi page
         const roomName = path.split('/')[2];
         initShifumi(roomName);
     }
-    if (path.startsWith('/pong/') && path !== '/pong/') {
-        if (document.getElementById('pong-game')) {
-            initPong();
-        } else {
-            console.error('Pong game canvas not found');
-        }
+    else if (path.startsWith('/pong/') && path !== '/pong/') {
+        initPong();
+    } 
+    else if (path.startsWith('/pong_lobby')) {
+        loadTournaments();
     }
+    else if (path.startsWith('/waiting_joining_tournament')) {
+        checkTournamentStatus();
+    }
+    else if (path.startsWith('/waiting_tournament_game')) {
+        checkTournamentGameStatus();
+    }
+    else if (path.startsWith('/tournament')) {
+        populateTournamentPage();
+    }
+
     // if (document.getElementById('user-username'))
     //  fetchUserProfileData();
     //if ...

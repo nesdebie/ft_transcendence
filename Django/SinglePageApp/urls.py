@@ -24,7 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users_api/', include('users.urls')),
-   path('api/pong/', include('pong_game.urls')),
+    path('api/pong/', include('pong_game.urls')),
     path('pages/', include('spa.urls')),
     path('', spa_views.index),
 	
