@@ -86,8 +86,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         from users.models import Player, Message
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
-        if game_type != 'default_game':  # Check if game_type is not 'default_game'
-            return  # Do not save the message
+        # if game_type != 'default_game':  # Check if game_type is not 'default_game'
+        #     return  # Do not save the message
         Message.objects.create(
             sender=sender_user,
             receiver=receiver_user,
@@ -111,7 +111,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def game_invite(self, event):
         game_type = event.get('game_type', 'default_game')  # Default to 'default_game' if not specified
-        await self.save_message(event['sender'], event['receiver'], "Game invite", message_type='game_invite', is_game_invite=True, game_type=game_type)
+        # await self.save_message(event['sender'], event['receiver'], "Game invite", message_type='game_invite', is_game_invite=True, game_type=game_type)
         await self.send(text_data=json.dumps({
             'type': 'game_invite',
             'sender': event['sender'],

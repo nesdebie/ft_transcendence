@@ -6,7 +6,7 @@
 				{% csrf_token %}
 				<div class="form-group">
 					<label id="1" for="register-username">Username</label>
-					<input type="text" class="form-control" id="register-username" placeholder="username" name="username" required>
+					<input type="text" class="form-control" id="register-username" placeholder="username" name="username" required maxlength="30"> <!-- Added maxlength -->
 					<span id="username-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
