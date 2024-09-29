@@ -3,33 +3,33 @@ Starting RPC server
 
 Available Accounts
 ==================
-(0) 0x64efd8249117C02930A14FaECec0E455E083804D (1000 ETH)
-(1) 0xe585b606ede15797AD8B136eCb975B05501B0AA3 (1000 ETH)
-(2) 0x8Ef63bB2Abbf0E14c5DB73CAF0b7f59473B3f964 (1000 ETH)
-(3) 0x9fE3d355336B65FE5056E2c513B5f189072bf19E (1000 ETH)
-(4) 0x0f071D300a60f1C13618ED4567f62bB2C7c8B176 (1000 ETH)
-(5) 0x71cFf156AAF781ABBdAd79c7F4a58b62Dc9eAdDE (1000 ETH)
-(6) 0x926B3E402563815fbE48A765153BF246d5cE8751 (1000 ETH)
-(7) 0xA51Fc40294E506bd8B10d29c6c735fbB7F0aC201 (1000 ETH)
-(8) 0xe512D950Eb1d03Ad8e2CCcb59690D73A9305a024 (1000 ETH)
-(9) 0x0d7e2CfCc7fF34E407aE84A2b61eD9d6b362439b (1000 ETH)
+(0) 0x886F32B5C4dEA259a73d04f8D7e673830AF8b0A7 (1000 ETH)
+(1) 0xa06F1368DD42f7388F91763ee9a82Ac3f26E9435 (1000 ETH)
+(2) 0x055D5062738155Da23cA3cdDD6326f9e5Dfc36D9 (1000 ETH)
+(3) 0xe9158960a9995b54ec80120f42239a5DBDd03e2a (1000 ETH)
+(4) 0x963c711A1AAF68f7189DBEC49491ebD2B5dD82FE (1000 ETH)
+(5) 0x8c047D183Aca9EED4c81eCC5Fa99E3CF1B350268 (1000 ETH)
+(6) 0x5e31eeefD18490079D18e1f02FFf7C4933767f37 (1000 ETH)
+(7) 0x51A5F4093829C603c35DF26cd892aDCa0f296a24 (1000 ETH)
+(8) 0xb186a07677F2808a71D1fc12a651a81e8f8B13a5 (1000 ETH)
+(9) 0x6603bc546F37e826D64930eD840e505D34186407 (1000 ETH)
 
 Private Keys
 ==================
-(0) 0xde17f46f7b5122e2c0975b3cca6c227a1614728345fa8e430ac058637ca7f950
-(1) 0x7822f17680be7c2f8550bd2093799ae1b26e0c918e8f22a78bf5c3132d2a2b33
-(2) 0x57f20756e7932642a7a273ebb2e50955dc1006577796eb7b931c523baef4c2e4
-(3) 0xe1a750553126a276c5d42125ba0de466fbec7f550b7d5ee3e105dd901e353801
-(4) 0x3869d0811cd3e44f1220538eccdb8b1f609acf21ac128e7af8f4d6c71b67235f
-(5) 0x9f151151893cb066f49214393684fa0fb2e73d654d0217b91efc07203c6e2caf
-(6) 0x25d20920570b47adaf37e452ba5f22cf18c1d1037b2561d8f526b47d547ddc64
-(7) 0x880fba9c1503522398094664aeb4e434b3804018532b2494924edf9031a11429
-(8) 0xdc3868370f853da194be9c08d190d8cfc12716772b4b7c5e0dbcdd884c81dd59
-(9) 0xf91d56f78418095b83a2dbaa7238cfd13879f809f01d55c5bf84249d1e12e5b3
+(0) 0xf3357108ebeeba9dd2405bf3f8bdec0b193a766a0400c578bbe0801418a7fb5f
+(1) 0xb7e347a08f63e645699f40ac35b46b2add6e60aa690555ad4e52767b3fa60a22
+(2) 0x2e4d4dd4bc0afa8bee8237981f4dfd3703e3dafc78acc357ae3bca7c95afc2b0
+(3) 0xb76f629ea6aa9f9cdc40496575671f2a0960878259b6bb9c074d61aa50c86daf
+(4) 0xc1521dfc1c69663c97d4921ca47f41ac12e4c4d51c2dd4abc1661b741abef392
+(5) 0x0a54aef936425e73b1dfd2ef79ebb891100d8b6c8059eb459c63bcb8c1956154
+(6) 0x44546a328ccb2f08e1a1425c920fb211345c30577cb5a18256e6d76e27f99d45
+(7) 0x684f970b099a9165fdd4309d17b7ca37c91f603206dd65f98976f875d41b810b
+(8) 0x5d41ce6a4e5c5d769d3e90c9d3e29fce52204a9652e433e7fe473a0c305666a5
+(9) 0x516b4d47ec3a877e03391bfa6a9cd89a0e995e21b6166f7279fa02f4a2e8c804
 
 HD Wallet
 ==================
-Mnemonic:      gun digital canal word critic jazz hope allow file urge camera inmate
+Mnemonic:      unique fruit verify pink bounce cruel upon hidden damp father bid trip
 Base HD Path:  m/44'/60'/0'/0/{account_index}
 
 Default Gas Price
@@ -62,18 +62,18 @@ net_version
 eth_getBlockByNumber
 eth_estimateGas
 net_version
-eth_getBlockByNumber
 eth_blockNumber
+eth_getBlockByNumber
 eth_estimateGas
 eth_getBlockByNumber
 eth_gasPrice
 eth_sendTransaction
 
-  Transaction: 0x9f8bb157d1e915d3ed42b303a6b3f4eef7441fb8f7ddcac5c3d274df8081a3be
-  Contract created: 0x1310df96af658733082600b9a72e09f3839c537d
+  Transaction: 0x4b79e12c3f20077b4e8dc282c609a83a42b9473edd3d036c02e4ee481b0ca13c
+  Contract created: 0x6093f8e310cb0efddf8a9dbab4c62cca981e16d7
   Gas usage: 1060938
   Block number: 1
-  Block time: Sun Sep 29 2024 08:10:01 GMT+0000 (Coordinated Universal Time)
+  Block time: Sun Sep 29 2024 08:43:23 GMT+0000 (Coordinated Universal Time)
 
 eth_getTransactionReceipt
 eth_getCode
@@ -81,54 +81,14 @@ eth_getTransactionByHash
 eth_getBlockByNumber
 eth_getBalance
 web3_clientVersion
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
 eth_accounts
 eth_getBlockByNumber
 eth_chainId
 eth_sendTransaction
 
-  Transaction: 0x9297677c5751ccdeaec303644756a5b1f998c1376cdee7a41d921f7226bf0558
-  Gas usage: 238141
+  Transaction: 0xa5c28eef66d25ceb69d1a9dc6e4bbb4295ca343e36e7db2b0ee5e4f2277a7d40
+  Gas usage: 237973
   Block number: 2
-  Block time: Sun Sep 29 2024 08:13:12 GMT+0000 (Coordinated Universal Time)
+  Block time: Sun Sep 29 2024 08:44:29 GMT+0000 (Coordinated Universal Time)
 
 eth_getTransactionReceipt
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
-eth_accounts
-eth_getBlockByNumber
-eth_chainId
-eth_sendTransaction
-
-  Transaction: 0x99cf5a42358726c6bb83f6a463617b470907327934f9b06fddc0575d8c09ca85
-  Gas usage: 240893
-  Block number: 3
-  Block time: Sun Sep 29 2024 08:13:13 GMT+0000 (Coordinated Universal Time)
-
-eth_getTransactionReceipt
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call
-web3_clientVersion
-web3_clientVersion
-eth_chainId
-eth_call

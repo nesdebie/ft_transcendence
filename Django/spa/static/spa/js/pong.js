@@ -150,9 +150,8 @@ function initPong() {
         // Show game over message
         const gameOverDiv = document.getElementById('game-over');
         const gameOverMessage = document.getElementById('game-over-message');
-        const gameInfo = JSON.parse(gameOverDiv.getAttribute('data-game_info'))
         gameOverDiv.style.display = 'block';
-
+        
         const playerUsername = document.getElementById('pong-game').getAttribute('data-player-username');
         const opponentUsername = Object.keys(gameState.scores).find(user => user !== playerUsername);
         
@@ -170,12 +169,13 @@ function initPong() {
             gameOverMessage.style.color = 'red';
         }
         // Add event listener to go back button
-        if (!tournament) {
+        if (!data.is_tournament) {
             document.getElementById('go-back-button').addEventListener('click', () => {
                 closeWebSocket();
-                window.history.back(); 
+                redirectToRoute('/pong_lobby'); 
             });
         } else {
+            const gameInfo = JSON.parse(gameOverDiv.getAttribute('data-game_info'))
             document.getElementById('go-back-button').addEventListener('click', () => {
                 closeWebSocket();
                 redirectToRoute(`/tournament/${gameInfo.tournament_id}`)

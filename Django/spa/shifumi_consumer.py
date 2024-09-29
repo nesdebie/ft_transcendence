@@ -168,7 +168,7 @@ class ShifumiConsumer(AsyncWebsocketConsumer):
 
         game = 'shifumi'
         timestamp = datetime.datetime.now().isoformat()
-        Add_game_history(scores, game, timestamp)
+        Add_game_history(scores, game)
 
         # Send the game over message
         await self.channel_layer.group_send(

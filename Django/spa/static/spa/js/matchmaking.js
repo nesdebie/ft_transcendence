@@ -24,8 +24,15 @@ function startMatchmaking() {
 				startGame(data.room_name);
 			} else {
 				setTimeout(() => {
-					if (window.location.pathname === '/pong_lobby')
-					pollForMatch(matchmakingId)}, 2000);
+					if (window.location.pathname === '/pong_lobby') {
+						pollForMatch(matchmakingId)
+					} else {
+						fetch(`/api/pong/matchmaking/stop/${matchmakingId}/`)
+						.then(response => response.json())
+						.then(data => {console.log('Matchmaking stoped: ', data)})
+					}
+				}, 2000);
+					
 			}
 		});
 	}

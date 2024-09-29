@@ -43,6 +43,11 @@ def check_matchmaking(request, matchmaking_id):
     
     return JsonResponse({'status': 'waiting'})
 
+def stop_matchmaking(request, matchmaking_id):
+    player = request.user
+    matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).delete()
+    return JsonResponse({'status': 'matchmaking_removed'})
+
 
 # @csrf_exempt
 # def create_game(request):

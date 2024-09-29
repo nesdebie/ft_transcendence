@@ -122,15 +122,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
         
         if self.room_name in self.rooms:
-            room = self.rooms[self.room_name]
-            game = room['game']
-            scores = game.scores
-            print(f"Final scores before saving: {scores}")
-            
-            if scores:
-                game_name = 'pong'
-                timestamp = datetime.datetime.now().isoformat()
-                result = Add_game_history(scores, game_name, timestamp)
             self.rooms.pop(self.room_name)
 
 
