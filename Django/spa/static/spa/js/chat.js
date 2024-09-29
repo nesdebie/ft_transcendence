@@ -47,6 +47,14 @@ export function initChat() {
     function sendMessage() {
         const messageInputDom = document.querySelector('#message_input');
         const message = messageInputDom.value.trim();
+
+        // Check for invalid characters
+        const invalidChars = /[<>\[\]{}]/;  // Regex to match invalid characters
+        if (invalidChars.test(message)) {
+            console.error('Message contains invalid characters and will not be sent.');
+            return;  // Prevent sending the message
+        }
+
         if (message !== '' && getWebSocket() && getWebSocket().readyState === WebSocket.OPEN) {
             getWebSocket().send(JSON.stringify({
                 'message': message,
