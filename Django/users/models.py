@@ -105,7 +105,12 @@ class Player(AbstractUser):
 		self.save()
 	
 	def is_available(self) -> bool:
-		return self.is_authenticated and not self.active_shifumi_game and not self.in_pong_game
+		if (self.online_status == False):
+			return False
+		elif self.active_shifumi_game or self.in_pong_game:
+			return 'Occupied'
+		else:
+			return True
 
 	def __str__(self):
 		return self.username

@@ -215,6 +215,7 @@ async function logout() {
             'X-CSRFToken': getCookie('csrftoken')
         },
     });
+    closeLoggingWebSocket();
     await redirectToRoute('/login');
     updateSidebar();
 }
@@ -257,6 +258,9 @@ export async function verifyOtp(username) {
 	}
 }
 
+let isAuthenticated = false;
+let Logging_socket = null;
+
 async function checkAuthentication() {
     try {
         const response = await fetch('/users_api/check_authentication/', {
@@ -268,20 +272,50 @@ async function checkAuthentication() {
 
         if (response.ok) {
             const data = await response.json();
-            if (data.authenticated) {
-                console.log("CheckAuthentification OK : ", data);
-                return true;
-            } else {
-                console.log("CheckAuthentification NOK : ", data);
-                return false;
+            const currentlyAuthenticated = data.authenticated;
+
+            if (isAuthenticated === false) {
+                // First time checking authentication
+                isAuthenticated = currentlyAuthenticated;
+                if (isAuthenticated) {
+                    console.log("CheckAuthentification OK : ", data);
+                    // Call function to create websocket
+                    createLoggingWebSocket(data.user_id);
+                }
             }
+            return currentlyAuthenticated;
         } else {
             console.error('Error checking authentication');
             return false;
         }
-    } catch(error) {
-        return error;
+    } catch (error) {
+        console.error('Error during authentication check:', error);
+        return false;
     }    
+}
+
+// Placeholder functions for websocket management
+function createLoggingWebSocket(user_id) {
+    Logging_socket = new WebSocket(`wss://${window.location.host}/ws/online_status/`)
+
+    Logging_socket.onopen = function(e) {
+        console.log('Logging websocket made')
+        Logging_socket.send(JSON.stringify({
+            'user_id' : user_id
+        }))
+    }
+    Logging_socket.onclose = function(e) {
+        console.log('Logging socket closed')
+    }
+}
+
+function closeLoggingWebSocket() {
+    console.log("WebSocket closed.");
+    if (Logging_socket != null) {
+        Logging_socket.close();
+        Logging_socket = null;
+    }
+
 }
 
 function handleErrors(data) {

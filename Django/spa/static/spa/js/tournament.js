@@ -138,8 +138,20 @@ export function populateTournamentPage() {
     // Populate participants with online/offline status
     Object.entries(data.scores).forEach(([username, score]) => {
         const row = document.createElement('tr');
-        const statusColor = data.playerStatus[username] ? 'green' : 'red'; // Assuming playerStatus is provided in data
-        row.innerHTML = `<td>${username}&nbsp <span style="color: ${statusColor};">(${data.playerStatus[username] ? 'Online' : 'Offline'})</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>${score}</td>`;        Players_score_List.appendChild(row);
+        let statusColor = 'null';
+        let status = 'null';
+        if (data.playerStatus[username] == true) {
+            statusColor = 'green'
+            status = 'Online'
+        } else if (data.playerStatus[username] == false) {
+            statusColor = 'red'
+            status = 'Offline'
+        } else {
+            statusColor = 'orange'
+            status = 'Occupied'
+        }
+
+        row.innerHTML = `<td>${username}&nbsp <span style="color: ${statusColor};">(${status})</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>${score}</td>`;        Players_score_List.appendChild(row);
     });
 
     // Populate game history
