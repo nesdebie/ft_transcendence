@@ -319,7 +319,7 @@ def logout_view(request):
 @csrf_exempt
 def check_authentication(request):
 	if request.user.is_authenticated:
-		return JsonResponse({'authenticated': True})
+		return JsonResponse({'authenticated': True, 'user_id': request.user.id})
 	else:
 		return JsonResponse({'authenticated': False})
 
