@@ -19,6 +19,18 @@
                 <div class="contact-table-scroll">
                     <table class="table table-hover">
                         <tbody>
+                            <tr>
+                                <td>
+                                    <a href="/chat/[_t0urn4_b0t_]" onclick="route()" class="btn btn-link" style="display: block; text-align: left;">
+                                        <img src="{{ request.user.profile_picture.url }}" alt="Tournabot" width="40" height="45" class="profile-image rounded-circle"> <!-- Replace with actual image path -->
+                                    </a>
+                                </td>
+                                <td>
+                                    <a style="color: grey" href="/chat/[_t0urn4_b0t_]" onclick="route()">
+                                        [_t0urn4_b0t_]
+                                    </a>
+                                </td>
+                            </tr>
                             {% for user in users %}
                                 <tr>
                                     <td>

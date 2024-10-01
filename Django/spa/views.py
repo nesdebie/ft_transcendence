@@ -145,7 +145,11 @@ def view_friend_requests(request):
 def view_chat(request, username=None):
     user: Player = request.user
     if username:
-        user_to_chat = get_object_or_404(Player, username=username)
+        # Allow chat with the bot without raising a 404 error
+        if username == '[_t0urn4_b0t_]':
+            user_to_chat = None  # Set to None or create a mock Player object if needed
+        else:
+            user_to_chat = get_object_or_404(Player, username=username)
     else:
         user_to_chat = None
 
@@ -163,7 +167,7 @@ def view_chat(request, username=None):
     blocking_users = Block.objects.filter(Q(to_user=user)).values_list('from_user', flat=True)
     users = Player.objects.exclude(id__in=blocked_users).exclude(id__in=blocking_users).exclude(id=user.id)
 
-    template = 'spa/pages/chat_interface.html' if user_to_chat else 'spa/pages/chat_friends_list.html'
+    template = 'spa/pages/chat_interface.html' if username else 'spa/pages/chat_friends_list.html'
 
     context = {
         'users': users,

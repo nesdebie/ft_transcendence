@@ -6,7 +6,7 @@
 				{% csrf_token %}
 				<div class="form-group">
 					<label id="1" for="register-username">Username</label>
-					<input type="text" class="form-control" id="register-username" placeholder="username" name="username" required maxlength="30"> <!-- Added maxlength -->
+					<input type="text" class="form-control" id="register-username" placeholder="username" name="username" required maxlength="12"> <!-- Added maxlength -->
 					<span id="username-error" class="error-message text-danger"></span>
 				</div>
 				<div class="form-group">
@@ -35,13 +35,13 @@
 					<span id="image-error" class="error-message text-danger"></span>
 				</div>
 				<!-- 2FA -->
-				<div class="form-group" id="2fa-section" style="display: none;">
+				<div class="form-group" id="2fa-section">
 					<input type="checkbox" id="register-2fa" name="two_factor_auth">
 					<label for="register-2fa">Enable Two-Factor Authentication (2FA)</label>
 				</div>
 				<!-- QR Code Display -->
 				<div id="qr-code-container" class="form-group" style="display:none;">
-				    <h3>Scan the QR Code with your Authenticator App</h3>
+				    <p>Scan the QR Code with your Authenticator App</p>
 				    <div id="qr-code"></div>
 				</div>
 				<!-- End of QR Code Display -->
