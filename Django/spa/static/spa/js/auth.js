@@ -90,8 +90,7 @@ document.body.addEventListener('change', async function(event) {
                     const qrCodeContainer = document.getElementById('qr-code-container');
                     const qrCodeElement = document.getElementById('qr-code');
                     qrCodeContainer.style.display = 'block';
-                    qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code">`;
-
+                    qrCodeElement.innerHTML = `<img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code" width="250" height="250">`; // Adjusted size
 					/********** LOCAL STORAGE FOR 2FA secret */
 					// Stocker le secret dans localStorage
 					localStorage.setItem('2fa_secret', data.secret);

@@ -439,9 +439,9 @@ function checkAllFieldsFilled(fieldsToCheck) {
     if (allFilled) {
         // Affiche un message ou effectue une action
         // Rendre visible la case à cocher 2FA
-        if (twoFASection) {
-            twoFASection.style.display = 'block';
-        }
+        // if (twoFASection) {
+        //     twoFASection.style.display = 'block';
+        // }
         // Masquer le bouton "Register with 42" si la section 2FA est visible
         if (registerWith42Button) {
             registerWith42Button.style.display = 'none';
@@ -450,9 +450,9 @@ function checkAllFieldsFilled(fieldsToCheck) {
     } else {
         // Affiche un message ou effectue une action différente
         // Masquer la case à cocher 2FA
-        if (twoFASection) {
-            twoFASection.style.display = 'none';
-        }
+        // if (twoFASection) {
+        //     twoFASection.style.display = 'none';
+        // }
         // Afficher le bouton "Register with 42" si la section 2FA est masquée
         if (registerWith42Button) {
             registerWith42Button.style.display = 'block';
