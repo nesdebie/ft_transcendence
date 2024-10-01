@@ -19,6 +19,7 @@ def pages(request, page):
 
 @login_required
 def view_self_profile(request):
+    from pong_game.models import Tournament
     user: Player = request.user
     received_requests = FriendRequest.objects.filter(to_user=user)
     friends = user.friends.all()
@@ -35,6 +36,24 @@ def view_self_profile(request):
     s_losses = len([match for match in shifumi_stats if (match[1] == user.username or match[2] == user.username) and match[4] != user.username and match[4] != "Draw"])  # Exclude draws from losses
     s_draws = len([match for match in shifumi_stats if match[4] == "Draw"])
 
+    finished_tournaments =  [tournament for tournament in Tournament.objects.all() 
+                            if user.username in tournament.players and tournament.is_finished]
+
+    print('finished tournaments: ', finished_tournaments)
+
+
+    tournament_score = 100
+    for tournament in finished_tournaments:
+        tournament_stat = Player_stat(user.username, f'Tournament Result: {tournament.id}')
+        print(f'tournament stat for id {tournament.id}: ', tournament_stat)
+        for stat in tournament_stat:
+            if (stat[4] == user.username):
+                tournament_score += 1
+            else:
+                tournament_score -= 1
+
+    
+
     context = {
         'user_profile': user,
         'is_own_profile': True,
@@ -48,7 +67,9 @@ def view_self_profile(request):
         'pong_losses': p_losses,
         'shifumi_wins': s_wins,
         'shifumi_losses': s_losses,
-        'shifumi_draws': s_draws
+        'shifumi_draws': s_draws,
+        'tournament_score': tournament_score,
+        'finished_tournament_count': len(finished_tournaments),
     }
     
     return render(request, 'spa/pages/profile.html', context)
@@ -56,6 +77,8 @@ def view_self_profile(request):
 
 @login_required
 def view_profile(request, username):
+    from pong_game.models import Tournament
+
     user: Player = request.user
     try:
         user_profile: Player = Player.objects.get(username=username)
@@ -75,6 +98,18 @@ def view_profile(request, username):
     s_losses = len([match for match in shifumi_stats if (match[1] == username or match[2] == username) and match[4] != username and match[4] != "Draw"])  # Exclude draws from losses
     s_draws = len([match for match in shifumi_stats if match[4] == "Draw"])
 
+    finished_tournaments =  [tournament.id for tournament in Tournament.objects.all() 
+                            if username in tournament.players and tournament.is_finished]
+
+    tournament_score = 100
+    for tournament_id in finished_tournaments:
+        tournament_stat = Player_stat(user.username, f'Tournament Result: {tournament_id}')
+        for stat in tournament_stat:
+            if (stat[4] == username):
+                tournament_score += 1
+            else:
+                tournament_score -= 1
+
     context = {
         'user_profile': user_profile,
         'is_own_profile': user == user_profile,
@@ -88,7 +123,9 @@ def view_profile(request, username):
         'pong_losses': losses,
         'shifumi_wins': s_wins,
         'shifumi_losses': s_losses,
-        'shifumi_draws': s_draws
+        'shifumi_draws': s_draws,
+        'tournament_score': tournament_score,
+        'finished_tournament_count': len(finished_tournaments),
     }
     return render(request, 'spa/pages/profile.html', context)
 

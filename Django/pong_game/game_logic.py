@@ -15,7 +15,7 @@ class PongGameLogic:
         self.init_ball_speed = 10
         self.ball_speed = self.init_ball_speed
         self.ball_speed_increase = 1
-        self.max_score = 11
+        self.max_score = 1
 
         self.players_usernames = [] #gives order of users
         self.paddles = {} # Player_username : {y : position }

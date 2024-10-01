@@ -124,6 +124,7 @@ class Tournament(models.Model):
         for i in range(len(sorted_players)):
             for j in range(i + 1, len(sorted_players)):
                 if sorted_players[i][1] > sorted_players[j][1]:
+                    print('Adding to blockChain')
                     Add_game_history({sorted_players[i][0]: self.number_of_players - 1 - i, sorted_players[j][0]: self.number_of_players - 1 - j}, f'Tournament Result: {self.id}')
         self.__calculate_finish_positions(sorted_players)
         self.save()
