@@ -170,7 +170,7 @@ def tournament_is_active(request, tournament_id):
     from pong_game.models import Tournament
     tournament = get_object_or_404(Tournament, id=tournament_id)
     
-    return JsonResponse({'is_active': tournament.is_active});
+    return JsonResponse({'is_active': tournament.is_active})
 
 @csrf_exempt
 def tournament_game_switch_player_status(request, tournament_id, game_id):
