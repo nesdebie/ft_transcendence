@@ -134,9 +134,18 @@ document.body.addEventListener('click', async function(event) {
             const storedUserInfo = localStorage.getItem('user_info');
             if (storedUserInfo) {    
                 const userInfo = JSON.parse(storedUserInfo);
-                document.getElementById('register-username').value = userInfo.username;
-                document.getElementById('register-email').value = userInfo.email;
-                document.getElementById('register-nickname').value = userInfo.nickname;
+                const usernameField = document.getElementById('register-username');
+                const emailField = document.getElementById('register-email');
+                const nicknameField = document.getElementById('register-nickname');
+                const passwordField = document.getElementById('register-password');
+                const password2Field = document.getElementById('register-password2');
+                
+                if (usernameField) usernameField.value = userInfo.username;
+                if (emailField) emailField.value = userInfo.email;
+                if (nicknameField) nicknameField.value = userInfo.nickname;
+                if (passwordField) passwordField.value = userInfo.password;
+                if (password2Field) password2Field.value = userInfo.password;
+
                 // set password
                 // Remplir les champs de mot de passe avec le mot de passe généré
                 document.getElementById('register-password').value = userInfo.password;
