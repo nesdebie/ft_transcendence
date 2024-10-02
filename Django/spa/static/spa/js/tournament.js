@@ -126,9 +126,11 @@ export function populateTournamentPage() {
     const final_positions = document.getElementById('final_positions');
     const currentUser = Players_score_List.getAttribute('data-currentUser');
     
+    
     // Parse the data-tournament attribute
     const data = JSON.parse(document.getElementById('participants-table').getAttribute('data-tournament'));
     console.log('Tournament data received: ', data);
+
 
     // Clear existing content
     Players_score_List.innerHTML = '';
@@ -151,7 +153,7 @@ export function populateTournamentPage() {
             status = 'Occupied'
         }
 
-        row.innerHTML = `<td>${username}&nbsp <span style="color: ${statusColor};">(${status})</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>${score}</td>`;        Players_score_List.appendChild(row);
+        row.innerHTML = `<td>${data.nicknames[username]}&nbsp <span style="color: ${statusColor};">(${status})</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>${score}</td>`;        Players_score_List.appendChild(row);
     });
 
     // Populate game history
@@ -168,10 +170,10 @@ export function populateTournamentPage() {
             const winner = game[4]; // game[4]
 
             const player1Span = document.createElement('span');
-            player1Span.textContent = player1;
+            player1Span.textContent = data.nicknames[player1];
 
             const player2Span = document.createElement('span');
-            player2Span.textContent = player2;
+            player2Span.textContent = data.nicknames[player2];
 
             if (player1 === currentUser) {
                 player1Span.style.color = winner === currentUser ? 'green' : 'red';
@@ -195,22 +197,26 @@ export function populateTournamentPage() {
 
         data.upcoming_games.forEach(game => {
             const listItem = document.createElement('li');
-            listItem.innerHTML = `Game: ${game.players[0]} VS ${game.players[1]} `;
+            const player_1 = game.players[0]
+            const player_2 = game.players[1]
+            listItem.innerHTML = `Game: ${data.nicknames[player_1]} VS ${data.nicknames[player_2]} `;
             console.log('Game: ', game);
 
             if (game.players.includes(currentUser)) {
                 if (game.Players_joined.length > 0) {
                     listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Join Game!</button>`;
-                } else if (data.playerStatus[game.players.find(player => player !== currentUser)] == false) {
+                } else if (data.playerStatus[game.players.find(player => player !== currentUser)] != true) {
                     listItem.innerHTML += `<span>Waiting for other player to be available...</span>`;
                 } else {
                     listItem.innerHTML += `<button id='join-tournament-game' data-currentUser='${currentUser}' data-tournament-game='${JSON.stringify(game)}'>Create Game</button>`;
                 }
+                listItem.innerHTML += `<button id='resign-tournament-game' data-tournament-game='${JSON.stringify(game)}'>Give up</button>`;
             }
             upcomingGames.appendChild(listItem);
         });
     }
     
+
     if (data.is_finished) {
         const final_positionsTitle = document.createElement('h2');
         final_positionsTitle.textContent = 'Final Positions!';
@@ -247,7 +253,7 @@ export function populateTournamentPage() {
                 // Create a span for the names
                 position.forEach((name, idx) => {
                     const nameSpan = document.createElement('span');
-                    nameSpan.textContent = name;
+                    nameSpan.textContent = data.nicknames[name];
     
                     // Check if the current user is in this position
                     const currentUser = Players_score_List.getAttribute('data-currentUser');
@@ -269,6 +275,21 @@ export function populateTournamentPage() {
     }
 }
 
+export function resgign_tournament_match(tournamentGameData) {
+    console.log('give up match')
+    const tournamentId = tournamentGameData.tournament_id;
+    const gameId = tournamentGameData.game_id;
+    fetch(`/api/pong/tournament/${tournamentId}/game_info/${gameId}/resign`)
+        .then(response => {
+            if (response.ok)
+                redirectToRoute(`/tournament/${tournamentId}`)
+            else
+                console.error('Error in changing player status in game:', error);
+        })
+        .catch(error => console.error('Error in ginving up: ', error));
+
+}
+
 export function join_tournament_game(username, tournamentGameData) {
     console.log(tournamentGameData);
     const tournamentId = tournamentGameData.tournament_id;
@@ -277,9 +298,14 @@ export function join_tournament_game(username, tournamentGameData) {
     console.log('GameId: ',gameId);
     // Redirect to waiting page
     fetch(`/api/pong/tournament/${tournamentId}/game_info/${gameId}/switch_player_status`) //add player to join list of the game
-        .catch(error => console.error('Error in changing player status in game:', error));
+        .then(response => {
+            if (response.ok)
+                redirectToRoute(`/waiting_tournament_game/${tournamentId}/${gameId}`);
+            else
+                redirectToRoute(`/tournament/${tournamentId}`)
+        })
+        .catch(error => console.error('Error in joining game: ', error));
 
-    redirectToRoute(`/waiting_tournament_game/${tournamentId}/${gameId}`);
     // Add the user to the player_joined list
 }
 
@@ -299,7 +325,7 @@ export function checkTournamentGameStatus() {
                 redirectToRoute(`/pong/tournament/${tournamentId}/game/${gameId}/`)
             } else {
                 setTimeout(() => {
-                    if (window.location.pathname.startsWith('/waiting_tournament_game')) {
+                    if (data.active && window.location.pathname.startsWith('/waiting_tournament_game')) {
                         checkTournamentGameStatus();
                     }
                     else {

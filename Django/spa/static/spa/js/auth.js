@@ -258,6 +258,30 @@ export async function verifyOtp(username) {
 	}
 }
 
+export async function change_nickname() {
+    const nickname = document.getElementById('change-nickname').value.trim().replace(/\s+/g, '_'); // Remove spaces and replace them with '_'
+
+    const formData = new FormData();
+    formData.append('nickname', nickname); // Append the value, not the element
+
+    fetch('/users_api/change_nickname/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        redirectToRoute('/pong_lobby'); // Redirect after successful update
+        if (!response.ok) {
+            return response.json().then(data => {
+                handleErrors(data); // Handle errors if response is not ok
+            });
+        }
+        return response.json(); // Return the response data if ok
+    })
+    .catch(error => {
+        console.error('Error during nickname change:', error); // Handle any fetch errors
+    });
+}
+
 let isAuthenticated = false;
 let Logging_socket = null;
 

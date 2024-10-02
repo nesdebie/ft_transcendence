@@ -81,7 +81,9 @@ class PongGameLogic:
     def __add_tournament_game(self):
         from .models import Tournament
         tournament = Tournament.objects.get(id=self.tournament_id)
+        print('finised finding game')
         tournament.add_game(self.scores)
+        print('finised __add_tournament')
 
     async def __finish_game(self, consumer):
         if (self.is_tournament):
