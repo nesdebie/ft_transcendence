@@ -39,12 +39,14 @@ def view_self_profile(request):
     finished_tournaments =  [tournament for tournament in Tournament.objects.all() 
                             if user.username in tournament.players and tournament.is_finished]
 
-    print('finished tournaments: ', finished_tournaments)
+    total_tournament_in_Blockchain = 0
 
 
     tournament_score = 100
     for tournament in finished_tournaments:
         tournament_stat = Player_stat(user.username, f'Tournament Result: {tournament.id}')
+        if (tournament_stat):
+            total_tournament_in_Blockchain += 1
         print(f'tournament stat for id {tournament.id}: ', tournament_stat)
         for stat in tournament_stat:
             if (stat[4] == user.username):
@@ -69,7 +71,7 @@ def view_self_profile(request):
         'shifumi_losses': s_losses,
         'shifumi_draws': s_draws,
         'tournament_score': tournament_score,
-        'finished_tournament_count': len(finished_tournaments),
+        'finished_tournament_count': total_tournament_in_Blockchain,
     }
     
     return render(request, 'spa/pages/profile.html', context)
@@ -101,9 +103,14 @@ def view_profile(request, username):
     finished_tournaments =  [tournament.id for tournament in Tournament.objects.all() 
                             if username in tournament.players and tournament.is_finished]
 
+    
+    total_tournament_in_Blockchain = 0
+
     tournament_score = 100
     for tournament_id in finished_tournaments:
         tournament_stat = Player_stat(user.username, f'Tournament Result: {tournament_id}')
+        if (tournament_stat):
+            total_tournament_in_Blockchain += 1
         for stat in tournament_stat:
             if (stat[4] == username):
                 tournament_score += 1
@@ -240,12 +247,18 @@ def tournament_page(request, tournament_id):
         player: Player.object.get(username=player).is_available() for player in tournament.players
         }
 
+    players_nicknames = {
+        player: Player.object.get(username=player).nickname if Player.object.get(username=player).nickname else player
+        for player in tournament.players
+    }
+
     context = {
         'scores'            :   tournament.scores,
         'upcoming_games'    :   tournament.get_upcoming_games(),
         'game_history'      :   tournament.get_game_history(),
-        'final_positions'    :   tournament.final_position,
+        'final_positions'   :  tournament.final_position,
         'is_finished'       :   tournament.is_finished,
-        'playerStatus'      :   players_availability
+        'playerStatus'      :   players_availability,
+        'nicknames'         :   players_nicknames,
     }
     return render(request, 'spa/pages/tournament.html',context={'tournament_data': json.dumps(context)});

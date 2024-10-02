@@ -1,5 +1,20 @@
 <div class="page-container align-center">
     <h1>Pong Lobby</h1>
+    <div id="tournament_nickname">
+        {% if request.user.nickname %}
+        <p id="nickname">Your current tournament nickname is {{ request.user.nickname }}</p>
+        {% else %}
+        <p id="nickname">you don't have a nickname, change it !</p>
+        {% endif %}
+        <form id="nickname_change_form">
+            <div class="form-group">
+                <label for="change-nickname">change nickname for tournaments</label>
+                <input type="text" class="form-control" id="change-nickname" placeholder="nickname" name="change-nickname" required>
+                <span id="nickname-error" class="error-message text-danger"></span>
+                <button id="change-nickname_button" type="submit" class="btn btn-primary btn-block">change nickname</button>
+            </div>
+        </form>
+    </div>
     <div class="pong-options">
         <a href="/pong_local" onclick="route(event)">Play local</a>
     </div>

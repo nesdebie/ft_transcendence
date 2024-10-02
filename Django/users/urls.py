@@ -32,5 +32,5 @@ urlpatterns = [
     path('login_42/', views.login_42, name='login_42'),
     path('callback/', views.callback, name='callback'),
 
-
+    path('change_nickname/', views.change_nickname, name='change_nickname'),
 ]

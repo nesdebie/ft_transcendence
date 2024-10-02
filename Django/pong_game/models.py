@@ -49,8 +49,12 @@ class Tournament(models.Model):
             return []
 
     def get_upcoming_game(self, game_id):
-        return next((game for game in self.upcoming_games if game['game_id'] == game_id), None)
-    
+    # Check if there is a game with the given game_id
+        for game in self.upcoming_games:
+            if game['game_id'] == game_id:
+                return game
+        return None    
+            
     def get_game_history(self):
         if self.is_active:
             return Game_history(f'Tournament Match: {self.id}')
@@ -82,6 +86,7 @@ class Tournament(models.Model):
 
     def add_game(self, scores:dict):
         Add_game_history(scores, f'Tournament Match: {self.id}'); # add the match to the blockchain
+        print('Added Game in History')
         players = list(scores.keys())
         # remove the match from the upcoming games
         self.upcoming_games = [game for game in self.upcoming_games if not (
@@ -91,15 +96,18 @@ class Tournament(models.Model):
         # Add score into db
         self.__update_scores_from_blockchain()
         if not self.upcoming_games:
+            print('starting end :)')
             self.end()
         self.save()
 
     def __update_scores_from_blockchain(self):
         games = Game_history(f'Tournament Match: {self.id}')
+        print('found all games in tournament and updating scores')
         for player in self.scores:
             self.scores[player] = 0;
         for game in games:
             self.scores[game[4]] += 1
+        print('score updated: ',self.scores)
         
 
 
@@ -115,12 +123,18 @@ class Tournament(models.Model):
         self.is_finished = True
         sorted_players = sorted(self.scores.items(), key=lambda item: item[1], reverse=True)
         # Look up if players have the exact same score then put the one who won the game between the 2 at the top
+        print("sorted Player retreived")
         for i in range(len(sorted_players) - 1):
-            if (sorted_players[i][1] == sorted_players[i + 1][1]): #if there is an equality
-                game = next(Match_history(sorted_players[i][0], sorted_players[i + 1][0], f'Tournament Match: {self.id}'))
+            if (sorted_players[i][1] == sorted_players[i + 1][1] and (i == len(sorted_players) - 2 or sorted_players[i][1] != sorted_players[i + 2][1])): #if there is an equality
+                print('found_player equal: ',sorted_players[i][0], sorted_players[i + 1][0])
+                game = Match_history(sorted_players[i][0], sorted_players[i + 1][0], f'Tournament Match: {self.id}')
+                print('equal game found: ', game);
+                game = game[0]
+                print('now game = ', game)
                 if (game[4] == sorted_players[i + 1][0]):
                     sorted_players[i], sorted_players[i + 1] = sorted_players[i + 1], sorted_players[i]
 
+        print("sorted Player doubles managed")
         for i in range(len(sorted_players)):
             for j in range(i + 1, len(sorted_players)):
                 if sorted_players[i][1] > sorted_players[j][1]:

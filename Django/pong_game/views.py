@@ -196,11 +196,26 @@ def tournament_game_status(request, tournament_id, game_id):
     upcoming_game = tournament.get_upcoming_game(game_id)
     
     if not upcoming_game:
-        return JsonResponse({'error': 'Game not found'}, status=404)
+        return JsonResponse({'ready': False, 'active': False})
     
     if len(upcoming_game['Players_joined']) == 2:
-        return JsonResponse({'ready': True})
+        return JsonResponse({'ready': True,'active': True})
     else:
-        return JsonResponse({'ready': False})
+        return JsonResponse({'ready': False, 'active': True})
 
-
+@csrf_exempt
+def tournament_resign(request, tournament_id, game_id):
+    tournament: Tournament = get_object_or_404(Tournament, id=tournament_id)
+    upcoming_game = tournament.get_upcoming_game(game_id)
+    from .game_logic import PongGameLogic
+    max_score = PongGameLogic().max_score
+    players = upcoming_game['players']
+    if not upcoming_game:
+        return JsonResponse({'error': 'Game not found'}, status=404)
+    if request.user.username not in players:
+        return JsonResponse({'error': 'Player not in this game'}, status=404)
+    
+    tournament.add_game({player : 0 if player == request.user.username else max_score
+                         for player in players})
+    
+    return JsonResponse({'status': "succes"})

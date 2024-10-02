@@ -1,9 +1,9 @@
-import { register, login, logout, updateSidebar, find_user, checkAuthentication, verifyOtp } from "./auth.js";
+import { register, login, logout, updateSidebar, find_user, checkAuthentication, verifyOtp, change_nickname } from "./auth.js";
 import { redirectToRoute } from "./router.js";
 import { sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriendRequest, removeFriend, block_user, unblock_user } from "./friend_managment.js";
 import { updateProfilePicture, setPassword } from "./profile_editor.js";
 import { getCookie } from "./utils.js"
-import { createTournament, join_tournament_game } from "./tournament.js";
+import { createTournament, join_tournament_game, resgign_tournament_match } from "./tournament.js";
 import { startMatchmaking } from "./matchmaking.js";
 
 $(document).ready(function() {
@@ -53,10 +53,17 @@ document.body.addEventListener('submit', async function(event) {
             console.error('Error changing password:', error);
             alert('Error changing password.');
         }
+    } else if (event.target.id == "nickname_change_form") {
+        event.preventDefault();
+        try {
+            await change_nickname(event);
+        } catch (error) {
+            console.error('Error during nickname change:', error);
+        }
     }
-    // fixing bug in login , please leave this condition , if this condition is not here 
-    if (event.target.id !== 'login-form')
+    if (event.target.id !== 'login-form') {
         updateSidebar();
+    } 
 });
 
 // 42 AUTH 
@@ -111,7 +118,11 @@ document.body.addEventListener('click', async function(event) {
         const tournamentGameData = JSON.parse(target.getAttribute('data-tournament-game'));
         console.log('button info:',username,tournamentGameData);
         join_tournament_game(username, tournamentGameData);
-    }  else if (target.id == 'register-with-42') {
+    }  else if (target.id == 'resign-tournament-game'){
+        const tournamentGameData = JSON.parse(target.getAttribute('data-tournament-game'));
+        console.log('give up the game', tournamentGameData)
+        resgign_tournament_match(tournamentGameData);
+    } else if (target.id == 'register-with-42') {
         // Gestion de l'authentification 42 dans un nouvel onglet
         event.preventDefault();
     

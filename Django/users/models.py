@@ -32,7 +32,7 @@ class Player(AbstractUser):
 	email 				= models.EmailField(verbose_name="email", max_length=60, unique=True)
 	profile_picture 	= models.ImageField(max_length=255, upload_to='profile_pics', default='profile_pics/default.jpg')
 
-	nickname 			= models.CharField(max_length=100, blank=True, default='')
+	nickname 			= models.CharField(max_length=30, null=True, unique=True, blank=True)
 	online_status		= models.BooleanField(default=False)
 
 	activation_code 	= models.CharField(max_length=32, blank=True, null=True)  # Ajout de l'attribut activation_code
@@ -52,8 +52,6 @@ class Player(AbstractUser):
 	
 	def save(self, *args, **kwargs):
 		# Set default value for nickname if empty
-		if not self.nickname:
-			self.nickname = self.username
 		if not self.profile_picture:
 			self.profile_picture = 'profile_pics/default.jpg'
 		super().save(*args, **kwargs)

@@ -4,13 +4,13 @@ from .models import Player, FriendRequest, Friendship, Block
 from django.http import JsonResponse
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
-from . import views
 from django.conf import settings 
 import requests 
 from django.contrib.auth import update_session_auth_hash
+from django.db import IntegrityError
+
 
 # LOGIN 42 AUTH 
 
@@ -247,7 +247,6 @@ def register_view(request):
         password2 = request.POST.get('password2')
         email = request.POST.get('email')
         image = request.FILES.get('image')
-        nickname = request.POST.get('nickname')
         two_factor_auth = request.POST.get('two_factor_auth') == 'on'
 		############### test local storage 
         secret = request.POST.get('2fa_secret')  # Récupérer le secret depuis le POST
@@ -278,7 +277,6 @@ def register_view(request):
             username=username,
             password=password,
             email=email,
-            nickname=nickname,
             profile_picture=image,
             auth_42=auth_42 
         )
@@ -532,3 +530,21 @@ def change_password(request):
         return JsonResponse({'success': 'Password changed successfully'})
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def change_nickname(request):
+    if request.method != 'POST':
+        return JsonResponse({'errors': {'nickname': 'Wrong method'}}, status=405)
+    
+    nickname = request.POST.get('nickname')
+    user :Player = request.user
+    user.nickname = nickname
+    try:
+        user.save()
+        return JsonResponse({'status': 'success', 'nickname': user.nickname})
+    except IntegrityError:
+        return JsonResponse({'errors': {'nickname': 'This nickname has already be chosen'}})
+    except Exception as e:
+        return JsonResponse({'errors': {'nickname': e}})
+    
+    
