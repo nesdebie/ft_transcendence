@@ -19,6 +19,7 @@ class Matchmaking(models.Model):
     matched = models.BooleanField(default=False)
     room_name = models.CharField(max_length=70 ,default='')
     game = models.ForeignKey(PongGame, on_delete=models.SET_NULL, null=True, blank=True)
+    game_type = models.CharField(max_length=20, choices=[('pong', 'Pong'),('shifumi', 'Shifumi')], default='pong')
 
     def __str__(self):
         return f"Matchmaking for {self.player.username}"

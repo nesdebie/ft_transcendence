@@ -11,22 +11,23 @@ import json
 def start_matchmaking(request):
     if request.method == 'POST':
         player :Player = request.user
-        matchmaking, created = Matchmaking.objects.get_or_create(player=player)
-        
+        game_type = json.loads(request.body).get('game_type')
+        matchmaking, created = Matchmaking.objects.get_or_create(player=player, game_type=game_type)
         # Check if there's another player waiting
-        other_matchmaking = Matchmaking.objects.filter(matched=False).exclude(player=player).first()
+        other_matchmaking = Matchmaking.objects.filter(matched=False, game_type=game_type).exclude(player=player).first()
         
         if other_matchmaking:
             # Create a new game
-            game = PongGame.objects.create(player1=player, player2=other_matchmaking.player)
+            if game_type == 'pong':
+                game = PongGame.objects.create(player1=player, player2=other_matchmaking.player)
+                other_matchmaking.game = game
             
             other_matchmaking.matched = True
             other_matchmaking.room_name = other_matchmaking.player.username + "_" + player.username
-            other_matchmaking.game = game
             other_matchmaking.save()
             
             matchmaking.delete()
-            return JsonResponse({'status': 'matched', 'room_name': other_matchmaking.room_name})
+            return JsonResponse({'status': 'matched', 'room_name': other_matchmaking.room_name, 'game_type': game_type})
         
         return JsonResponse({'status': 'waiting', 'matchmaking_id': str(matchmaking.id)})
     
@@ -35,14 +36,17 @@ def start_matchmaking(request):
 @csrf_exempt
 def check_matchmaking(request, matchmaking_id):
     player = request.user
-    matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).first()   
+    matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).first()
+    if not matchmaking:
+        return JsonResponse({'status': 'matchmaking_removed'}) 
+    room_name = matchmaking.room_name
     if matchmaking.matched:
-        room_name = matchmaking.room_name
         matchmaking.delete()
-        return JsonResponse({'status': 'matched', 'room_name': room_name})
+        return JsonResponse({'status': 'matched', 'room_name': room_name, 'game_type': matchmaking.game_type})
     
-    return JsonResponse({'status': 'waiting'})
+    return JsonResponse({'status': 'waiting', 'room_name': room_name, 'game_type': matchmaking.game_type})
 
+@csrf_exempt
 def stop_matchmaking(request, matchmaking_id):
     player = request.user
     matchmaking = Matchmaking.objects.filter(id=matchmaking_id, player=player).delete()

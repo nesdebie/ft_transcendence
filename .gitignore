@@ -17,3 +17,6 @@ Django/.logs/*
 
 # Fucking .DS_Store
 *.DS_Store
+
+Django/certifate.crt 
+Django/private.key

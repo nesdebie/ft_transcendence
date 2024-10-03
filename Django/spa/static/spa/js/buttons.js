@@ -4,7 +4,7 @@ import { sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriend
 import { updateProfilePicture, setPassword } from "./profile_editor.js";
 import { getCookie } from "./utils.js"
 import { createTournament, join_tournament_game, resgign_tournament_match } from "./tournament.js";
-import { startMatchmaking } from "./matchmaking.js";
+import { startMatchmaking, stopMatchmaking } from "./matchmaking.js";
 
 $(document).ready(function() {
     $("#profile-button").click(function() {
@@ -110,7 +110,16 @@ document.body.addEventListener('click', async function(event) {
         unblock_user(username);
     } else if (target.id == 'matchmaking-btn') {
         console.log("starting matchmaking");
-        startMatchmaking();
+        const game_type = target.getAttribute('data-game_type')
+        const matchmakingId = target.getAttribute('data-matchmaking-id'); // Assuming you store matchmaking ID in the button
+
+        if (target.textContent === 'Find a Match') {
+            console.log("starting matchmaking");
+            startMatchmaking(game_type, target); // Pass the button to change its text
+        } else {
+            console.log("stopping matchmaking");
+            stopMatchmaking(matchmakingId, target); // Call the stop function
+        }
     } else if (target.id == 'create-tournament-btn') {
         createTournament();
     } else if (target.id == 'join-tournament-game') {

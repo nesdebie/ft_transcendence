@@ -183,6 +183,4 @@ function getResultMessage(result, playerMove, opponentMove) {
     }
 }
 
-
-
 export { initShifumi };
