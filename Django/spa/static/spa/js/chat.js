@@ -7,7 +7,8 @@ export function initChat() {
     const username_to_chat = chatDataElement.getAttribute('data-username_to_chat');
     const is_blocked = chatDataElement.getAttribute('data-is-blocked') === 'true';  // Assume this data attribute is set based on backend logic
     const is_bot = username_to_chat === '';  // Updated bot username check
-
+    let intervalID;
+    
     // Allow chat initiation with the bot but prevent sending messages
     if (username_to_chat == null || is_blocked) {
         console.log('Cannot initiate chat due to block or missing username');
@@ -31,34 +32,9 @@ export function initChat() {
                     'sender': '[_t0urna_b0t_]',
                     'receiver': current_username
                 }));
-                fetch(`/api/pong/tournaments_lists/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let hasUpcomingGames = false;
-                        ['available', 'your', 'your_finished'].forEach(category => {
-                            if (data[category]) {
-                                data[category].forEach(tournament => {
-                                    if (tournament.upcoming_games && tournament.upcoming_games.length > 0) {
-                                        hasUpcomingGames = true;
-                                        tournament.upcoming_games.forEach(game => {
-                                            if (game.players && game.players.includes(current_username)) {
-                                                const opponentName = game.players.find(player => player !== current_username);
-                                                websocket.send(JSON.stringify({
-                                                    'message': `You have an upcoming game against ${opponentName} in tournament ${tournament.id}`,
-                                                    'sender': '[_t0urna_b0t_]',
-                                                    'receiver': current_username
-                                                }));
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                        if (!hasUpcomingGames) {
-                            console.log("No upcoming games or data structure is incorrect");
-                        }
-                    })
-                    .catch(error => console.error('Error fetching tournament games: ', error));
+                // Fetch and send game notifications immediately and periodically
+                fetchAndNotifyGames(websocket, current_username);
+                intervalID = setInterval(() => fetchAndNotifyGames(websocket, current_username), 10000);
             }
         };
 
@@ -77,6 +53,7 @@ export function initChat() {
 
         websocket.onclose = function(e) {
             console.log('Chat socket closed');
+            clearInterval(intervalID); // Clear the interval when the WebSocket is closed
         };
     }
 
@@ -239,3 +216,35 @@ function find_user_on_click(username) {
 }
 
 window.find_user_on_click = find_user_on_click;  // Make it accessible globally if necessary
+
+// Extracted function to fetch and notify about games
+function fetchAndNotifyGames(websocket, current_username) {
+    fetch(`/api/pong/tournaments_lists/`)
+        .then(response => response.json())
+        .then(data => {
+            let hasUpcomingGames = false;
+            ['available', 'your', 'your_finished'].forEach(category => {
+                if (data[category]) {
+                    data[category].forEach(tournament => {
+                        if (tournament.upcoming_games && tournament.upcoming_games.length > 0) {
+                            hasUpcomingGames = true;
+                            tournament.upcoming_games.forEach(game => {
+                                if (game.players && game.players.includes(current_username)) {
+                                    const opponentName = game.players.find(player => player !== current_username);
+                                    websocket.send(JSON.stringify({
+                                        'message': `You have an upcoming game against ${opponentName} in tournament ${tournament.id}`,
+                                        'sender': '[_t0urna_b0t_]',
+                                        'receiver': current_username
+                                    }));
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            if (!hasUpcomingGames) {
+                console.log("No upcoming games or data structure is incorrect");
+            }
+        })
+        .catch(error => console.error('Error fetching tournament games: ', error));
+}
