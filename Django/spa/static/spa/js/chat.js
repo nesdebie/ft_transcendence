@@ -25,13 +25,40 @@ export function initChat() {
         websocket.onopen = function(e) {
             setWebSocket(websocket);
             addAcceptButtonListeners();
-            // Send a greeting message if the user is chatting with the bot
             if (is_bot) {
                 websocket.send(JSON.stringify({
-                    'message': 'Hello',
+                    'message': 'Hello ' + current_username + ' !',
                     'sender': '[_t0urna_b0t_]',
                     'receiver': current_username
                 }));
+                fetch(`/api/pong/tournaments_lists/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let hasUpcomingGames = false;
+                        ['available', 'your', 'your_finished'].forEach(category => {
+                            if (data[category]) {
+                                data[category].forEach(tournament => {
+                                    if (tournament.upcoming_games && tournament.upcoming_games.length > 0) {
+                                        hasUpcomingGames = true;
+                                        tournament.upcoming_games.forEach(game => {
+                                            if (game.players && game.players.includes(current_username)) {
+                                                const opponentName = game.players.find(player => player !== current_username);
+                                                websocket.send(JSON.stringify({
+                                                    'message': `You have an upcoming game against ${opponentName} in tournament ${tournament.id}`,
+                                                    'sender': '[_t0urna_b0t_]',
+                                                    'receiver': current_username
+                                                }));
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        if (!hasUpcomingGames) {
+                            console.log("No upcoming games or data structure is incorrect");
+                        }
+                    })
+                    .catch(error => console.error('Error fetching tournament games: ', error));
             }
         };
 
