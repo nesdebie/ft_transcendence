@@ -6,7 +6,7 @@ export function initChat() {
     const current_username = chatDataElement.getAttribute('data-current-username');
     const username_to_chat = chatDataElement.getAttribute('data-username_to_chat');
     const is_blocked = chatDataElement.getAttribute('data-is-blocked') === 'true';  // Assume this data attribute is set based on backend logic
-    const is_bot = username_to_chat === '[_t0urn4_b0t_]';  // Check if the user is the bot
+    const is_bot = username_to_chat === '';  // Updated bot username check
 
     // Allow chat initiation with the bot but prevent sending messages
     if (username_to_chat == null || is_blocked) {
@@ -23,9 +23,16 @@ export function initChat() {
         );
 
         websocket.onopen = function(e) {
-            console.log('WebSocket connection established');
             setWebSocket(websocket);
             addAcceptButtonListeners();
+            // Send a greeting message if the user is chatting with the bot
+            if (is_bot) {
+                websocket.send(JSON.stringify({
+                    'message': 'Hello',
+                    'sender': '[_t0urna_b0t_]',
+                    'receiver': current_username
+                }));
+            }
         };
 
         websocket.onmessage = function(e) {
@@ -171,7 +178,7 @@ export function initChat() {
     connectWebSocket();
 }
 
-function generateRoomName(user1, user2) {
+export function generateRoomName(user1, user2) {
     return `chat_${[user1, user2].sort().join('_')}`;
 }
 

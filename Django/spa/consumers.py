@@ -5,6 +5,9 @@ from django.utils import timezone
 from channels.db import database_sync_to_async
 from django.urls import reverse
 
+# Define the bot's username as a constant at the top of the file
+BOT_USERNAME = '[_t0urna_b0t_]'
+
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -46,6 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 print(f"Error removing from group: {e}")
 
     async def receive(self, text_data):
+        print(f"Received message: {text_data}")
         if self.channel_layer is None:
             print("Channel layer is None. Cannot send message.")
             return
@@ -82,20 +86,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(f"Error sending message to group: {e}")
 
     @database_sync_to_async
-    def save_message(self, sender, receiver, message, message_type='chat_message', is_game_invite=False, game_type='default_game'):
+    def save_message(self, sender, receiver, message, message_type='chat_message', game_type=None):
         from users.models import Player, Message
+
+        # Check if sender or receiver is the bot
+        if sender == BOT_USERNAME or receiver == BOT_USERNAME:
+            # Handle message involving the bot
+            self.handle_bot_message(sender, receiver, message, message_type, game_type)
+            return  # Exit the function as no database operation is needed
+
+        # Normal message handling for real users
         sender_user = Player.objects.get(username=sender)
         receiver_user = Player.objects.get(username=receiver)
-        # if game_type != 'default_game':  # Check if game_type is not 'default_game'
-        #     return  # Do not save the message
         Message.objects.create(
             sender=sender_user,
             receiver=receiver_user,
             message=message,
             message_type=message_type,
-            is_game_invite=is_game_invite,
-            game_type=game_type  # Save the game type
+            game_type=game_type
         )
+
+    def handle_bot_message(self, sender, receiver, message, message_type, game_type):
+        # Logic to handle messages where the bot is involved
+        # This could involve sending messages to a WebSocket, logging, etc.
+        print(f"Bot involved in message: {message}")
+        # Example: Send message to WebSocket or another communication channel
+        # This is a placeholder for wherever the bot's messages need to be routed
+        pass
+
+    def get_virtual_bot(self):
+        # Create a virtual Player object for the bot
+        class VirtualBot:
+            username = BOT_USERNAME
+            email = "bot@example.com"  # Optional: Define other necessary attributes
+
+            def save(self, *args, **kwargs):
+                # Override the save method to prevent database operations
+                pass
+
+        return VirtualBot()
 
     async def chat_message(self, event):
         message = event['message']
