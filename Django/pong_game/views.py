@@ -198,10 +198,18 @@ def tournament_game_switch_player_status(request, tournament_id, game_id):
 def tournament_game_status(request, tournament_id, game_id):
     tournament: Tournament = get_object_or_404(Tournament, id=tournament_id)
     upcoming_game = tournament.get_upcoming_game(game_id)
-    
+
     if not upcoming_game:
         return JsonResponse({'ready': False, 'active': False})
-    
+
+    other_player_username = upcoming_game['players'][1] if upcoming_game['players'][0] == request.user.username else upcoming_game['players'][0]
+    other_user = get_object_or_404(Player, username=other_player_username)
+    print('other user is : ', other_player_username)
+    print('Other user is avaialable ?: ',other_user.is_available())
+
+    if other_user.is_available() != True:
+        return JsonResponse({'status': 'otherplayer_inactive'})
+
     if len(upcoming_game['Players_joined']) == 2:
         return JsonResponse({'ready': True,'active': True})
     else:

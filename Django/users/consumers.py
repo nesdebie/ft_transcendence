@@ -12,14 +12,17 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		
+		print(f'{self.user.username} has disconnected')
 		# Update the user's online status to false
 		if self.user:
 			self.user.online_status = False
-			await self.user.save()
+			await self.save_user(self.user)
+		print(f'{self.user.username} status is {self.user.is_available()} ')
 	
 
 	async def receive(self, text_data):
 		data = json.loads(text_data)
+		print('online consumser data received: ', data)
 		self.user = await self.get_user(data['user_id'])
 		self.user.online_status = True
 		await self.save_user(self.user)

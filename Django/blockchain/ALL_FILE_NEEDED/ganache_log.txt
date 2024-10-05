@@ -3,33 +3,33 @@ Starting RPC server
 
 Available Accounts
 ==================
-(0) 0x886F32B5C4dEA259a73d04f8D7e673830AF8b0A7 (1000 ETH)
-(1) 0xa06F1368DD42f7388F91763ee9a82Ac3f26E9435 (1000 ETH)
-(2) 0x055D5062738155Da23cA3cdDD6326f9e5Dfc36D9 (1000 ETH)
-(3) 0xe9158960a9995b54ec80120f42239a5DBDd03e2a (1000 ETH)
-(4) 0x963c711A1AAF68f7189DBEC49491ebD2B5dD82FE (1000 ETH)
-(5) 0x8c047D183Aca9EED4c81eCC5Fa99E3CF1B350268 (1000 ETH)
-(6) 0x5e31eeefD18490079D18e1f02FFf7C4933767f37 (1000 ETH)
-(7) 0x51A5F4093829C603c35DF26cd892aDCa0f296a24 (1000 ETH)
-(8) 0xb186a07677F2808a71D1fc12a651a81e8f8B13a5 (1000 ETH)
-(9) 0x6603bc546F37e826D64930eD840e505D34186407 (1000 ETH)
+(0) 0x0409Aa0b214c68D90cd032e449cBFA2320462d32 (1000 ETH)
+(1) 0x92735b5cCF50C29A249fED1E10120f4d9AEc0bB3 (1000 ETH)
+(2) 0x8860eF7aa8C57a2d939A7c7956f9502853DA2b8f (1000 ETH)
+(3) 0x9A77b074b6133489F60d075901F80075ad21628B (1000 ETH)
+(4) 0xbaB4fE8b430D49f3cf255a2c81beaDF1F08eB77F (1000 ETH)
+(5) 0x5E136E76b8B650C38D501A965ddF5D2ca9A17171 (1000 ETH)
+(6) 0xBCcaDd838E9825964DFCB35F0D0658e98A743EAb (1000 ETH)
+(7) 0x166a9652ee224234EACC41C88Fc83bFc02145856 (1000 ETH)
+(8) 0xC5Bcf837C46e3E49e54954C4f6e385E0b1f942C5 (1000 ETH)
+(9) 0xf6Bfc4783264dA1D2A35f221D92F8DD6A23EC2c6 (1000 ETH)
 
 Private Keys
 ==================
-(0) 0xf3357108ebeeba9dd2405bf3f8bdec0b193a766a0400c578bbe0801418a7fb5f
-(1) 0xb7e347a08f63e645699f40ac35b46b2add6e60aa690555ad4e52767b3fa60a22
-(2) 0x2e4d4dd4bc0afa8bee8237981f4dfd3703e3dafc78acc357ae3bca7c95afc2b0
-(3) 0xb76f629ea6aa9f9cdc40496575671f2a0960878259b6bb9c074d61aa50c86daf
-(4) 0xc1521dfc1c69663c97d4921ca47f41ac12e4c4d51c2dd4abc1661b741abef392
-(5) 0x0a54aef936425e73b1dfd2ef79ebb891100d8b6c8059eb459c63bcb8c1956154
-(6) 0x44546a328ccb2f08e1a1425c920fb211345c30577cb5a18256e6d76e27f99d45
-(7) 0x684f970b099a9165fdd4309d17b7ca37c91f603206dd65f98976f875d41b810b
-(8) 0x5d41ce6a4e5c5d769d3e90c9d3e29fce52204a9652e433e7fe473a0c305666a5
-(9) 0x516b4d47ec3a877e03391bfa6a9cd89a0e995e21b6166f7279fa02f4a2e8c804
+(0) 0x59043800677c284eacd9587fc3606e232bbb0239d39d31dadd9d83c209e7da22
+(1) 0xed621e98598d3fcab735824ac37b95e2c47e0e0ea2a2f999e197b847c7fc86ae
+(2) 0xdd795d405a37e58703fbd77b728b4b56006816dfdbcf48dd491eb170053333b7
+(3) 0x492bb54d15da4beeab97a5bba441569925155cc5f568280a2d0f8331fda7a3a5
+(4) 0xb6da846b10919de8466d08e8795a02e48515affb9a0a5a577e214a789478eaa0
+(5) 0xc3c621cc3714ff81e4c82c4569ba26096df7e6d6eead4fb68c7441bddd5a80bd
+(6) 0x8d7af7ccbe163f077d97870056fb6bf4d324487387daddf30ca74db7309378b1
+(7) 0x25e94d9a668ed18392256e3b36c7b0908c21f62586a8f847ab7bdf997f21c42f
+(8) 0x8bff2e85c72f5fc35549d53f8d7f16e2467a5581086975c2ab6f7ed65acd17b1
+(9) 0x29490c05d22a33f0855abd45e00022e2cf31b969ab2b09e9fa2191e9d5f26a31
 
 HD Wallet
 ==================
-Mnemonic:      unique fruit verify pink bounce cruel upon hidden damp father bid trip
+Mnemonic:      volcano goose summer lounge bicycle donkey glide oppose dignity wait avocado rebel
 Base HD Path:  m/44'/60'/0'/0/{account_index}
 
 Default Gas Price
@@ -69,11 +69,11 @@ eth_getBlockByNumber
 eth_gasPrice
 eth_sendTransaction
 
-  Transaction: 0x4b79e12c3f20077b4e8dc282c609a83a42b9473edd3d036c02e4ee481b0ca13c
-  Contract created: 0x6093f8e310cb0efddf8a9dbab4c62cca981e16d7
+  Transaction: 0xa052ba30e810b19bb7851804d147592bd074a7dcf4ba048deb4d7621988ba8b2
+  Contract created: 0x96976c73caf279110ca4194979145c0bf76e5462
   Gas usage: 1060938
   Block number: 1
-  Block time: Sun Sep 29 2024 08:43:23 GMT+0000 (Coordinated Universal Time)
+  Block time: Sat Oct 05 2024 11:11:14 GMT+0000 (Coordinated Universal Time)
 
 eth_getTransactionReceipt
 eth_getCode
@@ -81,14 +81,18 @@ eth_getTransactionByHash
 eth_getBlockByNumber
 eth_getBalance
 web3_clientVersion
-eth_accounts
-eth_getBlockByNumber
+web3_clientVersion
 eth_chainId
-eth_sendTransaction
-
-  Transaction: 0xa5c28eef66d25ceb69d1a9dc6e4bbb4295ca343e36e7db2b0ee5e4f2277a7d40
-  Gas usage: 237973
-  Block number: 2
-  Block time: Sun Sep 29 2024 08:44:29 GMT+0000 (Coordinated Universal Time)
-
-eth_getTransactionReceipt
+eth_call
+web3_clientVersion
+web3_clientVersion
+eth_chainId
+eth_call
+web3_clientVersion
+web3_clientVersion
+eth_chainId
+eth_call
+web3_clientVersion
+web3_clientVersion
+eth_chainId
+eth_call
