@@ -9,13 +9,13 @@ class PongGameLogic:
         self.width = 500
         self.height = 500
         self.paddle_width = 12
-        self.paddle_height = 200
+        self.paddle_height = 100
         self.ball_size = 10
         self.paddle_speed = 10
         self.init_ball_speed = 10
         self.ball_speed = self.init_ball_speed
         self.ball_speed_increase = 1
-        self.max_score = 1
+        self.max_score = 11
 
         self.players_usernames = [] #gives order of users
         self.paddles = {} # Player_username : {y : position }
@@ -24,6 +24,7 @@ class PongGameLogic:
         self.game_running :bool = False
         self.is_tournament :bool = False
         self.tournament_id = -1
+        self.ending_normal = True
 
     def __initialize_ball(self):
         # Choose a random angle, excluding ±π/2
@@ -63,7 +64,8 @@ class PongGameLogic:
             await asyncio.sleep(0.03)
         
         print('thread finishing game')
-        await self.__finish_game(consumer)
+        if (self.ending_normal):
+            await self.finish_game(consumer)
 
     async def __send_game_state(self, consumer):
         await consumer.channel_layer.group_send(
@@ -85,7 +87,7 @@ class PongGameLogic:
         tournament.add_game(self.scores)
         print('finised __add_tournament')
 
-    async def __finish_game(self, consumer):
+    async def finish_game(self, consumer):
         if (self.is_tournament):
             await self.__add_tournament_game()
         else:

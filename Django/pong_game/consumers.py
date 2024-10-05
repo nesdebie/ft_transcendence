@@ -21,11 +21,50 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        print(f"{self.user.username} is disconnecting from room {self.room_name}.")
+        
+        # Check if the room exists before trying to access it
+        
+        if self.room_name in self.rooms:
+            other_player = [username for username in self.rooms[self.room_name]['players_usernames'] if username != self.user.username]
+            
+            if other_player:
+                print('Other player: ',other_player)
+                other_player_username = other_player[0]
+                room = self.rooms[self.room_name]
+                game: PongGameLogic = room['game']
+                
+                # Set a flag to prevent multiple saves
+                if game.ending_normal:
+                    game.ending_normal = False
+                    if game.game_running:
+                        game.game_running = False
+                    
+                    # Update scores
+                    game.scores[self.user.username] = 0
+                    game.scores[other_player_username] = game.max_score
+                    
+                    # Finish the game and save to blockchain
+                    await game.finish_game(self)
+                    
+                    # Notify the other player
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'player_left',
+                            'player': self.user.username
+                        }
+                    )
+                    print(f"Notified {other_player_username} that {self.user.username} has left the game.")            
+        else:
+            print(f"Room {self.room_name} does not exist. Cannot disconnect.")
+        
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
-
+        print(f"{self.user.username} has been removed from the room {self.room_name}.")
+    
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
@@ -135,5 +174,12 @@ class PongConsumer(AsyncWebsocketConsumer):
                 'game_state': game_state
             }
         )
+
+    async def player_left(self, event):
+        player = event['player']
+        await self.send(text_data=json.dumps({
+            'type': 'player_left',
+            'player': player
+        }))
 
 

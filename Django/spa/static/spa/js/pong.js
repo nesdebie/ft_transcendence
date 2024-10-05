@@ -50,9 +50,12 @@ function initPong() {
                 console.log('game start: ', data)
                 game_data = data.game;
                 drawBoard();
+            } else if (data.type === 'player_left') {
+                alert(`${data.player} has left the game. You win!`);
+                redirectToRoute('/pong_lobby')
             } else {
                 console.error(e);
-            }
+            } 
         };
         
         socket.onopen = function(e) {
