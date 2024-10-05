@@ -24,9 +24,9 @@
 	<!-- If not already blocked, block user -->
 	{% if not is_own_profile %}
 	<div id="game-stats">
-		<h4>[PONG TOURNAMENT] Elo: {{ tournament_score }} for {{ finished_tournament_count }} tournament finished</h4>
-		<h4>[PONG] Wins: {{ pong_wins }} - Losses: {{ pong_losses }}</h4>
-		<h4>[SHIFUMI] Wins: {{ shifumi_wins }} - Losses: {{ shifumi_losses }} - Draws : {{ shifumi_draws }}</h4>
+		<h4>Pong ladder: {{ tournament_score }} for {{ finished_tournament_count }} tournament(s)</h4>
+		<h4>Pong: {{ pong_wins }}/{{ pong_losses }} [W/L]</h4>
+		<h4>Shifumi {{ shifumi_wins }}/{{ shifumi_losses }}/{{ shifumi_draws }} [W/L/D]</h4>>
 	</div>
 		<!-- Display friend request buttons if viewing another user's profile -->
 		{% if not friendship and not request_pending and not blocked %}
@@ -60,9 +60,9 @@
 	<!-- If own_profile -->
 	{% else %}
 		<div id="game-stats">
-			<h4>[PONG TOURNAMENT] Elo: {{ tournament_score }} for {{ finished_tournament_count }} tournament finished</h4>
-			<h4>[PONG] Wins: {{ pong_wins }} - Losses: {{ pong_losses }}</h4>
-			<h4>[SHIFUMI] Wins: {{ shifumi_wins }} - Losses: {{ shifumi_losses }} - Draws : {{ shifumi_draws }}</h4>
+			<h4>Pong ladder: {{ tournament_score }} for {{ finished_tournament_count }} tournament(s)</h4>
+			<h4>Pong: {{ pong_wins }}/{{ pong_losses }} [W/L]</h4>
+			<h4>Shifumi {{ shifumi_wins }}/{{ shifumi_losses }}/{{ shifumi_draws }} [W/L/D]</h4>
 		</div>
 		<!-- <h3>Find a User</h3> -->
 		<form id="find-user-form">

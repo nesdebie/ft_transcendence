@@ -24,7 +24,7 @@ const route = (event, url = null) => {
 const routes_suffixes = [
     { paths: ['/'], suffix: 'home.html'},
     { paths: ['/about', '/logout', '/register', '/login', '/shifumi_pve', '/pong_lobby', '/pong_local', '/shifumi_lobby'], suffix: '.html' },
-    { paths: ['/profile', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting_joining_tournament', '/tournament', '/waiting_tournament_game'], suffix: '' }
+    { paths: ['/profile', '/history', '/pong', '/friend_requests', '/chat', '/shifumi' ,'/profile_editor', '/waiting_joining_tournament', '/tournament', '/waiting_tournament_game'], suffix: '' }
 ];
 
 function update_path(path) {
