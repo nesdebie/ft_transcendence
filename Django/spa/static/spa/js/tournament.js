@@ -321,7 +321,18 @@ export function checkTournamentGameStatus() {
         .then(response => response.json())
         .then(data => {
             console.log('waiting for other player: ',data);
-            if (data.ready) {
+            if (data.status == 'otherplayer_inactive') {
+                alert('Other player is\'t disponible anymore for the game')
+                fetch(`/api/pong/tournament/${tournamentId}/game_info/${gameId}/switch_player_status`) // add player to join list of the game
+                .then(() => {
+                    return new Promise(resolve => setTimeout(resolve, 200)); // Sleep for 2000 milliseconds (2 seconds)
+                })
+                .then(() => {
+                    // Continue with any further actions after the sleep
+                    redirectToRoute(`/tournament/${tournamentId}/`);
+                })
+                .catch(error => console.error('Error in changing player status in game:', error));
+            } else if (data.ready) {
                 redirectToRoute(`/pong/tournament/${tournamentId}/game/${gameId}/`)
             } else {
                 setTimeout(() => {
