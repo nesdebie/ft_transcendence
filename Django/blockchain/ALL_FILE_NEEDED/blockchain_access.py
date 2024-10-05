@@ -70,7 +70,6 @@ def Player_stat(player, game):
 		else:
 			print(f"{len(player_matches)} match(s) trouvé(s) pour le joueur {player} dans le jeu {game}.")
 
-		# Retourner la liste des matchs où le joueur a participé pour le jeu spécifié
 		return player_matches
 
 	except Exception as e:

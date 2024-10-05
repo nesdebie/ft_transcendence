@@ -53,9 +53,8 @@ def view_self_profile(request):
                 tournament_score += 1
             else:
                 tournament_score -= 1
-
-    
-
+    print('pong_stats: ', pong_stats)
+    print('shifumi_stats: ', shifumi_stats)
     context = {
         'user_profile': user,
         'is_own_profile': True,
@@ -262,3 +261,26 @@ def tournament_page(request, tournament_id):
         'nicknames'         :   players_nicknames,
     }
     return render(request, 'spa/pages/tournament.html',context={'tournament_data': json.dumps(context)});
+
+@login_required
+def view_history(request):
+    user: Player = request.user
+    # Fetch Pong game statistics for the user
+    pong_stats_raw = Player_stat(user.username, 'pong')
+    pong_stats = [
+        f"vs {stat[2] if stat[1] == user.username else stat[1]} - {stat[3]} - [{'WINNER' if stat[4] == user.username else 'LOSER'}]"
+        for stat in pong_stats_raw
+    ]
+
+    # Fetch Shifumi game statistics for the user
+    shifumi_stats_raw = Player_stat(user.username, 'shifumi')
+    shifumi_stats = [
+        f"vs {stat[2] if stat[1] == user.username else stat[1]} - {stat[3]} - [{'WINNER' if stat[4] == user.username else 'LOSER' if stat[4] != 'Draw' else 'DRAW'}]"
+        for stat in shifumi_stats_raw
+    ]
+
+    context = {
+        'pong_stats': pong_stats,
+        'shifumi_stats': shifumi_stats,
+    }
+    return render(request, 'spa/pages/history.html', context)
