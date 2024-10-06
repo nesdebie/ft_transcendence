@@ -21,21 +21,20 @@
         <p id="lobby-status"></p>
         <button id="matchmaking-btn" class="btn btn-dark" data-game_type="pong">Find a Match</button>
         <div id="match-status" style="display: none;"></div>
-    
+        <button id="create-tournament-btn" class="btn btn-light">Create Tournament</button>
+
         <h4 id="your-tournaments-title">Your tournaments</h4>
-        <ul id="your-tournament-list" data-currentUser="{{ request.user }}">
+        <ul id="your-tournament-list" data-currentUser="{{ request.user }}" style="height: 200px; overflow-y: auto;">
             <!-- Tournament list will be populated here -->
         </ul>
         
         <h4 id="available-tournaments-title">Available tournaments</h4>
-        <ul id="available-tournament-list">
+        <ul id="available-tournament-list" style="height: 200px; overflow-y: auto;">
             <!-- Tournament list will be populated here -->
         </ul>
         
-        <button id="create-tournament-btn" class="btn btn-light">Create Tournament</button>
-        
         <h4 id="finished-tournaments-title">Previous tournaments</h4>
-        <ul id="finished-tournament-list">
+        <ul id="finished-tournament-list" style="height: 200px; overflow-y: auto;">
             <!-- Tournament list will be populated here -->
         </ul>
     </div>

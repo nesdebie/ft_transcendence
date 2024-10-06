@@ -1,20 +1,24 @@
 <div class="page-container align-center">
     <h4>Pong History</h4>
-    {% if pong_stats %}
-        {% for stat in pong_stats %}
-            <p>{{ stat }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No Pong stats available.</p>
-    {% endif %}
+    <div id="pong-history" style="height: 400px; overflow-y: auto;">
+        {% if pong_stats %}
+            {% for stat in pong_stats %}
+                <p>{{ stat }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No Pong stats available.</p>
+        {% endif %}
+    </div>
 
     <!-- Shifumi Stats Details -->
     <h4>Shifumi History</h4>
-    {% if shifumi_stats %}
-        {% for stat in shifumi_stats %}
-            <p>{{ stat }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No Shifumi stats available.</p>
-    {% endif %}
+    <div id="shifumi-history" style="height: 400px; overflow-y: auto;">
+        {% if shifumi_stats %}
+            {% for stat in shifumi_stats %}
+                <p>{{ stat }}</p>
+            {% endfor %}
+        {% else %}
+            <p>No Shifumi stats available.</p>
+        {% endif %}
+    </div>
 </div>
