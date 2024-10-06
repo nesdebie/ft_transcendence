@@ -245,6 +245,30 @@ body:not(.cyberpunk) #message-area::-webkit-scrollbar-thumb {
     border-radius: 10px; /* Rounded corners for the thumb */
 }
 
+/* Custom scrollbar styles for the message area */
+body:not(.cyberpunk) #pong-history,
+body:not(.cyberpunk) #shifumi-history {
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: black white; /* thumb color, track color */
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+body:not(.cyberpunk) #pong-history::-webkit-scrollbar,
+body:not(.cyberpunk) #shifumi-history::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+body:not(.cyberpunk) #pong-history::-webkit-scrollbar-track,
+body:not(.cyberpunk) #shifumi-history::-webkit-scrollbar-track {
+    background: white; /* Track color */
+}
+
+body:not(.cyberpunk) #pong-history::-webkit-scrollbar-thumb,
+body:not(.cyberpunk) #shifumi-history::-webkit-scrollbar-thumb {
+    background: black; /* Thumb color */
+    border-radius: 10px; /* Rounded corners for the thumb */
+}
+
 .main-content {
     z-index: 1;
 }

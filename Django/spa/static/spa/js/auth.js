@@ -420,7 +420,6 @@ async function find_user(event) {
         if (response.ok) {
             redirectToRoute('/profile/' + username);
         } else {
-            //console.log("find_user gave back not 200");
             await redirectToRoute('/404')
             handleErrors(data);
         }
@@ -429,7 +428,6 @@ async function find_user(event) {
     }
 }
 
-// A séparer du auth.js
 async function updateSidebar() {
     const isAuthenticated = await checkAuthentication();
     document.getElementById('profile-button').style.display = isAuthenticated ? 'block' : 'none';
@@ -438,6 +436,7 @@ async function updateSidebar() {
     document.getElementById('nav-shifumi').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-profile').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nav-chat').style.display = isAuthenticated ? 'block' : 'none';
+    document.getElementById('nav-history').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('nightCityModeBtn').style.display = isAuthenticated ? 'block' : 'none';
     document.getElementById('logout-button').style.display = isAuthenticated ? 'block' : 'none';
     if (isAuthenticated)
