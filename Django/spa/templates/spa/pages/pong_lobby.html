@@ -1,5 +1,8 @@
 <div class="page-container align-center">
     <h1>Pong Lobby</h1>
+    <div class="pong-options">
+        <a href="/pong_local" onclick="route(event)">Play local</a>
+    </div>
     <div id="tournament_nickname">
         {% if request.user.nickname %}
         <p id="nickname">Your current tournament nickname is {{ request.user.nickname }}</p>
@@ -13,9 +16,6 @@
                 <button id="change-nickname_button" type="submit" class="btn btn-dark">change nickname</button>
             </div>
         </form>
-    </div>
-    <div class="pong-options">
-        <a href="/pong_local" onclick="route(event)">Play local</a>
     </div>
     <div class="pong-options">
         <p id="lobby-status"></p>

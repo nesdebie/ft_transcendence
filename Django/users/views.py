@@ -10,6 +10,7 @@ from django.conf import settings
 import requests 
 from django.contrib.auth import update_session_auth_hash
 from django.db import IntegrityError
+import re
 
 
 # LOGIN 42 AUTH 
@@ -256,20 +257,18 @@ def register_view(request):
 
         errors = {}
 
+        if not is_valid_username(username):
+            errors['username'] = "Invalid username. Usernames cannot contain special characters."
         if Player.objects.filter(username=username).exists():
             errors['username'] = "Username already exists."
-
         if Player.objects.filter(email=email).exists():
             errors['email'] = "This email is already used, if it is yours try to log in instead."
-
         try:
             validate_password(password, Player)
         except ValidationError as error:
             errors['password'] = error.messages
-
         if password != password2:
             errors['password2'] = "Passwords don't match."
-
         if errors:
             return JsonResponse({"errors": errors}, status=400)
 
@@ -309,6 +308,10 @@ def register_view(request):
         return JsonResponse({'status': 'success'})
 
     return JsonResponse({'status': 'invalid method'}, status=405)
+
+def is_valid_username(username):
+    # Regex to allow only alphanumeric characters and underscores
+    return re.match(r'^[\w]+$', username) is not None
 
 def logout_view(request):
 	logout(request)
