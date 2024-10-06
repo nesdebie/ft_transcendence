@@ -356,7 +356,7 @@ document.body.addEventListener('click', async function(event) {
                 handleErrors(data); // wasn't there before 
             }
         } catch (error) {
-            //console.error('Error during authentication:', error);
+            console.error('Error during authentication:', error);
         }
     }
 });

@@ -260,7 +260,16 @@ def register_view(request):
         if not is_valid_username(username):
             errors['username'] = "Invalid username. Usernames cannot contain special characters."
         if Player.objects.filter(username=username).exists():
-            errors['username'] = "Username already exists."
+            if auth_42:
+                base_username = username + '_42'
+                new_username = base_username
+                i = 1
+                while Player.objects.filter(username=new_username).exists():
+                    new_username = f"{base_username}_{i}"
+                    i += 1
+                username = new_username
+            else:
+                errors['username'] = "Username already exists."
         if Player.objects.filter(email=email).exists():
             errors['email'] = "This email is already used, if it is yours try to log in instead."
         try:
