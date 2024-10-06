@@ -62,15 +62,15 @@ export function initChat() {
         const message = messageInputDom.value.trim();
 
         // Check for invalid characters
-        const invalidChars = /[<>\[\]{}]/;  // Regex to match invalid characters
-        if (invalidChars.test(message)) {
-            console.error('Message contains invalid characters and will not be sent.');
-            return;  // Prevent sending the message
-        }
+        // const invalidChars = /[<>\[\]{}]/;  // Regex to match invalid characters
+        // if (invalidChars.test(message)) {
+        //     console.error('Message contains invalid characters and will not be sent.');
+        //     return;  // Prevent sending the message
+        // }
 
         // Prevent sending messages to the bot
         if (is_bot) {
-            console.error('Cannot send messages to the bot.');
+            //console.error('Cannot send messages to the bot.');
             return;  // Prevent sending messages to the bot
         }
 
@@ -193,9 +193,13 @@ function generateGameRoomName(user1, user2) {
 function appendMessage(data, current_username) {
     const localTime = moment.utc(data.timestamp).local().format('YYYY-MM-DD HH:mm');
     const messageElement = document.createElement('tr');
+    
+    // Escape the message to prevent XSS
+    const escapedMessage = escapeHtml(data.message);
+    
     messageElement.innerHTML = `
         <td class="${data.sender === current_username ? 'sent-message' : 'received-message'}">
-            <p class="message" style="color: black;">${data.message}</p>
+            <p class="message" style="color: black;">${escapedMessage}</p>
             <p class="timestamp">${localTime}</p>
         </td>
     `;
@@ -247,4 +251,14 @@ function fetchAndNotifyGames(websocket, current_username) {
             }
         })
         .catch(error => console.error('Error fetching tournament games: ', error));
+}
+
+// Function to escape HTML characters
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
