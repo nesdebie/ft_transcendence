@@ -390,7 +390,8 @@ function showWelcomeMessage(username, profileImageUrl) {
 
     welcomeMessage.innerHTML = `
         ${profileImageHtml}
-        Welcome, ${username}! Check the box below to enable 2FA and then click Register, or just click Register to continue.
+        Welcome, ${username} ! Check the box below to enable 2FA and then click Register, or just click Register to continue.
+        <br/><span id="email-error" class="error-message text-danger"></span>
     `;
     
     form.insertBefore(welcomeMessage, form.firstChild);
