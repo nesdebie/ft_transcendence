@@ -246,8 +246,8 @@ export async function login_user_after_otp(username) {
 
 function hideUsernameAndPassword() {
     const fieldsToHide = [
-        'username-container',  // ID of the container of the username field
-        'password-container',  // ID of the container of the password field
+        'username-container',
+        'password-container',  
         'login_button'
     ];
 
@@ -258,8 +258,6 @@ function hideUsernameAndPassword() {
         }
     });
 }
-
-
 document.body.addEventListener('click', async function(event) {
     let target = event.target;
 
@@ -275,14 +273,16 @@ document.body.addEventListener('click', async function(event) {
         const checkLocalStorage = new Promise((resolve, reject) => {
             const interval = setInterval(() => {
                 const storedUserInfo = localStorage.getItem('user_info');
-                
-                if (storedUserInfo) {
+                // jwt 
+                const jwtToken = localStorage.getItem('jwt_token');
+
+                if (storedUserInfo && jwtToken) {
                     const userInfo = JSON.parse(storedUserInfo);
                     console.log(userInfo);
                     user_name = userInfo.username;
                     localStorage.removeItem('user_info');
                     clearInterval(interval);
-                    resolve(user_name);
+                    resolve({ user_name, jwtToken });
                 }
             }, 500);
 
@@ -294,8 +294,9 @@ document.body.addEventListener('click', async function(event) {
         });
 
         try {
-            user_name = await checkLocalStorage;
+            const { user_name, jwtToken } = await checkLocalStorage;
             console.log("Username retrieved:", user_name);
+            console.log("JWT Token:", jwtToken)
 
             const formData = new FormData();
             formData.append('username', user_name);
@@ -303,7 +304,8 @@ document.body.addEventListener('click', async function(event) {
             const response = await fetch('/users_api/find_user_for_login_with_username/', {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Authorization': `Bearer ${jwtToken}`
                 },
                 body: formData
             });
@@ -311,22 +313,17 @@ document.body.addEventListener('click', async function(event) {
             const data = await response.json();
 
             if (response.ok) {
-                //const data = await response.json(); before was here 
                 if (data.user_exists) {
                     if (data.two_factor_enabled) {
-                        
-                        // Afficher le formulaire pour entrer le code OTP
                         const otpFormContainer = document.getElementById('otp-form-container');
                         otpFormContainer.style.display = 'block';
 
-                        // Gérer la soumission du formulaire OTP
                         const otpForm = document.getElementById('otp-form');
                         otpForm.addEventListener('submit', async function(event) {
                             event.preventDefault();
-                            const result = await verifyOtp(user_name);// before was username 
-                        
+                            const result = await verifyOtp(user_name);
+
                             if (result == true) {
-                                console.log("OTP verification succeeded");
                                 const loginSuccess = await login_user_after_otp(user_name);
                                 if (loginSuccess) {
                                     console.log("User logged in successfully after OTP verification.");
@@ -339,27 +336,24 @@ document.body.addEventListener('click', async function(event) {
                                 console.log("OTP verification failed");
                             }
                         });
-
                     } else {
                         console.log("Two-factor authentication is not enabled.");
-                        // Rediriger l'utilisateur car il a été automatiquement connecté
                         await redirectToRoute('/');
                         updateSidebar();
                     }
                 } else {
                     console.log("User does not exist.");
-                    await redirectToRoute('/login')
+                    await redirectToRoute('/login');
                 }
             } else {
-                //console.error('Error checking authentication:', response.statusText);
-                await redirectToRoute('/login');// wasnt there before
-                handleErrors(data); // wasn't there before 
+                console.error("Error checking authentication:", data);
             }
         } catch (error) {
             console.error('Error during authentication:', error);
         }
     }
 });
+
 /******************************************************************** */
 
 /************************* fonction pour ajouter un message et cacher les info du user */

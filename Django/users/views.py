@@ -11,6 +11,8 @@ import requests
 from django.contrib.auth import update_session_auth_hash
 from django.db import IntegrityError
 import re
+import jwt
+import datetime
 
 
 # LOGIN 42 AUTH 
@@ -35,7 +37,7 @@ def login_user_by_username(request):
         
         try:
             user = Player.objects.get(username=username)
-            login(request, user)  # Authentifier l'utilisateur
+            login(request, user) 
             return JsonResponse({
                 'status': 'success',
                 'message': f'User {username} logged in successfully.'
@@ -47,26 +49,42 @@ def login_user_by_username(request):
     else:
         return JsonResponse({'status': 'invalid method'}, status=405)
 
+
 @csrf_protect
 def find_user_for_login_with_username(request):
     if request.method == 'POST':
+       
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if not auth_header.startswith('Bearer '):
+            return JsonResponse({'error': 'Invalid authorization header'}, status=401)
+
+        jwt_token = auth_header.split(' ')[1]
+        try:
+            payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+            jwt_username = payload.get('username')
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            return JsonResponse({'error': 'Invalid or expired token'}, status=401)
+
+        # verify user name 
         username = request.POST.get('username')
         if not username:
             return JsonResponse({'errors': {'find-user': 'Username is required'}}, status=400)
         
+        # compare user name in db with jwt token 
+        if jwt_username != username:
+            return JsonResponse({'error': 'JWT username does not match the provided username'}, status=401)
+
         try:
             user = Player.objects.get(username=username)
-            # Si l'utilisateur existe, on vérifie si la 2FA est activée
-			
+            # 2FA active 
             if user.two_factor_enabled:
-                # login(request, user)
                 return JsonResponse({
                     'status': 'success',
                     'user_exists': True,
                     'two_factor_enabled': True
                 })
             else:
-                # Connecter automatiquement l'utilisateur si la 2FA n'est pas activée
+                # connect auto 
                 login(request, user)
                 return JsonResponse({
                     'status': 'success',
@@ -79,7 +97,6 @@ def find_user_for_login_with_username(request):
             return JsonResponse({'errors': {'find-user': f'An unexpected error occurred: {str(e)}'}}, status=500)
     else:
         return JsonResponse({'status': 'invalid method'}, status=405)
-
 
 # AUTH 
 from django.shortcuts import render, get_object_or_404
@@ -147,6 +164,16 @@ def callback(request):
 		
         # Récupérer l'URL de la photo de profil
         profile_image_url = user_info.get('image', {}).get('versions', {}).get('medium', '')
+        user_login = user_info.get('login', '')
+
+        ######## gen JWT token 
+        payload = {
+            'user_id': user_login,
+            'username': user_login,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+            'iat': datetime.datetime.utcnow()
+        }
+        jwt_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
 
         # Utilisation uniquement de localStorage pour transmettre les informations
         response_script = f"""
@@ -161,6 +188,8 @@ def callback(request):
             }}));
 
             localStorage.setItem('is_connected_with_42', 'true');
+
+            localStorage.setItem('jwt_token', '{jwt_token}');
 
             window.close();
         </script>

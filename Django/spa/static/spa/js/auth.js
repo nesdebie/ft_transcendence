@@ -106,7 +106,7 @@ document.body.addEventListener('change', async function(event) {
         } else {
             document.getElementById('qr-code-container').style.display = 'none';
         }
-    } 
+    }
 });
 
 
