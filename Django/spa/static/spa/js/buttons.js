@@ -1,4 +1,4 @@
-import { register, login, logout, updateSidebar, find_user, checkAuthentication, verifyOtp, change_nickname } from "./auth.js";
+import { register, login, logout, updateSidebar, find_user, checkAuthentication, verifyOtp, change_nickname, handleErrors } from "./auth.js";
 import { redirectToRoute } from "./router.js";
 import { sendFriendRequest, removeFriendRequest, acceptFriendRequest, denyFriendRequest, removeFriend, block_user, unblock_user } from "./friend_managment.js";
 import { updateProfilePicture, setPassword } from "./profile_editor.js";
@@ -257,6 +257,12 @@ function hideUsernameAndPassword() {
             element.style.display = 'none'; // Hide the container of the field
         }
     });
+
+    // Ensure the error message span remains visible
+    const errorMessage = document.getElementById('login-error');
+    if (errorMessage) {
+        errorMessage.style.display = 'block'; // Show the error message if needed
+    }
 }
 document.body.addEventListener('click', async function(event) {
     let target = event.target;
@@ -346,7 +352,7 @@ document.body.addEventListener('click', async function(event) {
                     await redirectToRoute('/login');
                 }
             } else {
-                console.error("Error checking authentication:", data);
+                handleErrors(data);
             }
         } catch (error) {
             console.error('Error during authentication:', error);
