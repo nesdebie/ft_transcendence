@@ -76,23 +76,51 @@ def find_user_for_login_with_username(request):
 
         try:
             user = Player.objects.get(username=username)
-            # 2FA active 
-            if user.two_factor_enabled:
-                return JsonResponse({
-                    'status': 'success',
-                    'user_exists': True,
-                    'two_factor_enabled': True
-                })
+
+            if user.auth_42:
+                if user.two_factor_enabled:
+                    return JsonResponse({
+                        'status': 'success',
+                        'user_exists': True,
+                        'two_factor_enabled': True
+                   })
+                else:
+                    login(request, user)
+                    return JsonResponse({
+                        'status': 'success',
+                        'user_exists': True,
+                        'two_factor_enabled': False
+                   })
             else:
-                # connect auto 
-                login(request, user)
-                return JsonResponse({
-                    'status': 'success',
-                    'user_exists': True,
-                    'two_factor_enabled': False
-                })
+                base_username = f"{username}_42"
+                i = 1
+                while True:
+                    try:
+                        user = Player.objects.get(username=base_username)
+                        if user.auth_42:
+                            break
+                        base_username = f"{username}_42_{i}"
+                        i += 1
+                    except Player.DoesNotExist:
+                        break
+                if not user.auth_42:
+                    return JsonResponse({'errors': {'login': 'User does not exist'}}, status=400)
+                if user.two_factor_enabled:
+                    return JsonResponse({
+                        'status': 'success',
+                        'user_exists': True,
+                        'two_factor_enabled': True
+                   })
+                else:
+                    login(request, user)
+                    return JsonResponse({
+                        'status': 'success',
+                        'user_exists': True,
+                        'two_factor_enabled': False
+                   })
+
         except Player.DoesNotExist:
-            return JsonResponse({'status': 'success', 'user_exists': False})
+            return JsonResponse({'errors': {'login': 'User does not exist'}}, status=400)
         except Exception as e:
             return JsonResponse({'errors': {'find-user': f'An unexpected error occurred: {str(e)}'}}, status=500)
     else:

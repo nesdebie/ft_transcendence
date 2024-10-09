@@ -23,7 +23,8 @@ async function login(event) {
         });
 
         const data = await response.json();
-
+        console.log("DEBUG :");
+        console.log(data);
         if (response.ok) {
             // 2FA
             if (data.two_factor_enabled) {
@@ -348,6 +349,7 @@ function handleErrors(data) {
     if (data.errors) {
         for (const key in data.errors) {
             const errorElement = document.getElementById(`${key}-error`);
+            console.log(errorElement);
             if (errorElement) {
                 const errorMessages = Array.isArray(data.errors[key]) 
                     ? data.errors[key].join('\n') 
