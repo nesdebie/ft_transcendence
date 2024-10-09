@@ -155,9 +155,11 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def game_over(self, event):
         game_state = event['game_state']
+        is_tournament = event['is_tournament']
         await self.send(text_data=json.dumps({
             'type': 'game_over',
-            'game_state': game_state
+            'game_state': game_state,
+            'is_tournament': is_tournament,
         }))
         
         if self.room_name in self.rooms:

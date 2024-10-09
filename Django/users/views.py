@@ -352,8 +352,8 @@ def is_valid_username(username):
     return re.match(r'^[\w]+$', username) is not None
 
 def logout_view(request):
-	logout(request)
-	return JsonResponse({'status': 'success'})
+    logout(request)
+    return JsonResponse({'status': 'success'})
 
 @csrf_exempt
 def check_authentication(request):
@@ -578,14 +578,18 @@ def change_nickname(request):
         return JsonResponse({'errors': {'nickname': 'Wrong method'}}, status=405)
     
     nickname = request.POST.get('nickname')
+    if Player.objects.filter(username=nickname).exists():
+        return JsonResponse({'errors': {'nickname': 'This nickname cannot be the same as another user\'s username'}}, status=400)
+
+
     user :Player = request.user
     user.nickname = nickname
     try:
         user.save()
-        return JsonResponse({'status': 'success', 'nickname': user.nickname})
+        return JsonResponse({'status': 'success', 'nickname': user.nickname}, status=200)
     except IntegrityError:
-        return JsonResponse({'errors': {'nickname': 'This nickname has already be chosen'}})
+        return JsonResponse({'errors': {'nickname': 'This nickname has already be chosen'}}, status=400)
     except Exception as e:
-        return JsonResponse({'errors': {'nickname': e}})
+        return JsonResponse({'errors': {'nickname': e}}, status=400)
     
     

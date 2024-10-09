@@ -247,7 +247,8 @@ class ShifumiConsumer(AsyncWebsocketConsumer):
             return None
         elif (move1 == 'rock' and move2 == 'scissors') or \
              (move1 == 'scissors' and move2 == 'paper') or \
-             (move1 == 'paper' and move2 == 'rock'):
+             (move1 == 'paper' and move2 == 'rock') or \
+             (move2 == 'timeout'):
             return players[0]
         else:
             return players[1]

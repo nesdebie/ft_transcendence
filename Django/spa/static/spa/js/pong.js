@@ -173,12 +173,14 @@ function initPong() {
         }
         // Add event listener to go back button
         if (!data.is_tournament) {
+            document.getElementById('go-back-button').textContent = "Go to pong Lobby"
             document.getElementById('go-back-button').addEventListener('click', () => {
                 closeWebSocket();
                 redirectToRoute('/pong_lobby'); 
             });
         } else {
             const gameInfo = JSON.parse(gameOverDiv.getAttribute('data-game_info'))
+            document.getElementById('go-back-button').textContent = "Go back to tournament page"
             document.getElementById('go-back-button').addEventListener('click', () => {
                 closeWebSocket();
                 redirectToRoute(`/tournament/${gameInfo.tournament_id}`)

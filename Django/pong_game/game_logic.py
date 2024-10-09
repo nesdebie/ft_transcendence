@@ -102,7 +102,8 @@ class PongGameLogic:
                     'paddles': self.paddles,
                     'ball': self.ball,
                     'scores': self.scores
-                }
+                },
+                'is_tournament': self.is_tournament,
             }
         )
 

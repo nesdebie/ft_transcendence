@@ -268,11 +268,12 @@ export async function change_nickname() {
         body: formData
     })
     .then(response => {
-        redirectToRoute('/pong_lobby'); // Redirect after successful update
         if (!response.ok) {
             return response.json().then(data => {
                 handleErrors(data); // Handle errors if response is not ok
             });
+        } else {
+            redirectToRoute('/pong_lobby'); // Redirect after successful update
         }
         return response.json(); // Return the response data if ok
     })
@@ -297,7 +298,7 @@ async function checkAuthentication() {
             const data = await response.json();
             const currentlyAuthenticated = data.authenticated;
 
-            if (isAuthenticated === false) {
+            if (isAuthenticated === false || currentlyAuthenticated == false) {
                 // First time checking authentication
                 isAuthenticated = currentlyAuthenticated;
                 if (isAuthenticated) {
