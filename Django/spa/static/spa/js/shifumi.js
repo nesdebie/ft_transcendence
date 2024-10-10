@@ -1,4 +1,5 @@
 import { setWebSocket, getWebSocket, closeWebSocket } from "./websocketManager.js";
+import { redirectToRoute } from "./router.js";
 
 function initShifumi(roomName) {
     const websocket = new WebSocket(
@@ -105,7 +106,7 @@ function endGame(data, playerUsername) {
     // Add event listener to go back button
     document.getElementById('go-back-button').addEventListener('click', () => {
         closeWebSocket();
-        window.history.back();
+        redirectToRoute('/shifumi_lobby');
     });
 }
 
